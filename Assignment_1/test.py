@@ -31,6 +31,6 @@ else:
     print("dlib version is ",dlib.__version__," ---> Failed. Should be",DLIB_VER)
 
 if IS_HOLD_VER_COND:
-    print("All conditions are holding.")
+    print("All conditions are keeping.")
 else:
     print("Few conditions are disturbed.")
