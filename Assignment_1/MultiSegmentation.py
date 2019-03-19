@@ -26,7 +26,7 @@ class Segments:
 class ImModel:
     def __init__(self, img_name, rect , iterations):
         self._img = cv.imread("images\\" + img_name)
-        self._mask = np.zeros(self._img.shape[:2], np.uint8)
+        self._mask = np.full(self._img.shape[:2],cv.GC_PR_BGD,np.uint8) # np.zeros(self._img.shape[:2], np.uint8)
         self._rect = rect
         self._bgdModel = np.zeros((1, 65), np.float64)
         self._fgdModel = np.zeros((1, 65), np.float64)
