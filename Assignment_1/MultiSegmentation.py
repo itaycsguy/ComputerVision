@@ -178,10 +178,8 @@ class Interactive:
             cv2.circle(seg_img, center, 2, color, -1)
 
 
-    def save_results(self, image, output, alpha = 0.5):
-        trans_image = cv2.addWeighted(image, alpha, output, 1.0 - alpha, 0)
-        # The same equation: alpha * image + (1.0 - alpha) * output
-        plt.imshow(trans_image), plt.colorbar(), plt.show()
+    def save_results(self, src_img, seg_img, trans_img):
+        pass
 
 
     def main_loop(self):
@@ -202,6 +200,7 @@ class Interactive:
         # segment you're on
         current_segment = 0
 
+        # 4-colouring is MUST
         while True:
             cv2.imshow("Select segments", seg_img)
             k = cv2.waitKey(20)
@@ -226,15 +225,31 @@ class Interactive:
         concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        seg_img = seg_img * concat_masks
+        # equivalent equation: seg_img = seg_img * concat_masks
+        seg_img = cv2.addWeighted(seg_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
+        # show transparency image
+        # The same equation: alpha * image + (1.0 - alpha) * output
+        trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.8, seg_img.copy().astype(np.uint8), 0.2, 0)
+        plt.imshow(trans_img), plt.colorbar(), plt.show()
+
         # save results as asked to
-        self.save_results(orig_img.copy().astype(np.uint8), seg_img.copy().astype(np.uint8))
+        # self.save_results(orig_img, seg_img, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()
 
+
+"""
+    Left work:
+    ==========
+    1. Matching of the color segmentation the the right one
+    2. Checking transparency quality - there are lines behind
+    3. Save 2 results: seg_img + trans_img
+    4. Let the user to choose input image
+    5. Keep Hagit's submission instructions
+"""
 
 if __name__ == "__main__":
     Interactive().main_loop()
