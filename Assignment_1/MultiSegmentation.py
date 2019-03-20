@@ -14,7 +14,7 @@ SEG_THREE_COLOR = (0, 255, 255)
 
 
 """
-Computation unit which calculates the grabcut to multi-classes objects
+    Computation unit which calculates the grabcut to multi-classes objects
 """
 class ImGraph:
     def __init__(self, image):
@@ -22,59 +22,65 @@ class ImGraph:
 
 
     """
-    seg2mask - mapping from segments to mask colors
-    f_idx    - foreground index between 4 we have got and the rest are the background immediately 
-    Return binary grabcut foreground
+        seg2mask - mapping from segments to mask colors
+        f_idx    - foreground index between 4 we have got and the rest are the background immediately 
+        Return binary grabcut foreground
     """
-    def calc_bin_grabcut(self, f_seg_indices):
+    def calc_bin_grabcut(self, f_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
-        for indices in f_seg_indices:
-            mask[indices[0]][indices[1]] = cv2.GC_FGD
+        for (x, y) in f_seg_indices:
+            # (x, y) -> (y, x) due to image input and numpy conversion
+            mask[y][x] = cv2.GC_FGD
 
-        # algorithm parameters:
+        # algorithm MUST parameters:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
 
-        iterations = 5
-        mode = cv2.GC_INIT_WITH_MASK
-        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, mode)
-        mask = np.where((mask == 2) | (mask == 0), 0, 1).astype(np.uint8)
+        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_INIT_WITH_MASK)
+        mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
+        mask = mask[:, :, np.newaxis]
 
         return mask
 
 
     """
-    seg2mask - mapping from segments to mask colors
-    Return multi-grabcut image total result
+        seg2mask - mapping from segments to mask colors
+        Return multi-grabcut image total result
     """
     def calc_multi_grabcut(self):
+        print("\nProcessing the image..")
         f0_mask = self.calc_bin_grabcut(seg0)
+        print("(#seg, color) ---> (0, {}): is discovered".format(SEG_ZERO_COLOR))
         f1_mask = self.calc_bin_grabcut(seg1)
+        print("(#seg, color) ---> (1, {}): is discovered".format(SEG_ONE_COLOR))
         f2_mask = self.calc_bin_grabcut(seg2)
+        print("(#seg, color) ---> (2, {}): is discovered".format(SEG_TWO_COLOR))
         f3_mask = self.calc_bin_grabcut(seg3)
+        print("(#seg, color) ---> (3, {}): is discovered".format(SEG_THREE_COLOR))
+        print("Done!\n")
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
 """
-Interface for interactive selection of segement points
-
-Interface instruction:
-Image opens to the user once the program starts to run.
-The user then selects segments with mouse:
-- Right click: segments a point
-- Left click: start a line
-- Line is from the previous point selected to the one clicked.
-- All points in the line belong to the current segment
-User uses `Space-Bar` to switch between segments, the message board shows on which segment the user is on at a given time.
-There are 4 segments in total, each has a color: RED, GREEN, BLUE, YELLOW respectively.
-Once you finish segmenting, press `ESC`.
-
-Once manual segmentation is finished:
-The user will have four lists: seg0, seg1, seg2, seg3. Each is a list with all the points belonging to the segment.
+    Interface for interactive selection of segement points
+    
+    Interface instruction:
+    Image opens to the user once the program starts to run.
+    The user then selects segments with mouse:
+    - Right click: segments a point
+    - Left click: start a line
+    - Line is from the previous point selected to the one clicked.
+    - All points in the line belong to the current segment
+    User uses `Space-Bar` to switch between segments, the message board shows on which segment the user is on at a given time.
+    There are 4 segments in total, each has a color: RED, GREEN, BLUE, YELLOW respectively.
+    Once you finish segmenting, press `ESC`.
+    
+    Once manual segmentation is finished:
+    The user will have four lists: seg0, seg1, seg2, seg3. Each is a list with all the points belonging to the segment.
 """
 class Interactive:
     """
-    mouse callback function
+        mouse callback function
     """
     def mouse_click(self, event, x, y, flags, params):
         # if left button is pressed, draw line
@@ -123,8 +129,8 @@ class Interactive:
 
 
     """
-    given two points, this function returns all the points on line between.
-    this is used when user selects lines on segments
+        given two points, this function returns all the points on line between.
+        this is used when user selects lines on segments
     """
     def add_line_point(self, p1, p2):
         x1, y1 = p1
@@ -165,7 +171,7 @@ class Interactive:
 
 
     """
-    given a segment points and a color, paint in seg_image
+        given a segment points and a color, paint in seg_image
     """
     def paint_segment(self, segment, color):
         for center in segment:
@@ -211,10 +217,10 @@ class Interactive:
         ig = ImGraph(orig_img)
 
         # making one-against-all binary grabcut computations and return the union foreground images
-        concat_mask = ig.calc_multi_grabcut()
+        concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        seg_img = orig_img * concat_mask[:, :, np.newaxis]
+        seg_img = seg_img * concat_masks
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
         # destroy all windows
