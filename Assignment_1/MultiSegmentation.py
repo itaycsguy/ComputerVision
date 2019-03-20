@@ -17,28 +17,8 @@ SEG_THREE_COLOR = (0, 255, 255)
 Computation unit which calculates the grabcut to multi-classes objects
 """
 class ImGraph:
-    def __init__(self, image, mask):
+    def __init__(self, image):
         self.img = image
-        self.mask = mask
-
-
-    """
-    seg - list of interactively selected pixels on the original image
-    Return the pixel value which is the most frequent with the seg indices at the mask image
-    """
-    def get_most_freq_value(self, seg):
-        u, indices = np.unique(self.mask[seg], return_inverse=True)
-        return u[np.argmax(np.bincount(indices))]
-
-    """
-    Return a mapping from selected segments to mask color 
-    """
-    def seg2mask_color(self):
-        voted_seg0 = self.get_most_freq_value(seg0)
-        voted_seg1 = self.get_most_freq_value(seg1)
-        voted_seg2 = self.get_most_freq_value(seg2)
-        voted_seg3 = self.get_most_freq_value(seg3)
-        return {SEGMENT_ZERO: voted_seg0, SEGMENT_ONE: voted_seg1, SEGMENT_TWO: voted_seg2, SEGMENT_THREE: voted_seg3}
 
 
     """
@@ -46,22 +26,18 @@ class ImGraph:
     f_idx    - foreground index between 4 we have got and the rest are the background immediately 
     Return binary grabcut foreground
     """
-    def calc_bin_grabcut(self, seg2mask_map, f_idx):
-        new_mask = np.zeros(self.mask.shape[:2], dtype=np.uint8)
+    def calc_bin_grabcut(self, f_seg_indices):
+        mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
+        for indices in f_seg_indices:
+            mask[indices[0]][indices[1]] = cv2.GC_FGD
+
+        # algorithm parameters:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
-        rect = (0, 0, self.mask.shape[0], self.mask.shape[1])
-        iterations = 10
-        mode = cv2.GC_INIT_WITH_RECT
-        mask, bgd_model, fgd_model = cv2.grabCut(self.img, new_mask, rect, bgd_model, fgd_model, iterations, mode)
-        mask = np.where((mask == 2) | (mask == 0), 0, 1).astype(np.uint8)
-        middle_img = self.img * mask[:, :, np.newaxis]
 
-        f_mask_color = seg2mask_map.get(f_idx)
-        new_mask[new_mask == f_mask_color] = cv2.GC_BGD
-        new_mask[new_mask != f_mask_color] = cv2.GC_BGD
+        iterations = 5
         mode = cv2.GC_INIT_WITH_MASK
-        mask, _, _ = cv2.grabCut(middle_img, new_mask, None, bgd_model, fgd_model, iterations, mode)
+        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, mode)
         mask = np.where((mask == 2) | (mask == 0), 0, 1).astype(np.uint8)
 
         return mask
@@ -71,20 +47,12 @@ class ImGraph:
     seg2mask - mapping from segments to mask colors
     Return multi-grabcut image total result
     """
-    def calc_multi_grabcut(self, seg2mask_map):
-        image_result = self.img
-        f0_mask = self.calc_bin_grabcut(seg2mask_map, SEGMENT_ZERO)
-        image_result[f0_mask == 1] = SEG_ZERO_COLOR
-        f1_mask = self.calc_bin_grabcut(seg2mask_map, SEGMENT_ONE)
-        image_result[f1_mask == 1] = SEG_ONE_COLOR
-        f2_mask = self.calc_bin_grabcut(seg2mask_map, SEGMENT_TWO)
-        image_result[f2_mask == 1] = SEG_TWO_COLOR
-        f3_mask = self.calc_bin_grabcut(seg2mask_map, SEGMENT_THREE)
-        image_result[f3_mask == 1] = SEG_THREE_COLOR
-
-        plt.imshow(image_result), plt.colorbar(), plt.show()
-
-        return image_result
+    def calc_multi_grabcut(self):
+        f0_mask = self.calc_bin_grabcut(seg0)
+        f1_mask = self.calc_bin_grabcut(seg1)
+        f2_mask = self.calc_bin_grabcut(seg2)
+        f3_mask = self.calc_bin_grabcut(seg3)
+        return f0_mask + f1_mask + f2_mask + f3_mask
 
 
 """
@@ -131,7 +99,7 @@ class Interactive:
                     seg2.extend(points)
             if current_segment == SEGMENT_THREE:
                 if len(seg3) == 0:
-                    seg3.append((x,y))
+                    seg3.append((x, y))
                 else:
                     points = self.add_line_point(seg3[-1], (x, y))
                     seg3.extend(points)
@@ -208,10 +176,8 @@ class Interactive:
         global orig_img, seg_img, current_segment
         global seg0, seg1, seg2, seg3
         input_image = "images\\boat.jpg"
-        input_mask = "images\\boatMask.tif"
         orig_img = cv2.imread(input_image)
         seg_img = cv2.imread(input_image)
-        orig_mask = cv2.imread(input_mask, 0)
         cv2.namedWindow("Select segments")
 
         # mouse event listener
@@ -242,16 +208,14 @@ class Interactive:
         """
 
         # keeping important data as in object creation
-        ig = ImGraph(orig_img, orig_mask)
-
-        # making a map between marked segments and the given mask
-        seg2mask_map = ig.seg2mask_color()
+        ig = ImGraph(orig_img)
 
         # making one-against-all binary grabcut computations and return the union foreground images
-        concat_image = ig.calc_multi_grabcut(seg2mask_map)
+        concat_mask = ig.calc_multi_grabcut()
 
-        # TODO
-        # last step: show the results
+        # show the total result:
+        seg_img = orig_img * concat_mask[:, :, np.newaxis]
+        plt.imshow(seg_img), plt.colorbar(), plt.show()
 
         # destroy all windows
         cv2.destroyAllWindows()
@@ -259,5 +223,3 @@ class Interactive:
 
 if __name__ == "__main__":
     Interactive().main_loop()
-
-
