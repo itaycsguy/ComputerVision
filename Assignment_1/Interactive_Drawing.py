@@ -1,5 +1,4 @@
 import cv2 as cv
-import numpy as np
 
 
 """
@@ -10,8 +9,6 @@ def draw_points():
         if event == cv.EVENT_LBUTTONDOWN:
             print("Left click")
             circles.append((x, y))
-
-
     cap = cv.VideoCapture(0)
 
     cv.namedWindow("Frame")
@@ -36,16 +33,13 @@ def draw_points():
     cv.destroyAllWindows()
 
 
-
 """
-    Building a rectangle at a time - single each
+Building a rectangle at a time - single each
 """
 drawing = False
 point1 = ()
 point2 = ()
-
 def draw_rectangle():
-
     def mouse_drawing(event, x, y, flags, params):
         global point1, point2, drawing
         if event == cv.EVENT_LBUTTONDOWN:
@@ -58,8 +52,6 @@ def draw_rectangle():
         elif event == cv.EVENT_MOUSEMOVE:
             if drawing is True:
                 point2 = (x, y)
-
-
     cap = cv.VideoCapture(0)
 
     cv.namedWindow("Frame")
@@ -86,4 +78,4 @@ def draw_rectangle():
 """
 if __name__ == "__main__":
     draw_rectangle()
-    # draw_points()
+    draw_points()
