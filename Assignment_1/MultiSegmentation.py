@@ -51,16 +51,17 @@ class ImGraph:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
         rect = (0, 0, self.mask.shape[0], self.mask.shape[1])
-        # bgd_model = fgd_model = rect = None
         iterations = 10
         mode = cv2.GC_INIT_WITH_RECT
-        new_mask, bgd_model, fgd_model = cv2.grabCut(self.img, new_mask, rect, bgd_model, fgd_model, iterations, mode)
+        mask, bgd_model, fgd_model = cv2.grabCut(self.img, new_mask, rect, bgd_model, fgd_model, iterations, mode)
+        mask = np.where((mask == 2) | (mask == 0), 0, 1).astype(np.uint8)
+        middle_img = self.img * mask[:, :, np.newaxis]
 
         f_mask_color = seg2mask_map.get(f_idx)
         new_mask[new_mask == f_mask_color] = cv2.GC_BGD
         new_mask[new_mask != f_mask_color] = cv2.GC_BGD
         mode = cv2.GC_INIT_WITH_MASK
-        mask, _, _ = cv2.grabCut(self.img, new_mask, rect, bgd_model, fgd_model, iterations, mode)
+        mask, _, _ = cv2.grabCut(middle_img, new_mask, None, bgd_model, fgd_model, iterations, mode)
         mask = np.where((mask == 2) | (mask == 0), 0, 1).astype(np.uint8)
 
         return mask
