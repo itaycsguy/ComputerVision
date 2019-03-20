@@ -49,20 +49,20 @@ class ImGraph:
     """
     def calc_multi_grabcut(self):
         print("\nProcessing the image..")
-        f0_mask = self.calc_bin_grabcut(seg0)
-        print("(#seg, color) ---> (0, {}): is discovered".format(SEG_ZERO_COLOR))
-        f1_mask = self.calc_bin_grabcut(seg1)
-        print("(#seg, color) ---> (1, {}): is discovered".format(SEG_ONE_COLOR))
-        f2_mask = self.calc_bin_grabcut(seg2)
-        print("(#seg, color) ---> (2, {}): is discovered".format(SEG_TWO_COLOR))
-        f3_mask = self.calc_bin_grabcut(seg3)
-        print("(#seg, color) ---> (3, {}): is discovered".format(SEG_THREE_COLOR))
+        f0_mask = self.calc_bin_grabcut(seg0) * SEG_ZERO_COLOR
+        print("(#seg, color) ---> (0, {}): Found!".format(SEG_ZERO_COLOR))
+        f1_mask = self.calc_bin_grabcut(seg1) * SEG_ONE_COLOR
+        print("(#seg, color) ---> (1, {}): Found!".format(SEG_ONE_COLOR))
+        f2_mask = self.calc_bin_grabcut(seg2) * SEG_TWO_COLOR
+        print("(#seg, color) ---> (2, {}): Found!".format(SEG_TWO_COLOR))
+        f3_mask = self.calc_bin_grabcut(seg3) * SEG_THREE_COLOR
+        print("(#seg, color) ---> (3, {}): Found!".format(SEG_THREE_COLOR))
         print("Done!\n")
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
 """
-    Interface for interactive selection of segement points
+    Interface for interactive selection of segment points
     
     Interface instruction:
     Image opens to the user once the program starts to run.
@@ -178,6 +178,12 @@ class Interactive:
             cv2.circle(seg_img, center, 2, color, -1)
 
 
+    def save_results(self, image, output, alpha = 0.5):
+        trans_image = cv2.addWeighted(image, alpha, output, 1.0 - alpha, 0)
+        # The same equation: alpha * image + (1.0 - alpha) * output
+        plt.imshow(trans_image), plt.colorbar(), plt.show()
+
+
     def main_loop(self):
         global orig_img, seg_img, current_segment
         global seg0, seg1, seg2, seg3
@@ -222,6 +228,9 @@ class Interactive:
         # show the total result:
         seg_img = seg_img * concat_masks
         plt.imshow(seg_img), plt.colorbar(), plt.show()
+
+        # save results as asked to
+        self.save_results(orig_img.copy().astype(np.uint8), seg_img.copy().astype(np.uint8))
 
         # destroy all windows
         cv2.destroyAllWindows()
