@@ -2,9 +2,9 @@ import cv2, argparse, os, sys, dlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-inputImage = ""
-segmentedImage = ""
-segmaskImage = ""
+inputImage = "balloons.jpg"
+segmentedImage = "balloonsSeg.jpg"
+segmaskImage = "balloonsSegMask.jpg"
 
 SEGMENT_ZERO = 0
 SEGMENT_ONE = 1
@@ -19,8 +19,6 @@ SEG_THREE_COLOR = (0, 255, 255)
 """
     Computation unit which calculates the grabcut to multi-classes objects
 """
-
-
 class ImGraph:
     def __init__(self, image):
         self.img = image
@@ -30,7 +28,6 @@ class ImGraph:
         f_idx    - foreground index between 4 we have got and the rest are the background immediately 
         Return binary grabcut foreground
     """
-
     def calc_bin_grabcut(self, f_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
         for (x, y) in f_seg_indices:
@@ -43,7 +40,7 @@ class ImGraph:
 
         mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_INIT_WITH_MASK)
         mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
-        mask = mask[:, :, np.newaxis]
+        # mask = mask[:, :, np.newaxis]
 
         return mask
 
@@ -51,27 +48,72 @@ class ImGraph:
         seg2mask - mapping from segments to mask colors
         Return multi-grabcut image total result
     """
-
     def calc_multi_grabcut(self):
         print("\nProcessing the image..")
-        seg_color = tuple(reversed(SEG_ZERO_COLOR))
-        f0_mask = self.calc_bin_grabcut(seg0) * seg_color
-        print("(#seg, color) ---> (0, {}): Found!".format(seg_color))
-        seg_color = tuple(reversed(SEG_ONE_COLOR))
-        f1_mask = self.calc_bin_grabcut(seg1) * seg_color
-        print("(#seg, color) ---> (1, {}): Found!".format(seg_color))
-        seg_color = tuple(reversed(SEG_TWO_COLOR))
-        f2_mask = self.calc_bin_grabcut(seg2) * seg_color
-        print("(#seg, color) ---> (2, {}): Found!".format(seg_color))
-        seg_color = tuple(reversed(SEG_THREE_COLOR))
-        f3_mask = self.calc_bin_grabcut(seg3) * seg_color
-        print("(#seg, color) ---> (3, {}): Found!".format(seg_color))
+        seg0_color = tuple(reversed(SEG_ZERO_COLOR))
+        f0_mask = self.calc_bin_grabcut(seg0)
+        print("(#seg, color) ---> (0, {}): Found!".format(seg0_color))
+        seg1_color = tuple(reversed(SEG_ONE_COLOR))
+        f1_mask = self.calc_bin_grabcut(seg1)
+        print("(#seg, color) ---> (1, {}): Found!".format(seg1_color))
+        seg2_color = tuple(reversed(SEG_TWO_COLOR))
+        f2_mask = self.calc_bin_grabcut(seg2)
+        print("(#seg, color) ---> (2, {}): Found!".format(seg2_color))
+        seg3_color = tuple(reversed(SEG_THREE_COLOR))
+        f3_mask = self.calc_bin_grabcut(seg3)
+        print("(#seg, color) ---> (3, {}): Found!".format(seg3_color))
         print("Done!\n")
-        return f0_mask + f1_mask + f2_mask + f3_mask
+
+        coor_means = [np.mean(seg0, axis=0), np.mean(seg1, axis=0), np.mean(seg2, axis=0), np.mean(seg3, axis=0)]
+        f0_mask_repaired = self.decision_by_multivoting(f0_mask, coor_means, SEGMENT_ZERO, list())
+        f0_mask_repaired = f0_mask_repaired[:, :, np.newaxis] * seg0_color
+        f1_mask_repaired = self.decision_by_multivoting(f1_mask, coor_means, SEGMENT_ONE, [f0_mask])
+        f1_mask_repaired = f1_mask_repaired[:, :, np.newaxis] * seg1_color
+        f2_mask_repaired = self.decision_by_multivoting(f2_mask, coor_means, SEGMENT_TWO, [f0_mask, f1_mask])
+        f2_mask_repaired = f2_mask_repaired[:, :, np.newaxis] * seg2_color
+        f3_mask_repaired = self.decision_by_multivoting(f3_mask, coor_means, SEGMENT_THREE, [f0_mask, f1_mask, f2_mask])
+        f3_mask_repaired = f3_mask_repaired[:, :, np.newaxis] * seg3_color
+
+        return f0_mask_repaired + f1_mask_repaired + f2_mask_repaired + f3_mask_repaired
 
 
-    def calc_rec_multi_grabcut(self):
-        pass
+    """
+        A method to determine which color match to which pixel where overlapping is up
+        The Big Idea: checking each pixel which mean it is closer to deciding according by the result
+    """
+    def decision_by_multivoting(self, mask, coor_means, seg_id, competitive_masks):
+        mask_out = np.zeros(mask.shape[:2], dtype=np.uint8)
+        for i in range(mask.shape[0]):
+            for j in range(mask.shape[1]):
+                enable = [False, False, False]
+                for idx, comp_mask in enumerate(competitive_masks):
+                    enable[idx] = (comp_mask[i][j] == 1)
+
+                # do not handling the situation unless 1 competitive mask is exist
+                if any(enable) and mask[i][j] == 1:
+                    loc = np.array([i, j])
+                    # computing an euclidean distance
+                    dis_avg0 = np.linalg.norm(loc - coor_means[0])
+                    dis_avg1 = np.linalg.norm(loc - coor_means[1])
+                    dis_avg2 = np.linalg.norm(loc - coor_means[2])
+                    dis_avg3 = np.linalg.norm(loc - coor_means[3])
+
+                    # finding the min distance between the 4 we had computed
+                    which_id = seg_id
+                    if dis_avg0 <= dis_avg1 and dis_avg0 <= dis_avg2 and dis_avg0 <= dis_avg3:
+                        which_id = SEGMENT_ZERO
+                    elif dis_avg1 <= dis_avg0 and dis_avg1 <= dis_avg2 and dis_avg1 <= dis_avg3:
+                        which_id = SEGMENT_ONE
+                    elif dis_avg2 <= dis_avg0 and dis_avg2 <= dis_avg1 and dis_avg2 <= dis_avg3:
+                        which_id = SEGMENT_TWO
+                    elif dis_avg3 <= dis_avg0 and dis_avg3 <= dis_avg1 and dis_avg3 <= dis_avg2:
+                        which_id = SEGMENT_THREE
+
+                    # updating the current mask
+                    if seg_id == which_id:
+                        mask_out[i][j] = 1
+
+        return mask_out
 
 
 """
@@ -91,13 +133,11 @@ class ImGraph:
     Once manual segmentation is finished:
     The user will have four lists: seg0, seg1, seg2, seg3. Each is a list with all the points belonging to the segment.
 """
-
-
 class Interactive:
+
     """
         mouse callback function
     """
-
     def mouse_click(self, event, x, y, flags, params):
         # if left button is pressed, draw line
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -147,7 +187,6 @@ class Interactive:
         given two points, this function returns all the points on line between.
         this is used when user selects lines on segments
     """
-
     def add_line_point(self, p1, p2):
         x1, y1 = p1
         x2, y2 = p2
@@ -188,18 +227,22 @@ class Interactive:
     """
         given a segment points and a color, paint in seg_image
     """
-
     def paint_segment(self, segment, color):
         for center in segment:
             cv2.circle(seg_img, center, 2, color, -1)
 
 
+    """
+        given segmented image and segmented mask image (transparency)
+        and save them in ".jpg" format to "results" directory
+    """
     def save_results(self, seg_image, trans_image):
-        directory = "results"
+        directory = 'results'
         if not os.path.exists(directory):
             os.makedirs(directory)
-        cv2.imwrite(directory + "\\" + segmentedImage, seg_image)
-        cv2.imwrite(directory + "\\" + segmaskImage, trans_image)
+        print(directory + '\\' + segmentedImage)
+        cv2.imwrite(directory + '\\' + segmentedImage, seg_image)
+        cv2.imwrite(directory + '\\' + segmaskImage, trans_image)
 
 
     def main_loop(self):
@@ -236,7 +279,6 @@ class Interactive:
             graph cut implementation for 4 segments
             add functions and code as you wish
         """
-
         # keeping important data as in object creation
         ig = ImGraph(orig_img)
 
@@ -253,7 +295,7 @@ class Interactive:
         plt.imshow(trans_img), plt.colorbar(), plt.show()
 
         # save results as asked to
-        self.save_results(seg_img, trans_img)
+        # self.save_results(seg_img, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()
@@ -262,27 +304,12 @@ class Interactive:
 """
     Left work:
     ==========
-    1. Matching of the color segmentation the the right one
+    1. Multi-voting implementation
     2. Checking transparency quality - there are lines behind
     3. Save 2 results: seg_img + trans_img
-    4. Let the user to choose input image
-    5. Keep Hagit's submission instructions
 """
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Image name input')
-    parser.add_argument('-example')
-    parser.add_argument('-inputImage', action="store", type=str, default="balloons.jpg")
-    parser.add_argument('-imageSeg', action="store", type=str, default="balloonsSeg.jpg")
-    parser.add_argument('-imageSegMask', action="store", type=str, default="balloonsSegMask.jpg")
+    parser = argparse.ArgumentParser(description='Assign name to: inputImage, segmentedImage, segmaskImage at the TOP of the script.')
     args = parser.parse_args()
-
-    if not args.example:
-        inputImage = args.inputImage
-        imageSeg = args.imageSeg
-        imageSegMask = args.imageSegMask
-        if not (os.path.exists(inputImage) or os.path.exists(imageSeg) or os.path.exists(imageSegMask)):
-            print("There is some missing parameter.")
-            sys.exit()
-
     Interactive().main_loop()
