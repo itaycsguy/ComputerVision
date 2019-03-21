@@ -1,22 +1,19 @@
-import cv2, sys, dlib
+import cv2, argparse, os, sys, dlib
 import numpy as np
 import matplotlib.pyplot as plt
+
+inputImage = ""
+segmentedImage = ""
+segmaskImage = ""
 
 SEGMENT_ZERO = 0
 SEGMENT_ONE = 1
 SEGMENT_TWO = 2
 SEGMENT_THREE = 3
 
-DSEG_ZERO_COLOR = (255, 0, 0)
 SEG_ZERO_COLOR = (0, 0, 255)
-
-DSEG_ONE_COLOR = (0, 255, 0)
 SEG_ONE_COLOR = (0, 255, 0)
-
-DSEG_TWO_COLOR = (0, 0, 255)
 SEG_TWO_COLOR = (255, 0, 0)
-
-DSEG_THREE_COLOR = (255, 255, 0)
 SEG_THREE_COLOR = (0, 255, 255)
 
 """
@@ -57,16 +54,24 @@ class ImGraph:
 
     def calc_multi_grabcut(self):
         print("\nProcessing the image..")
-        f0_mask = self.calc_bin_grabcut(seg0) * DSEG_ZERO_COLOR
-        print("(#seg, color) ---> (0, {}): Found!".format(DSEG_ZERO_COLOR))
-        f1_mask = self.calc_bin_grabcut(seg1) * DSEG_ONE_COLOR
-        print("(#seg, color) ---> (1, {}): Found!".format(DSEG_ONE_COLOR))
-        f2_mask = self.calc_bin_grabcut(seg2) * DSEG_TWO_COLOR
-        print("(#seg, color) ---> (2, {}): Found!".format(DSEG_TWO_COLOR))
-        f3_mask = self.calc_bin_grabcut(seg3) * DSEG_THREE_COLOR
-        print("(#seg, color) ---> (3, {}): Found!".format(DSEG_THREE_COLOR))
+        seg_color = tuple(reversed(SEG_ZERO_COLOR))
+        f0_mask = self.calc_bin_grabcut(seg0) * seg_color
+        print("(#seg, color) ---> (0, {}): Found!".format(seg_color))
+        seg_color = tuple(reversed(SEG_ONE_COLOR))
+        f1_mask = self.calc_bin_grabcut(seg1) * seg_color
+        print("(#seg, color) ---> (1, {}): Found!".format(seg_color))
+        seg_color = tuple(reversed(SEG_TWO_COLOR))
+        f2_mask = self.calc_bin_grabcut(seg2) * seg_color
+        print("(#seg, color) ---> (2, {}): Found!".format(seg_color))
+        seg_color = tuple(reversed(SEG_THREE_COLOR))
+        f3_mask = self.calc_bin_grabcut(seg3) * seg_color
+        print("(#seg, color) ---> (3, {}): Found!".format(seg_color))
         print("Done!\n")
         return f0_mask + f1_mask + f2_mask + f3_mask
+
+
+    def calc_rec_multi_grabcut(self):
+        pass
 
 
 """
@@ -188,15 +193,20 @@ class Interactive:
         for center in segment:
             cv2.circle(seg_img, center, 2, color, -1)
 
-    def save_results(self, src_img, seg_img, trans_img):
-        pass
+
+    def save_results(self, seg_image, trans_image):
+        directory = "results"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        cv2.imwrite(directory + "\\" + segmentedImage, seg_image)
+        cv2.imwrite(directory + "\\" + segmaskImage, trans_image)
+
 
     def main_loop(self):
         global orig_img, seg_img, current_segment
         global seg0, seg1, seg2, seg3
-        input_image = "images\\boat.jpg"
-        orig_img = cv2.imread(input_image)
-        seg_img = cv2.imread(input_image)
+        orig_img = cv2.imread(inputImage)
+        seg_img = cv2.imread(inputImage)
         cv2.namedWindow("Select segments")
 
         # mouse event listener
@@ -234,7 +244,6 @@ class Interactive:
         concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        # equivalent equation: seg_img = seg_img * concat_masks
         seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
@@ -244,7 +253,7 @@ class Interactive:
         plt.imshow(trans_img), plt.colorbar(), plt.show()
 
         # save results as asked to
-        # self.save_results(orig_img, seg_img, trans_img)
+        self.save_results(seg_img, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()
@@ -261,4 +270,19 @@ class Interactive:
 """
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Image name input')
+    parser.add_argument('-example')
+    parser.add_argument('-inputImage', action="store", type=str, default="balloons.jpg")
+    parser.add_argument('-imageSeg', action="store", type=str, default="balloonsSeg.jpg")
+    parser.add_argument('-imageSegMask', action="store", type=str, default="balloonsSegMask.jpg")
+    args = parser.parse_args()
+
+    if not args.example:
+        inputImage = args.inputImage
+        imageSeg = args.imageSeg
+        imageSegMask = args.imageSegMask
+        if not (os.path.exists(inputImage) or os.path.exists(imageSeg) or os.path.exists(imageSegMask)):
+            print("There is some missing parameter.")
+            sys.exit()
+
     Interactive().main_loop()
