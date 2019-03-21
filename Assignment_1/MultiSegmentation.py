@@ -7,25 +7,33 @@ SEGMENT_ONE = 1
 SEGMENT_TWO = 2
 SEGMENT_THREE = 3
 
+DSEG_ZERO_COLOR = (255, 0, 0)
 SEG_ZERO_COLOR = (0, 0, 255)
-SEG_ONE_COLOR = (0, 255, 0)
-SEG_TWO_COLOR = (255, 0, 0)
-SEG_THREE_COLOR = (0, 255, 255)
 
+DSEG_ONE_COLOR = (0, 255, 0)
+SEG_ONE_COLOR = (0, 255, 0)
+
+DSEG_TWO_COLOR = (0, 0, 255)
+SEG_TWO_COLOR = (255, 0, 0)
+
+DSEG_THREE_COLOR = (255, 255, 0)
+SEG_THREE_COLOR = (0, 255, 255)
 
 """
     Computation unit which calculates the grabcut to multi-classes objects
 """
+
+
 class ImGraph:
     def __init__(self, image):
         self.img = image
-
 
     """
         seg2mask - mapping from segments to mask colors
         f_idx    - foreground index between 4 we have got and the rest are the background immediately 
         Return binary grabcut foreground
     """
+
     def calc_bin_grabcut(self, f_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
         for (x, y) in f_seg_indices:
@@ -42,28 +50,28 @@ class ImGraph:
 
         return mask
 
-
     """
         seg2mask - mapping from segments to mask colors
         Return multi-grabcut image total result
     """
+
     def calc_multi_grabcut(self):
         print("\nProcessing the image..")
-        f0_mask = self.calc_bin_grabcut(seg0) * SEG_ZERO_COLOR
-        print("(#seg, color) ---> (0, {}): Found!".format(SEG_ZERO_COLOR))
-        f1_mask = self.calc_bin_grabcut(seg1) * SEG_ONE_COLOR
-        print("(#seg, color) ---> (1, {}): Found!".format(SEG_ONE_COLOR))
-        f2_mask = self.calc_bin_grabcut(seg2) * SEG_TWO_COLOR
-        print("(#seg, color) ---> (2, {}): Found!".format(SEG_TWO_COLOR))
-        f3_mask = self.calc_bin_grabcut(seg3) * SEG_THREE_COLOR
-        print("(#seg, color) ---> (3, {}): Found!".format(SEG_THREE_COLOR))
+        f0_mask = self.calc_bin_grabcut(seg0) * DSEG_ZERO_COLOR
+        print("(#seg, color) ---> (0, {}): Found!".format(DSEG_ZERO_COLOR))
+        f1_mask = self.calc_bin_grabcut(seg1) * DSEG_ONE_COLOR
+        print("(#seg, color) ---> (1, {}): Found!".format(DSEG_ONE_COLOR))
+        f2_mask = self.calc_bin_grabcut(seg2) * DSEG_TWO_COLOR
+        print("(#seg, color) ---> (2, {}): Found!".format(DSEG_TWO_COLOR))
+        f3_mask = self.calc_bin_grabcut(seg3) * DSEG_THREE_COLOR
+        print("(#seg, color) ---> (3, {}): Found!".format(DSEG_THREE_COLOR))
         print("Done!\n")
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
 """
     Interface for interactive selection of segment points
-    
+
     Interface instruction:
     Image opens to the user once the program starts to run.
     The user then selects segments with mouse:
@@ -74,14 +82,17 @@ class ImGraph:
     User uses `Space-Bar` to switch between segments, the message board shows on which segment the user is on at a given time.
     There are 4 segments in total, each has a color: RED, GREEN, BLUE, YELLOW respectively.
     Once you finish segmenting, press `ESC`.
-    
+
     Once manual segmentation is finished:
     The user will have four lists: seg0, seg1, seg2, seg3. Each is a list with all the points belonging to the segment.
 """
+
+
 class Interactive:
     """
         mouse callback function
     """
+
     def mouse_click(self, event, x, y, flags, params):
         # if left button is pressed, draw line
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -127,11 +138,11 @@ class Interactive:
         self.paint_segment(seg2, SEG_TWO_COLOR)
         self.paint_segment(seg3, SEG_THREE_COLOR)
 
-
     """
         given two points, this function returns all the points on line between.
         this is used when user selects lines on segments
     """
+
     def add_line_point(self, p1, p2):
         x1, y1 = p1
         x2, y2 = p2
@@ -169,18 +180,16 @@ class Interactive:
             points.reverse()
         return points
 
-
     """
         given a segment points and a color, paint in seg_image
     """
+
     def paint_segment(self, segment, color):
         for center in segment:
             cv2.circle(seg_img, center, 2, color, -1)
 
-
     def save_results(self, src_img, seg_img, trans_img):
         pass
-
 
     def main_loop(self):
         global orig_img, seg_img, current_segment
@@ -226,7 +235,7 @@ class Interactive:
 
         # show the total result:
         # equivalent equation: seg_img = seg_img * concat_masks
-        seg_img = cv2.addWeighted(seg_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
+        seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
         # show transparency image
