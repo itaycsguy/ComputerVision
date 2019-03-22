@@ -2,7 +2,7 @@ import cv2, argparse, os, sys, dlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-inputImage = "balloons.jpg"
+inputImage = "images\\balloons.jpg"
 segmentedImage = "balloonsSeg.jpg"
 segmaskImage = "balloonsSegMask.jpg"
 
@@ -38,7 +38,8 @@ class ImGraph:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
 
-        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_INIT_WITH_MASK)
+        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_EVAL)
+
         mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
         # mask = mask[:, :, np.newaxis]
 
@@ -52,68 +53,55 @@ class ImGraph:
         print("\nProcessing the image..")
         seg0_color = tuple(reversed(SEG_ZERO_COLOR))
         f0_mask = self.calc_bin_grabcut(seg0)
+        data = [seg0, seg1, seg2, seg3]
+        db = self.build_segment_db(data)
+        f0_mask = self.find_isolated_segment(f0_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg0_color
         print("(#seg, color) ---> (0, {}): Found!".format(seg0_color))
         seg1_color = tuple(reversed(SEG_ONE_COLOR))
         f1_mask = self.calc_bin_grabcut(seg1)
-        print("(#seg, color) ---> (1, {}): Found!".format(seg1_color))
+        data = [seg1, seg0, seg2, seg3]
+        db = self.build_segment_db(data)
+        f1_mask = self.find_isolated_segment(f1_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg1_color
         seg2_color = tuple(reversed(SEG_TWO_COLOR))
         f2_mask = self.calc_bin_grabcut(seg2)
-        print("(#seg, color) ---> (2, {}): Found!".format(seg2_color))
+        data = [seg2, seg0, seg1, seg3]
+        db = self.build_segment_db(data)
+        f2_mask = self.find_isolated_segment(f2_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg2_color
         seg3_color = tuple(reversed(SEG_THREE_COLOR))
         f3_mask = self.calc_bin_grabcut(seg3)
+        data = [seg3, seg0, seg1, seg2]
+        db = self.build_segment_db(data)
+        f3_mask = self.find_isolated_segment(f3_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg3_color
         print("(#seg, color) ---> (3, {}): Found!".format(seg3_color))
         print("Done!\n")
 
-        coor_means = [np.mean(seg0, axis=0), np.mean(seg1, axis=0), np.mean(seg2, axis=0), np.mean(seg3, axis=0)]
-        f0_mask_repaired = self.decision_by_multivoting(f0_mask, coor_means, SEGMENT_ZERO, list())
-        f0_mask_repaired = f0_mask_repaired[:, :, np.newaxis] * seg0_color
-        f1_mask_repaired = self.decision_by_multivoting(f1_mask, coor_means, SEGMENT_ONE, [f0_mask])
-        f1_mask_repaired = f1_mask_repaired[:, :, np.newaxis] * seg1_color
-        f2_mask_repaired = self.decision_by_multivoting(f2_mask, coor_means, SEGMENT_TWO, [f0_mask, f1_mask])
-        f2_mask_repaired = f2_mask_repaired[:, :, np.newaxis] * seg2_color
-        f3_mask_repaired = self.decision_by_multivoting(f3_mask, coor_means, SEGMENT_THREE, [f0_mask, f1_mask, f2_mask])
-        f3_mask_repaired = f3_mask_repaired[:, :, np.newaxis] * seg3_color
+        return f0_mask + f1_mask + f2_mask + f3_mask
 
-        return f0_mask_repaired + f1_mask_repaired + f2_mask_repaired + f3_mask_repaired
+
+    def build_segment_db(self, segments):
+        tcat = np.column_stack((tuple(reversed(segments[0])), np.ones(len(segments[0]))))
+        cat1 = np.column_stack((tuple(reversed(segments[1])), np.zeros(len(segments[1]))))
+        con0 = np.concatenate((tcat, cat1), axis=0)
+        cat2 = np.column_stack((tuple(reversed(segments[2])), np.zeros(len(segments[2]))))
+        cat3 = np.column_stack((tuple(reversed(segments[3])), np.zeros(len(segments[3]))))
+        con1 = np.concatenate((cat2, cat3), axis=0)
+        return np.concatenate((con0, con1), axis=0)
 
 
     """
         A method to determine which color match to which pixel where overlapping is up
-        The Big Idea: checking each pixel which mean it is closer to deciding according by the result
     """
-    def decision_by_multivoting(self, mask, coor_means, seg_id, competitive_masks):
-        mask_out = np.zeros(mask.shape[:2], dtype=np.uint8)
-        for i in range(mask.shape[0]):
-            for j in range(mask.shape[1]):
-                enable = [False, False, False]
-                for idx, comp_mask in enumerate(competitive_masks):
-                    enable[idx] = (comp_mask[i][j] == 1)
+    def find_isolated_segment(self, mask, dataset, labels):
+        # edges = cv2.Canny(mask * 255, 100, 200)
+        # knn = cv2.ml.KNearest_create()
+        # # ret, results, neighbours,dist = knn.train(dataset.astype(np.float32), cv2.ml.ROW_SAMPLE, labels.astype(np.float32))
+        # # ret, results, neighbours, dist = knn.findNearest(edges.astype(np.float32), 3)s
+        #
+        # # print(edges)
+        # cv2.imshow('res', edges)
+        # cv2.waitKey(0)
 
-                # do not handling the situation unless 1 competitive mask is exist
-                if any(enable) and mask[i][j] == 1:
-                    loc = np.array([i, j])
-                    # computing an euclidean distance
-                    dis_avg0 = np.linalg.norm(loc - coor_means[0])
-                    dis_avg1 = np.linalg.norm(loc - coor_means[1])
-                    dis_avg2 = np.linalg.norm(loc - coor_means[2])
-                    dis_avg3 = np.linalg.norm(loc - coor_means[3])
-
-                    # finding the min distance between the 4 we had computed
-                    which_id = seg_id
-                    if dis_avg0 <= dis_avg1 and dis_avg0 <= dis_avg2 and dis_avg0 <= dis_avg3:
-                        which_id = SEGMENT_ZERO
-                    elif dis_avg1 <= dis_avg0 and dis_avg1 <= dis_avg2 and dis_avg1 <= dis_avg3:
-                        which_id = SEGMENT_ONE
-                    elif dis_avg2 <= dis_avg0 and dis_avg2 <= dis_avg1 and dis_avg2 <= dis_avg3:
-                        which_id = SEGMENT_TWO
-                    elif dis_avg3 <= dis_avg0 and dis_avg3 <= dis_avg1 and dis_avg3 <= dis_avg2:
-                        which_id = SEGMENT_THREE
-
-                    # updating the current mask
-                    if seg_id == which_id:
-                        mask_out[i][j] = 1
-
-        return mask_out
+        return mask
 
 
 """
