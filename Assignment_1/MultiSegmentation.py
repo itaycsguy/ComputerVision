@@ -38,7 +38,7 @@ class ImGraph:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
 
-        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_EVAL)
+        mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_INIT_WITH_MASK)
 
         mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
         # mask = mask[:, :, np.newaxis]
@@ -73,25 +73,33 @@ class ImGraph:
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
-    def find_color(self, contour, segments):
-        desired_color = None
-        curr_min = np.Inf
+    def find_color(self, cnt, segments):
+        dis0 = (cnt[:, 0][0] - segments[0][0])**2
+        dis1 = (cnt[:, 0][0] - segments[1][0])**2
+        dis2 = (cnt[:, 0][0] - segments[2][0])**2
+        dis3 = (cnt[:, 0][0] - segments[3][0])**2
 
-        # conversion
-        for sid, seg in enumerate(segments):
-            for i, s in enumerate(seg):
-                seg[i] = list(tuple(reversed(s)))
-            segments[sid] = np.reshape(seg, (len(seg), 2))
+        curr_min0 = -1
+        curr_min1 = -1
+        if all(dis0 <= dis1):
+            curr_min0 = 0
+        else:
+            curr_min0 = 1
+        if all(dis2 <= dis3):
+            curr_min1 = 2
+        else:
+            curr_min1 = 3
 
-        val0 = np.linalg.norm(contour - segments[0])
-        (curr_min, desired_color) = (val0, SEG_ZERO_COLOR) if val0 < curr_min else (val0, desired_color)
-        val1 = np.linalg.norm(contour - segments[1])
-        (curr_min, desired_color) = (val1, SEG_ONE_COLOR) if val1 < curr_min else (val1, desired_color)
-        val2 = np.linalg.norm(contour - segments[2])
-        (curr_min, desired_color) = (val2, SEG_TWO_COLOR) if val2 < curr_min else (val2, desired_color)
-        val3 = np.linalg.norm(contour - segments[3])
-        (curr_min, desired_color) = (val3, SEG_THREE_COLOR) if val3 < curr_min else (val3, desired_color)
-        return desired_color
+        curr_min = min(curr_min0, curr_min1)
+
+        color_out = None
+        color_out = SEG_ZERO_COLOR if curr_min == 0 else color_out
+        color_out = SEG_ONE_COLOR if curr_min == 1 else color_out
+        color_out = SEG_TWO_COLOR if curr_min == 2 else color_out
+        color_out = SEG_THREE_COLOR if curr_min == 3 else color_out
+
+        return color_out
+
 
 
     """
@@ -99,17 +107,17 @@ class ImGraph:
     """
     def find_segment_by_snakes(self, mask, seg_id, segments):
         edges = cv2.Canny(mask, 1, 1)
-        contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        color_groups = list()
-        for cnt in contours:
-            color_groups.append(self.find_color(cnt, segments))
+        # color_groups = list()
+        # for cnt in contours:
+        #     color_groups.append(self.find_color(cnt, segments))
 
         new_mask = np.zeros(mask.shape[:2], dtype=np.uint8)
         tmp_image = self.img.copy()
-        cv2.drawContours(tmp_image, contours, seg_id, color_groups[seg_id], 3)
-
+        cv2.drawContours(tmp_image, contours, seg_id, (255, 0, 0), 0)
         # cv2.fillPoly(tmp_image, pts=[contours[seg_id]], color=color_groups[seg_id])
+
         cv2.imshow('res', tmp_image)
         cv2.waitKey(0)
 
