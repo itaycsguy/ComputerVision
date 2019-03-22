@@ -2,7 +2,7 @@ import cv2, argparse, os, sys, dlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-inputImage = "images\\balloons.jpg"
+inputImage = "balloons.jpg"
 segmentedImage = "balloonsSeg.jpg"
 segmaskImage = "balloonsSegMask.jpg"
 
@@ -50,58 +50,70 @@ class ImGraph:
         Return multi-grabcut image total result
     """
     def calc_multi_grabcut(self):
+        segments = [seg0, seg1, seg2, seg3]
         print("\nProcessing the image..")
         seg0_color = tuple(reversed(SEG_ZERO_COLOR))
         f0_mask = self.calc_bin_grabcut(seg0)
-        data = [seg0, seg1, seg2, seg3]
-        db = self.build_segment_db(data)
-        f0_mask = self.find_isolated_segment(f0_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg0_color
+        f0_mask = self.find_segment_by_snakes(f0_mask, SEGMENT_ZERO, segments)[:, :, np.newaxis]
         print("(#seg, color) ---> (0, {}): Found!".format(seg0_color))
         seg1_color = tuple(reversed(SEG_ONE_COLOR))
         f1_mask = self.calc_bin_grabcut(seg1)
-        data = [seg1, seg0, seg2, seg3]
-        db = self.build_segment_db(data)
-        f1_mask = self.find_isolated_segment(f1_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg1_color
+        f1_mask = self.find_segment_by_snakes(f1_mask, SEGMENT_ONE, segments)[:, :, np.newaxis]
+        print("(#seg, color) ---> (1, {}): Found!".format(seg1_color))
         seg2_color = tuple(reversed(SEG_TWO_COLOR))
         f2_mask = self.calc_bin_grabcut(seg2)
-        data = [seg2, seg0, seg1, seg3]
-        db = self.build_segment_db(data)
-        f2_mask = self.find_isolated_segment(f2_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg2_color
+        f2_mask = self.find_segment_by_snakes(f2_mask, SEGMENT_TWO, segments)[:, :, np.newaxis]
+        print("(#seg, color) ---> (2, {}): Found!".format(seg2_color))
         seg3_color = tuple(reversed(SEG_THREE_COLOR))
         f3_mask = self.calc_bin_grabcut(seg3)
-        data = [seg3, seg0, seg1, seg2]
-        db = self.build_segment_db(data)
-        f3_mask = self.find_isolated_segment(f3_mask, db[:, 0:2], db[:, 2])[:, :, np.newaxis] * seg3_color
+        f3_mask = self.find_segment_by_snakes(f3_mask, SEGMENT_THREE, segments)[:, :, np.newaxis]
         print("(#seg, color) ---> (3, {}): Found!".format(seg3_color))
         print("Done!\n")
 
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
-    def build_segment_db(self, segments):
-        tcat = np.column_stack((tuple(reversed(segments[0])), np.ones(len(segments[0]))))
-        cat1 = np.column_stack((tuple(reversed(segments[1])), np.zeros(len(segments[1]))))
-        con0 = np.concatenate((tcat, cat1), axis=0)
-        cat2 = np.column_stack((tuple(reversed(segments[2])), np.zeros(len(segments[2]))))
-        cat3 = np.column_stack((tuple(reversed(segments[3])), np.zeros(len(segments[3]))))
-        con1 = np.concatenate((cat2, cat3), axis=0)
-        return np.concatenate((con0, con1), axis=0)
+    def find_color(self, contour, segments):
+        desired_color = None
+        curr_min = np.Inf
+
+        # conversion
+        for sid, seg in enumerate(segments):
+            for i, s in enumerate(seg):
+                seg[i] = list(tuple(reversed(s)))
+            segments[sid] = np.reshape(seg, (len(seg), 2))
+
+        val0 = np.linalg.norm(contour - segments[0])
+        (curr_min, desired_color) = (val0, SEG_ZERO_COLOR) if val0 < curr_min else (val0, desired_color)
+        val1 = np.linalg.norm(contour - segments[1])
+        (curr_min, desired_color) = (val1, SEG_ONE_COLOR) if val1 < curr_min else (val1, desired_color)
+        val2 = np.linalg.norm(contour - segments[2])
+        (curr_min, desired_color) = (val2, SEG_TWO_COLOR) if val2 < curr_min else (val2, desired_color)
+        val3 = np.linalg.norm(contour - segments[3])
+        (curr_min, desired_color) = (val3, SEG_THREE_COLOR) if val3 < curr_min else (val3, desired_color)
+        return desired_color
 
 
     """
         A method to determine which color match to which pixel where overlapping is up
     """
-    def find_isolated_segment(self, mask, dataset, labels):
-        # edges = cv2.Canny(mask * 255, 100, 200)
-        # knn = cv2.ml.KNearest_create()
-        # # ret, results, neighbours,dist = knn.train(dataset.astype(np.float32), cv2.ml.ROW_SAMPLE, labels.astype(np.float32))
-        # # ret, results, neighbours, dist = knn.findNearest(edges.astype(np.float32), 3)s
-        #
-        # # print(edges)
-        # cv2.imshow('res', edges)
-        # cv2.waitKey(0)
+    def find_segment_by_snakes(self, mask, seg_id, segments):
+        edges = cv2.Canny(mask, 1, 1)
+        contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-        return mask
+        color_groups = list()
+        for cnt in contours:
+            color_groups.append(self.find_color(cnt, segments))
+
+        new_mask = np.zeros(mask.shape[:2], dtype=np.uint8)
+        tmp_image = self.img.copy()
+        cv2.drawContours(tmp_image, contours, seg_id, color_groups[seg_id], 3)
+
+        # cv2.fillPoly(tmp_image, pts=[contours[seg_id]], color=color_groups[seg_id])
+        cv2.imshow('res', tmp_image)
+        cv2.waitKey(0)
+
+        return new_mask
 
 
 """
@@ -274,7 +286,8 @@ class Interactive:
         concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
+        seg_img = concat_masks * orig_img
+        # seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
         # show transparency image
