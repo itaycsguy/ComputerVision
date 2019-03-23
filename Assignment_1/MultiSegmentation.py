@@ -1,7 +1,7 @@
 import cv2, argparse, os, sys, dlib
 import numpy as np
 import matplotlib.pyplot as plt
-import collections
+
 
 inputImage = "balloons.jpg"
 segmentedImage = "balloonsSeg.jpg"
@@ -64,34 +64,38 @@ class ImGraph:
         print("(#seg, color) ---> (3, {}): Found!".format(seg3_color))
         print("Done!\n")
 
-        diff0 = np.abs(f0_mask - f1_mask - f2_mask - f3_mask)
-        diff1 = np.abs(f1_mask - f0_mask - f2_mask - f3_mask)
-        diff2 = np.abs(f2_mask - f0_mask - f1_mask - f3_mask)
-        diff3 = np.abs(f3_mask - f0_mask - f1_mask - f2_mask)
-
-        if not self.is_background_like(f0_mask, diff0):
+        if not self.is_background_like(f0_mask):
             f0_mask = self.find_segment_by_snakes(f0_mask, seg0)
         f0_mask = f0_mask[:, :, np.newaxis] * seg0_color
-        if not self.is_background_like(diff1, diff1):
+        if not self.is_background_like(f1_mask):
             f1_mask = self.find_segment_by_snakes(f1_mask, seg1)
         f1_mask = f1_mask[:, :, np.newaxis] * seg1_color
-        if not self.is_background_like(diff2, diff2):
+        if not self.is_background_like(f2_mask):
             f2_mask = self.find_segment_by_snakes(f2_mask, seg2)
         f2_mask = f2_mask[:, :, np.newaxis] * seg2_color
-        if not self.is_background_like(diff3, diff3):
+        if not self.is_background_like(f3_mask):
             f3_mask = self.find_segment_by_snakes(f3_mask, seg3)
         f3_mask = f3_mask[:, :, np.newaxis] * seg3_color
 
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
-    def is_background_like(self, mask, total_diff):
-        for idx, item in enumerate(mask):
-            if all(item == 1) or all(mask[:, idx] == 1):
+    """
+        An heuristic validation which is testing some mask to be a background or not
+    """
+    def is_background_like(self, mask):
+        for i in range(mask.shape[0]):
+            if all(mask[i, :] == 1):
+                return True
+        for i in range(mask.shape[1]):
+            if all(mask[:, i] == 1):
                 return True
         return False
 
 
+    """
+        By multi-voting between areas that have found we can detect the correct one to draw as the target segment
+    """
     def multivoting_area_desicion(self, real_mask, total_areas, segment, threshold):
         for area in total_areas:
             for (x, y) in segment:
@@ -101,7 +105,7 @@ class ImGraph:
 
 
     """
-        A method to determine which color match to which pixel where overlapping is up
+        A method to determine which color matches to which pixel where overlapping is up
     """
     def find_segment_by_snakes(self, mask, segment):
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -140,7 +144,6 @@ class ImGraph:
     The user will have four lists: seg0, seg1, seg2, seg3. Each is a list with all the points belonging to the segment.
 """
 class Interactive:
-
     """
         mouse callback function
     """
@@ -292,8 +295,7 @@ class Interactive:
         concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        # seg_img = concat_masks * orig_img
-        seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
+        seg_img = concat_masks * orig_img
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
         # show transparency image
@@ -311,9 +313,7 @@ class Interactive:
 """
     Left work:
     ==========
-    1. Multi-voting implementation
-    2. Checking transparency quality - there are lines behind
-    3. Save 2 results: seg_img + trans_img
+    1. Save 2 results: seg_img + trans_img
 """
 
 if __name__ == "__main__":
