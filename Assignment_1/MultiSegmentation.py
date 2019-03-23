@@ -300,7 +300,7 @@ class Interactive:
 
         # show transparency image
         # The same equation: alpha * image + (1.0 - alpha) * output
-        trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.8, seg_img.copy().astype(np.uint8), 0.2, 0)
+        trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.9, seg_img.copy().astype(np.uint8), 0.1, 0)
         plt.imshow(trans_img), plt.colorbar(), plt.show()
 
         # save results as asked to
