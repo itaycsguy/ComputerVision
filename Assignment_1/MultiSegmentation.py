@@ -1,6 +1,7 @@
 import cv2, argparse, os, sys, dlib
 import numpy as np
 import matplotlib.pyplot as plt
+import collections
 
 inputImage = "balloons.jpg"
 segmentedImage = "balloonsSeg.jpg"
@@ -39,9 +40,7 @@ class ImGraph:
         fgd_model = np.zeros((1, 65), np.float64)
 
         mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_INIT_WITH_MASK)
-
         mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
-        # mask = mask[:, :, np.newaxis]
 
         return mask
 
@@ -50,78 +49,77 @@ class ImGraph:
         Return multi-grabcut image total result
     """
     def calc_multi_grabcut(self):
-        segments = [seg0, seg1, seg2, seg3]
         print("\nProcessing the image..")
         seg0_color = tuple(reversed(SEG_ZERO_COLOR))
         f0_mask = self.calc_bin_grabcut(seg0)
-        f0_mask = self.find_segment_by_snakes(f0_mask, SEGMENT_ZERO, segments)[:, :, np.newaxis]
         print("(#seg, color) ---> (0, {}): Found!".format(seg0_color))
         seg1_color = tuple(reversed(SEG_ONE_COLOR))
         f1_mask = self.calc_bin_grabcut(seg1)
-        f1_mask = self.find_segment_by_snakes(f1_mask, SEGMENT_ONE, segments)[:, :, np.newaxis]
         print("(#seg, color) ---> (1, {}): Found!".format(seg1_color))
         seg2_color = tuple(reversed(SEG_TWO_COLOR))
         f2_mask = self.calc_bin_grabcut(seg2)
-        f2_mask = self.find_segment_by_snakes(f2_mask, SEGMENT_TWO, segments)[:, :, np.newaxis]
         print("(#seg, color) ---> (2, {}): Found!".format(seg2_color))
         seg3_color = tuple(reversed(SEG_THREE_COLOR))
         f3_mask = self.calc_bin_grabcut(seg3)
-        f3_mask = self.find_segment_by_snakes(f3_mask, SEGMENT_THREE, segments)[:, :, np.newaxis]
         print("(#seg, color) ---> (3, {}): Found!".format(seg3_color))
         print("Done!\n")
+
+        diff0 = np.abs(f0_mask - f1_mask - f2_mask - f3_mask)
+        diff1 = np.abs(f1_mask - f0_mask - f2_mask - f3_mask)
+        diff2 = np.abs(f2_mask - f0_mask - f1_mask - f3_mask)
+        diff3 = np.abs(f3_mask - f0_mask - f1_mask - f2_mask)
+
+        if not self.is_background_like(f0_mask, diff0):
+            f0_mask = self.find_segment_by_snakes(f0_mask, seg0)
+        f0_mask = f0_mask[:, :, np.newaxis] * seg0_color
+        if not self.is_background_like(diff1, diff1):
+            f1_mask = self.find_segment_by_snakes(f1_mask, seg1)
+        f1_mask = f1_mask[:, :, np.newaxis] * seg1_color
+        if not self.is_background_like(diff2, diff2):
+            f2_mask = self.find_segment_by_snakes(f2_mask, seg2)
+        f2_mask = f2_mask[:, :, np.newaxis] * seg2_color
+        if not self.is_background_like(diff3, diff3):
+            f3_mask = self.find_segment_by_snakes(f3_mask, seg3)
+        f3_mask = f3_mask[:, :, np.newaxis] * seg3_color
 
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
-    def find_color(self, cnt, segments):
-        dis0 = (cnt[:, 0][0] - segments[0][0])**2
-        dis1 = (cnt[:, 0][0] - segments[1][0])**2
-        dis2 = (cnt[:, 0][0] - segments[2][0])**2
-        dis3 = (cnt[:, 0][0] - segments[3][0])**2
+    def is_background_like(self, mask, total_diff):
+        for idx, item in enumerate(mask):
+            if all(item == 1) or all(mask[:, idx] == 1):
+                return True
+        return False
 
-        curr_min0 = -1
-        curr_min1 = -1
-        if all(dis0 <= dis1):
-            curr_min0 = 0
-        else:
-            curr_min0 = 1
-        if all(dis2 <= dis3):
-            curr_min1 = 2
-        else:
-            curr_min1 = 3
 
-        curr_min = min(curr_min0, curr_min1)
-
-        color_out = None
-        color_out = SEG_ZERO_COLOR if curr_min == 0 else color_out
-        color_out = SEG_ONE_COLOR if curr_min == 1 else color_out
-        color_out = SEG_TWO_COLOR if curr_min == 2 else color_out
-        color_out = SEG_THREE_COLOR if curr_min == 3 else color_out
-
-        return color_out
-
+    def multivoting_area_desicion(self, real_mask, total_areas, segment, threshold):
+        for area in total_areas:
+            for (x, y) in segment:
+                if area[y][x] == threshold:
+                    return area
+        return real_mask
 
 
     """
         A method to determine which color match to which pixel where overlapping is up
     """
-    def find_segment_by_snakes(self, mask, seg_id, segments):
-        edges = cv2.Canny(mask, 1, 1)
-        contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    def find_segment_by_snakes(self, mask, segment):
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-        # color_groups = list()
-        # for cnt in contours:
-        #     color_groups.append(self.find_color(cnt, segments))
+        total_areas = list()
+        for cnt in contours:
+            new_mask = np.zeros(mask.shape[:2], dtype=np.uint8)
+            cv2.fillPoly(new_mask, pts=[cnt], color=(255, 255, 255))
+            total_areas.append(new_mask)
 
-        new_mask = np.zeros(mask.shape[:2], dtype=np.uint8)
-        tmp_image = self.img.copy()
-        cv2.drawContours(tmp_image, contours, seg_id, (255, 0, 0), 0)
-        # cv2.fillPoly(tmp_image, pts=[contours[seg_id]], color=color_groups[seg_id])
+        mask = self.multivoting_area_desicion(mask, total_areas, segment, 255)
 
-        cv2.imshow('res', tmp_image)
-        cv2.waitKey(0)
+        # cv2.imshow('mask', mask)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
-        return new_mask
+        return mask
+
 
 
 """
@@ -294,8 +292,8 @@ class Interactive:
         concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        seg_img = concat_masks * orig_img
-        # seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
+        # seg_img = concat_masks * orig_img
+        seg_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.0, concat_masks.copy().astype(np.uint8), 1.0, 0)
         plt.imshow(seg_img), plt.colorbar(), plt.show()
 
         # show transparency image
