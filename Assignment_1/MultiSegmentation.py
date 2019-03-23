@@ -3,9 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-inputImage = "balloons.jpg"
+save_directory = "results"
+inputImage = "images//Florence.jpg"
 segmentedImage = "balloonsSeg.jpg"
 segmaskImage = "balloonsSegMask.jpg"
+
 
 SEGMENT_ZERO = 0
 SEGMENT_ONE = 1
@@ -29,11 +31,15 @@ class ImGraph:
         f_idx    - foreground index between 4 we have got and the rest are the background immediately 
         Return binary grabcut foreground
     """
-    def calc_bin_grabcut(self, f_seg_indices, iterations=20):
+    def calc_bin_grabcut(self, f_seg_indices, b_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
         for (x, y) in f_seg_indices:
             # (x, y) -> (y, x) due to image input and numpy conversion
             mask[y][x] = cv2.GC_FGD
+
+        for (x, y) in b_seg_indices:
+            mask[y][x] = cv2.GC_BGD
+
 
         # algorithm MUST parameters:
         bgd_model = np.zeros((1, 65), np.float64)
@@ -50,31 +56,33 @@ class ImGraph:
     """
     def calc_multi_grabcut(self):
         print("\nProcessing the image..")
-        seg0_color = tuple(reversed(SEG_ZERO_COLOR))
-        f0_mask = self.calc_bin_grabcut(seg0)
-        print("(#seg, color) ---> (0, {}): Found!".format(seg0_color))
-        seg1_color = tuple(reversed(SEG_ONE_COLOR))
-        f1_mask = self.calc_bin_grabcut(seg1)
-        print("(#seg, color) ---> (1, {}): Found!".format(seg1_color))
-        seg2_color = tuple(reversed(SEG_TWO_COLOR))
-        f2_mask = self.calc_bin_grabcut(seg2)
-        print("(#seg, color) ---> (2, {}): Found!".format(seg2_color))
-        seg3_color = tuple(reversed(SEG_THREE_COLOR))
-        f3_mask = self.calc_bin_grabcut(seg3)
-        print("(#seg, color) ---> (3, {}): Found!".format(seg3_color))
+        seg0_color = SEG_ZERO_COLOR
+        f0_mask = self.calc_bin_grabcut(seg0, seg1 + seg2 + seg3)
+        print("(#segment, color) ---> (0, {}): Found!".format(seg0_color))
+        seg1_color = SEG_ONE_COLOR
+        f1_mask = self.calc_bin_grabcut(seg1, seg0 + seg2 + seg3)
+        print("(#segment, color) ---> (1, {}): Found!".format(seg1_color))
+        seg2_color = SEG_TWO_COLOR
+        f2_mask = self.calc_bin_grabcut(seg2, seg0 + seg1 + seg3)
+        print("(#segment, color) ---> (2, {}): Found!".format(seg2_color))
+        seg3_color = SEG_THREE_COLOR
+
+        f3_mask = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_mask + f1_mask + f2_mask)
+        # f3_mask = self.calc_bin_grabcut(seg3, seg0 + seg1 + seg2)
+        print("(#segment, color) ---> (3, {}): Found!".format(seg3_color))
         print("Done!\n")
 
         if not self.is_background_like(f0_mask):
-            f0_mask = self.find_segment_by_snakes(f0_mask, seg0)
+            f0_mask = self.find_segment(f0_mask, seg0)
         f0_mask = f0_mask[:, :, np.newaxis] * seg0_color
         if not self.is_background_like(f1_mask):
-            f1_mask = self.find_segment_by_snakes(f1_mask, seg1)
+            f1_mask = self.find_segment(f1_mask, seg1)
         f1_mask = f1_mask[:, :, np.newaxis] * seg1_color
         if not self.is_background_like(f2_mask):
-            f2_mask = self.find_segment_by_snakes(f2_mask, seg2)
+            f2_mask = self.find_segment(f2_mask, seg2)
         f2_mask = f2_mask[:, :, np.newaxis] * seg2_color
         if not self.is_background_like(f3_mask):
-            f3_mask = self.find_segment_by_snakes(f3_mask, seg3)
+            f3_mask = self.find_segment(f3_mask, seg3)
         f3_mask = f3_mask[:, :, np.newaxis] * seg3_color
 
         return f0_mask + f1_mask + f2_mask + f3_mask
@@ -107,7 +115,7 @@ class ImGraph:
     """
         A method to determine which color matches to which pixel where overlapping is up
     """
-    def find_segment_by_snakes(self, mask, segment):
+    def find_segment(self, mask, segment):
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
         total_areas = list()
@@ -118,11 +126,11 @@ class ImGraph:
 
         mask = self.multivoting_area_desicion(mask, total_areas, segment, 255)
 
-        # cv2.imshow('mask', mask)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        cv2.imshow('mask', mask)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-        return mask
+        return mask / 255
 
 
 
@@ -246,12 +254,11 @@ class Interactive:
         and save them in ".jpg" format to "results" directory
     """
     def save_results(self, seg_image, trans_image):
-        directory = 'results'
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        print(directory + '\\' + segmentedImage)
-        cv2.imwrite(directory + '\\' + segmentedImage, seg_image)
-        cv2.imwrite(directory + '\\' + segmaskImage, trans_image)
+        if not os.path.exists(save_directory):
+            os.makedirs(save_directory)
+        cv2.imwrite(save_directory + '//' + segmentedImage, seg_image)
+        cv2.imwrite(save_directory + '//' + segmaskImage, trans_image)
+        print("Images are save to", save_directory)
 
 
     def main_loop(self):
@@ -295,13 +302,16 @@ class Interactive:
         concat_masks = ig.calc_multi_grabcut()
 
         # show the total result:
-        seg_img = concat_masks * orig_img
-        plt.imshow(seg_img), plt.colorbar(), plt.show()
+        cv2.imshow('seg_img', concat_masks.astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         # show transparency image
         # The same equation: alpha * image + (1.0 - alpha) * output
-        trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.9, seg_img.copy().astype(np.uint8), 0.1, 0)
-        plt.imshow(trans_img), plt.colorbar(), plt.show()
+        trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.5, concat_masks.copy().astype(np.uint8), 0.5, 0)
+        cv2.imshow('trans_img', trans_img.astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         # save results as asked to
         # self.save_results(seg_img, trans_img)
