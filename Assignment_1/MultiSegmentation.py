@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 
 
 save_directory = "results"
-inputImage = "images//flowers.jpg"
-segmentedImage = "balloonsSeg.jpg"
-segmaskImage = "balloonsSegMask.jpg"
+open_directory = "images"
+Image = "guard.jpg"
+inputImage = open_directory + "//" + Image
+segmentedImage = "Seg" + Image
+segmaskImage = "SegMask" + Image
 
 
 SEGMENT_ZERO = 0
@@ -49,6 +51,216 @@ class ImGraph:
         mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
 
         return mask
+
+
+    def elias(self):
+        print("cal...")
+
+        f0_123 = self.calc_bin_grabcut(seg0, seg1 + seg2 + seg3)
+        print(">> 1")
+        f0_12 = self.calc_bin_grabcut(seg0, seg1 + seg2)
+        print(">> 2")
+        f0_13 = self.calc_bin_grabcut(seg0, seg1 + seg3)
+        print(">> 3")
+        f0_23 = self.calc_bin_grabcut(seg0, seg2 + seg3)
+        print(">> 4")
+        f0_1 = self.calc_bin_grabcut(seg0, seg1)
+        print("5")
+        f0_2 = self.calc_bin_grabcut(seg0, seg2)
+        print("6")
+        f0_3 = self.calc_bin_grabcut(seg0, seg3)
+        print("7")
+        f0_not = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg1 + seg2 + seg3, seg0)
+
+        # Voting per segment
+        f0 = (2 * f0_123) + f0_12 + f0_13 + f0_23 + f0_1 + f0_2 + f0_3 + f0_not
+
+        '''
+        cv2.imshow('f0_123', (f0_123[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_not', (f0_not[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_12', (f0_12[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_13', (f0_13[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_23', (f0_23[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_1', (f0_1[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_2', (f0_2[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f0_3', (f0_3[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        '''
+
+        ###################################################################
+        ###################################################################
+
+        f1_023 = self.calc_bin_grabcut(seg1, seg0 + seg2 + seg3)
+        print("1")
+        f1_02 = self.calc_bin_grabcut(seg1, seg0 + seg2)
+        print("2")
+        f1_03 = self.calc_bin_grabcut(seg1, seg0 + seg3)
+        print("3")
+        f1_23 = self.calc_bin_grabcut(seg1, seg2 + seg3)
+        print("4")
+        f1_0 = self.calc_bin_grabcut(seg1, seg0)
+        print("5")
+        f1_2 = self.calc_bin_grabcut(seg1, seg2)
+        print("6")
+        f1_3 = self.calc_bin_grabcut(seg1, seg3)
+        print("7")
+        f1_not = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg0 + seg2 + seg3, seg1)
+
+        # Voting per segment
+        f1 = (2 * f1_023) + f1_02 + f1_03 + f1_23 + f1_0 + f1_2 + f1_3 + f1_not
+
+        '''
+        cv2.imshow('f1_023', (f1_023[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_not', (f1_not[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_02', (f1_02[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_03', (f1_03[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_23', (f1_23[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_0', (f1_0[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_2', (f1_2[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f1_3', (f1_3[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        '''
+        ###################################################################
+        ###################################################################
+
+
+        f2_013 = self.calc_bin_grabcut(seg2, seg1 + seg0 + seg3)
+        print("1")
+        f2_01 = self.calc_bin_grabcut(seg2, seg1 + seg0)
+        print("2")
+        f2_03 = self.calc_bin_grabcut(seg2, seg3 + seg0)
+        print("3")
+        f2_13 = self.calc_bin_grabcut(seg2, seg1 + seg3)
+        print("4")
+        f2_0 = self.calc_bin_grabcut(seg2, seg0)
+        print("5")
+        f2_1 = self.calc_bin_grabcut(seg2, seg1)
+        print("6")
+        f2_3 = self.calc_bin_grabcut(seg2, seg3)
+        print("7")
+        f2_not = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg1 + seg0 + seg3, seg2)
+
+        # Voting per segment
+        f2 = (2 * f2_013) + f2_01 + f2_03 + f2_13 + f2_0 + f2_1 + f2_3 + f2_not
+
+        '''
+        cv2.imshow('f2_013', (f2_013[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_not', (f2_not[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_01', (f2_01[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_03', (f2_03[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_13', (f2_13[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_0', (f2_0[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_1', (f2_1[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f2_3', (f2_3[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        '''
+        ###################################################################
+        ###################################################################
+
+
+        f3_012 = self.calc_bin_grabcut(seg3, seg1 + seg2 + seg0)
+        print("1")
+        f3_01 = self.calc_bin_grabcut(seg3, seg1 + seg0)
+        print("2")
+        f3_02 = self.calc_bin_grabcut(seg3, seg0 + seg2)
+        print("3")
+        f3_12 = self.calc_bin_grabcut(seg3, seg2 + seg1)
+        print("4")
+        f3_0 = self.calc_bin_grabcut(seg3, seg0)
+        print("5")
+        f3_1 = self.calc_bin_grabcut(seg3, seg1)
+        print("6")
+        f3_2 = self.calc_bin_grabcut(seg3, seg2)
+        print("7")
+        f3_not = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg1 + seg2 + seg0, seg3)
+
+        # Voting per segment
+        f3 = (2 * f3_012) + f3_01 + f3_02 + f3_12 + f3_0 + f3_1 + f3_2 + f3_not
+
+        '''
+        cv2.imshow('f3_012', (f3_012[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_not', (f3_not[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_01', (f3_01[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_02', (f3_02[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_12', (f3_12[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_0', (f3_0[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_1', (f3_1[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.imshow('f3_2', (f3_2[:, :, np.newaxis] * (255, 255, 255)).astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        '''
+
+        # multi-voting to all segments together
+
+        # get the majority voting for each pixel
+        f0_final = ((f0 > f1) & (f0 > f2) & (f0 > f3))
+        f1_final = ((f1 > f0) & (f1 > f2) & (f1 > f3))
+        f2_final = ((f2 > f0) & (f2 > f1) & (f2 > f3))
+        f3_final = ((f3 > f0) & (f3 > f1) & (f3 > f2))
+
+        ##################################################### checkpoint
+        f0_mask = f0_final[:, :, np.newaxis] * SEG_ZERO_COLOR
+        f1_mask = f1_final[:, :, np.newaxis] * SEG_ONE_COLOR
+        f2_mask = f2_final[:, :, np.newaxis] * SEG_TWO_COLOR
+        f3_mask = f3_final[:, :, np.newaxis] * SEG_THREE_COLOR
+        cv2.imshow('before', (f0_mask + f1_mask + f2_mask + f3_mask).astype(np.uint8))
+        #####################################################
+
+
+        # pixels that have not majority
+        blackpixels = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_final + f1_final + f2_final + f3_final)
+        f0_help = ((f0 >= f1) & (f0 >= f2) & (f0 >= f3))
+        f1_help = ((f1 >= f0) & (f1 >= f2) & (f1 >= f3))
+        f2_help = ((f2 >= f0) & (f2 >= f1) & (f2 >= f3))
+        f3_help = ((f3 >= f0) & (f3 >= f1) & (f3 >= f2))
+        f01_conflict = f0_help == f1_help
+        f02_conflict = f0_help == f2_help
+        f03_conflict = f0_help == f3_help
+        f12_conflict = f1_help == f2_help
+        f13_conflict = f1_help == f3_help
+        f23_conflict = f2_help == f3_help
+
+        plus0 = (blackpixels & f01_conflict & f0_not) | (blackpixels & f02_conflict & f0_not) | (blackpixels & f03_conflict & f0_not)
+        blackpixels = blackpixels - plus0
+        plus1 = (blackpixels & f01_conflict & f1_not) | (blackpixels & f12_conflict & f1_not) | (blackpixels & f13_conflict & f1_not)
+        blackpixels = blackpixels - plus1
+        plus2 = (blackpixels & f02_conflict & f2_not) | (blackpixels & f12_conflict & f2_not) | (blackpixels & f23_conflict & f2_not)
+        blackpixels = blackpixels - plus2
+        plus3 = blackpixels
+
+        f0_final = f0_final + plus0
+        f1_final = f1_final + plus1
+        f2_final = f2_final + plus2
+        f3_final = f3_final + plus3
+
+
+        # f3_mask = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_mask + f1_mask + f2_mask)
+        # f3_mask = self.calc_bin_grabcut(seg3, seg0 + seg1 + seg2)
+
+        '''
+        f0_mask = self.find_segment(f0_mask, seg0)
+        f1_mask = self.find_segment(f1_mask, seg1)
+        f2_mask = self.find_segment(f2_mask, seg2)
+
+        f0_mask = f0_mask - np.logical_and(f0_mask, f1_mask)
+        f0_mask = f0_mask - np.logical_and(f0_mask, f2_mask)
+        f1_mask = f1_mask - np.logical_and(f1_mask, f2_mask)
+
+        f3_mask = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_mask + f1_mask + f2_mask)
+        f3_mask = f3_mask - np.logical_and(f3_mask, f0_mask)
+        f3_mask = f3_mask - np.logical_and(f3_mask, f1_mask)
+        f3_mask = f3_mask - np.logical_and(f3_mask, f2_mask)
+        '''
+        f0_mask = f0_final[:, :, np.newaxis] * SEG_ZERO_COLOR
+        f1_mask = f1_final[:, :, np.newaxis] * SEG_ONE_COLOR
+        f2_mask = f2_final[:, :, np.newaxis] * SEG_TWO_COLOR
+        f3_mask = f3_final[:, :, np.newaxis] * SEG_THREE_COLOR
+
+        return f0_mask + f1_mask + f2_mask + f3_mask
+
 
 
     def multivoting_by_grabcut(self):
@@ -326,7 +538,8 @@ class Interactive:
         """
         # keeping important data as in object creation
         ig = ImGraph(orig_img)
-        final_mask = ig.multivoting_by_grabcut()
+        #final_mask = ig.multivoting_by_grabcut()
+        final_mask = ig.elias()
 
         # show segmentation image
         cv2.imshow('seg_image', final_mask.astype(np.uint8))
@@ -340,7 +553,7 @@ class Interactive:
         cv2.destroyAllWindows()
 
         # save results as asked to
-        # self.save_results(seg_img, trans_img)
+        self.save_results(seg_img, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()
