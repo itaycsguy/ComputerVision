@@ -321,9 +321,9 @@ class Interactive:
 
         seg_counter = INIT_REQUIRED_COUNTER
         if not seg2:
-            seg_counter = INIT_REQUIRED_COUNTER + 1
+            seg_counter += 1
         if not seg3:
-            seg_counter = INIT_REQUIRED_COUNTER + 2
+            seg_counter += 1
 
         # keeping important data as in object creation
         ig = ImGraph(orig_img, seg_counter)
