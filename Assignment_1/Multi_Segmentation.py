@@ -9,7 +9,7 @@ save_directory = "results"
 my_examples_directory = "my_examples"
 
 # image handing:
-Image = "boat.jpg"
+Image = "man.jpg"
 inputImage = open_directory + "//" + Image
 
 # where to save handling:
