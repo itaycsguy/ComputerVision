@@ -1,12 +1,20 @@
-import cv2, argparse, os, sys, dlib
+## Students And Developers: Itay Guy, 305104184 & Elias Jadon, 207755737
+
+import cv2, argparse, os
 import numpy as np
-import matplotlib.pyplot as plt
 
-
+# directory handling:
+open_directory = "images"
 save_directory = "results"
-inputImage = "images//flowers.jpg"
-segmentedImage = "balloonsSeg.jpg"
-segmaskImage = "balloonsSegMask.jpg"
+my_examples_directory = "my_examples"
+
+# image handing:
+Image = "boat.jpg"
+inputImage = open_directory + "//" + Image
+
+# where to save handling:
+segmentedImage = "Seg_" + Image
+segmaskImage = "SegMask_" + Image
 
 
 SEGMENT_ZERO = 0
@@ -18,6 +26,7 @@ SEG_ZERO_COLOR = (0, 0, 255)
 SEG_ONE_COLOR = (0, 255, 0)
 SEG_TWO_COLOR = (255, 0, 0)
 SEG_THREE_COLOR = (0, 255, 255)
+
 
 """
     Computation unit which calculates the grabcut to multi-classes objects
@@ -40,7 +49,6 @@ class ImGraph:
         for (x, y) in b_seg_indices:
             mask[y][x] = cv2.GC_BGD
 
-
         # algorithm MUST parameters:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
@@ -51,115 +59,83 @@ class ImGraph:
         return mask
 
 
-    def multivoting_by_grabcut(self):
-        print("\nProcessing the image..")
-        masks0 = self.calc_multi_grabcut(seg0, np.array(SEG_ZERO_COLOR), seg1, np.array(SEG_ONE_COLOR), seg2, np.array(SEG_TWO_COLOR), seg3, np.array(SEG_THREE_COLOR))
-        masks1 = self.calc_multi_grabcut(seg1, np.array(SEG_ONE_COLOR), seg2, np.array(SEG_TWO_COLOR), seg3, np.array(SEG_THREE_COLOR), seg0, np.array(SEG_ZERO_COLOR))
-        masks2 = self.calc_multi_grabcut(seg2, np.array(SEG_TWO_COLOR), seg3, np.array(SEG_THREE_COLOR), seg0, np.array(SEG_ZERO_COLOR), seg1, np.array(SEG_ONE_COLOR))
-        masks3 = self.calc_multi_grabcut(seg3, np.array(SEG_THREE_COLOR), seg0, np.array(SEG_ZERO_COLOR), seg1, np.array(SEG_ONE_COLOR), seg2, np.array(SEG_TWO_COLOR))
+    """
+        segX - each is the selected segment which is the critical area of grab-cut algorithm
+        This method is calculating all the 2 combinations of binary grab-cut algorithm
+    """
+    def calc_grabcut_combinations(self, seg0, seg1, seg2, seg3):
+        f0_123 = self.calc_bin_grabcut(seg0, seg1 + seg2 + seg3)
+        f0_12 = self.calc_bin_grabcut(seg0, seg1 + seg2)
+        f0_13 = self.calc_bin_grabcut(seg0, seg1 + seg3)
+        f0_23 = self.calc_bin_grabcut(seg0, seg2 + seg3)
+        f0_1 = self.calc_bin_grabcut(seg0, seg1)
+        f0_2 = self.calc_bin_grabcut(seg0, seg2)
+        f0_3 = self.calc_bin_grabcut(seg0, seg3)
+        f0_complement = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg1 + seg2 + seg3, seg0)
 
-        cv2.imshow('mask0', masks0.astype(np.uint8))
-        cv2.imshow('mask1', masks1.astype(np.uint8))
-        cv2.imshow('mask2', masks2.astype(np.uint8))
-        cv2.imshow('mask3', masks3.astype(np.uint8))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        print("Done!\n")
-        return self.multivoting_decision_by_color([masks0, masks1, masks2, masks3], seg0, SEG_ZERO_COLOR, seg1, SEG_ONE_COLOR, seg2, SEG_TWO_COLOR, seg3, SEG_THREE_COLOR)
-
-
-
-    def multivoting_decision_by_color(self, masks, seg0, seg0_color, seg1, seg1_color, seg2, seg2_color, seg3, seg3_color):
-        for mask in masks:
-            counter = 0
-            exist = False
-            for (x, y) in seg0:
-                exist = True if all(np.equal(mask[y][x], seg0_color)) else False
-            if exist:
-                counter += 1
-            for (x, y) in seg1:
-                exist = True if all(np.equal(mask[y][x], seg1_color)) else False
-            if exist:
-                counter += 1
-            for (x, y) in seg2:
-                exist = True if all(np.equal(mask[y][x], seg2_color)) else False
-            if exist:
-                counter += 1
-            for (x, y) in seg3:
-                exist = True if all(np.equal(mask[y][x], seg3_color)) else False
-            if exist:
-                counter += 1
-
-            if counter == 4:
-                return mask
-
-        return masks[0]
-
+        # voting per segment
+        f0 = (2 * f0_123) + f0_12 + f0_13 + f0_23 + f0_1 + f0_2 + f0_3 + f0_complement
+        return f0, f0_complement
 
 
     """
-        seg2mask - mapping from segments to mask colors
-        Return multi-grabcut image total result
+        fX = binary grab-cut output mask, fX_complement = the complement mask
+        These inputs are came from 'calc_grabcut_combinations' method
     """
-    def calc_multi_grabcut(self, seg0, seg0_color, seg1, seg1_color, seg2, seg2_color, seg3, seg3_color):
-        f0_mask = self.calc_bin_grabcut(seg0, seg1 + seg2 + seg3)
-        f1_mask = self.calc_bin_grabcut(seg1, seg0 + seg2 + seg3)
-        f2_mask = self.calc_bin_grabcut(seg2, seg0 + seg1 + seg3)
+    def segmenting_isolation(self, f0, f0_complement, f1, f1_complement, f2, f2_complement, f3, f3_complement):
+        # make majority voting:
+        f0_middle = ((f0 > f1) & (f0 > f2) & (f0 > f3))
+        f1_middle = ((f1 > f0) & (f1 > f2) & (f1 > f3))
+        f2_middle = ((f2 > f0) & (f2 > f1) & (f2 > f3))
+        f3_middle = ((f3 > f0) & (f3 > f1) & (f3 > f2))
 
-        # f3_mask = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_mask + f1_mask + f2_mask)
-        # f3_mask = self.calc_bin_grabcut(seg3, seg0 + seg1 + seg2)
+        empty_px = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_middle + f1_middle + f2_middle + f3_middle)
+        # getting masks intersects and detect conflicts
+        f0_px_amt = ((f0 >= f1) & (f0 >= f2) & (f0 >= f3))
+        f1_px_amt = ((f1 >= f0) & (f1 >= f2) & (f1 >= f3))
+        f2_px_amt = ((f2 >= f0) & (f2 >= f1) & (f2 >= f3))
+        f3_px_amt = ((f3 >= f0) & (f3 >= f1) & (f3 >= f2))
+        f01_conflict = (f0_px_amt == f1_px_amt)
+        f02_conflict = (f0_px_amt == f2_px_amt)
+        f03_conflict = (f0_px_amt == f3_px_amt)
+        f12_conflict = (f1_px_amt == f2_px_amt)
+        f13_conflict = (f1_px_amt == f3_px_amt)
+        f23_conflict = (f2_px_amt == f3_px_amt)
 
-        f0_mask = self.find_segment(f0_mask, seg0)
-        f1_mask = self.find_segment(f1_mask, seg1)
-        f2_mask = self.find_segment(f2_mask, seg2)
+        # added more pixels to the final mask segment by empty mask comparison the conflicts
+        irrelevant_added_px0 = (empty_px & f01_conflict & f0_complement) | (empty_px & f02_conflict & f0_complement) | (empty_px & f03_conflict & f0_complement)
+        empty_px = empty_px - irrelevant_added_px0
+        irrelevant_added_px1 = (empty_px & f01_conflict & f1_complement) | (empty_px & f12_conflict & f1_complement) | (empty_px & f13_conflict & f1_complement)
+        empty_px = empty_px - irrelevant_added_px1
+        irrelevant_added_px2 = (empty_px & f02_conflict & f2_complement) | (empty_px & f12_conflict & f2_complement) | (empty_px & f23_conflict & f2_complement)
+        empty_px = empty_px - irrelevant_added_px2
+        irrelevant_added_px3 = empty_px
 
-        f0_mask = f0_mask - np.logical_and(f0_mask, f1_mask)
-        f0_mask = f0_mask - np.logical_and(f0_mask, f2_mask)
-        f1_mask = f1_mask - np.logical_and(f1_mask, f2_mask)
+        return f0_middle + irrelevant_added_px0, f1_middle + irrelevant_added_px1, f2_middle + irrelevant_added_px2, f3_middle + irrelevant_added_px3
 
-        f3_mask = np.ones(self.img.shape[:2], dtype=np.uint8) - (f0_mask + f1_mask + f2_mask)
-        f3_mask = f3_mask - np.logical_and(f3_mask, f0_mask)
-        f3_mask = f3_mask - np.logical_and(f3_mask, f1_mask)
-        f3_mask = f3_mask - np.logical_and(f3_mask, f2_mask)
 
-        f0_mask = f0_mask[:, :, np.newaxis] * seg0_color
-        f1_mask = f1_mask[:, :, np.newaxis] * seg1_color
-        f2_mask = f2_mask[:, :, np.newaxis] * seg2_color
-        f3_mask = f3_mask[:, :, np.newaxis] * seg3_color
+    """
+        This method is calculating the final mask result to the image segmentations all together by multivoting technique
+    """
+    def calc_multivoting_grabcut(self):
+        print("\nProcessing", Image, "..")
+        f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
+        f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
+        f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
+        f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
+        print("Done grab-cut computations..")
+
+        ## extract empty pixels:
+        f0_final, f1_final, f2_final, f3_final = self.segmenting_isolation(f0, f0_complement, f1, f1_complement, f2, f2_complement, f3, f3_complement)
+        print("Done masks multi-voting isolation and global mask segments enhancing..")
+
+        f0_mask = f0_final[:, :, np.newaxis] * SEG_ZERO_COLOR
+        f1_mask = f1_final[:, :, np.newaxis] * SEG_ONE_COLOR
+        f2_mask = f2_final[:, :, np.newaxis] * SEG_TWO_COLOR
+        f3_mask = f3_final[:, :, np.newaxis] * SEG_THREE_COLOR
+        print("The process is finished.")
 
         return f0_mask + f1_mask + f2_mask + f3_mask
-
-
-    """
-        By multi-voting between areas that have found we can detect the correct one to draw as the target segment
-    """
-    def multivoting_area_desicion(self, real_mask, total_areas, segment, threshold):
-        for area in total_areas:
-            for (x, y) in segment:
-                if area[y][x] == threshold:
-                    return area
-        return real_mask
-
-
-    """
-        A method to determine which color matches to which pixel where overlapping is up
-    """
-    def find_segment(self, mask, segment):
-        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-        total_areas = list()
-        for cnt in contours:
-            new_mask = np.zeros(mask.shape[:2], dtype=np.uint8)
-            cv2.fillPoly(new_mask, pts=[cnt], color=(255, 255, 255))
-            total_areas.append(new_mask)
-
-        mask = self.multivoting_area_desicion(mask, total_areas, segment, 255)
-
-        # cv2.imshow('mask', mask)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
-        return mask / 255
 
 
 
@@ -287,8 +263,15 @@ class Interactive:
             os.makedirs(save_directory)
         cv2.imwrite(save_directory + '//' + segmentedImage, seg_image)
         cv2.imwrite(save_directory + '//' + segmaskImage, trans_image)
-        print("Images are save to", save_directory)
+        print("Results have been saved to", save_directory)
 
+
+    def save_seq_images(self, orig_img, seg_img, final_mask, trans_img):
+        total_seq_image = np.concatenate((orig_img, np.concatenate((seg_img, np.concatenate((final_mask, trans_img), axis=1)), axis=1)), axis=1)
+        if not os.path.exists(my_examples_directory):
+            os.makedirs(my_examples_directory)
+        cv2.imwrite(my_examples_directory + '//' + Image, total_seq_image)
+        print("Results have been saved to", my_examples_directory)
 
     def main_loop(self):
         global orig_img, seg_img, current_segment
@@ -326,33 +309,35 @@ class Interactive:
         """
         # keeping important data as in object creation
         ig = ImGraph(orig_img)
-        final_mask = ig.multivoting_by_grabcut()
+        final_mask = ig.calc_multivoting_grabcut()
+
+        print("Displaying results..")
+        cv2.imshow('Original_image', orig_img.astype(np.uint8))
 
         # show segmentation image
-        cv2.imshow('seg_image', final_mask.astype(np.uint8))
+        cv2.imshow('Segmented_image', final_mask.astype(np.uint8))
 
         # show transparency image
-        # The same equation: alpha * image + (1.0 - alpha) * output
         trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.5, final_mask.copy().astype(np.uint8), 0.5, 0)
-        cv2.imshow('trans_image', trans_img.astype(np.uint8))
+        cv2.imshow('Transparency_image', trans_img.astype(np.uint8))
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
         # save results as asked to
-        # self.save_results(seg_img, trans_img)
+        self.save_results(final_mask, trans_img)
+
+        # self.save_seq_images(orig_img, seg_img, final_mask, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()
 
 
 """
-    Left work:
-    ==========
-    1. Save 2 results: seg_img + trans_img
+    Run the program from here with full attention to the description
+    Do not forget to put the right image name with exclusive output names
 """
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Assign name to: inputImage, segmentedImage, segmaskImage at the TOP of the script.')
+    parser = argparse.ArgumentParser(description='Assign names to: inputImage, segmentedImage, segmaskImage at the TOP of the script.')
     args = parser.parse_args()
     Interactive().main_loop()
