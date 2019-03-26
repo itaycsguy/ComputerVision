@@ -1,12 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/Segmentation_Example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/balloons.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/balloonsMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/boatMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/chinaMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/cornMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/fishMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/florenceMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/flowersMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/guardMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/horsesMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/image002.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/image003 (1).gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/image003.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/manMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/messi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/mooseMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/images/zebrasMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMaskballoons.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMaskchina.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMaskcorn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMaskfish.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMaskguard.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMaskhorses.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Segballoons.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Segchina.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Segcorn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Segfish.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Segguard.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Seghorses.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/test.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,20 +49,15 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
+        <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="15" lean-forward="true" selection-end-line="570" selection-end-column="29" />
+            <state relative-caret-position="510">
+              <caret line="336" column="33" lean-forward="true" selection-start-line="336" selection-start-column="33" selection-end-line="336" selection-end-column="33" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
-          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -74,6 +101,7 @@
         <option value="$PROJECT_DIR$/Assignment_1/Segmentation_Example.py" />
         <option value="$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" />
         <option value="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
+        <option value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
       </list>
     </option>
   </component>
@@ -121,12 +149,6 @@
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="results" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -159,7 +181,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.MultiSegmentation">
+  <component name="RunManager" selected="Python.Multi_Segmentation">
     <configuration name="Interactive_Drawing" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ComputerVision" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -194,6 +216,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Multi_Segmentation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ComputerVision" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Assignment_1" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -244,34 +287,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="ComputerVision" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src_task1" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src_task1/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Multi_Segmentation" />
         <item itemvalue="Python.MultiSegmentation" />
         <item itemvalue="Python.Interactive_Drawing" />
         <item itemvalue="Python.Segmentation" />
         <item itemvalue="Python.test (3)" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -304,15 +326,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14657739" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14699684" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.26022914" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" visible="true" weight="0.25893825" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -334,8 +356,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/venv/test.py" />
-    <entry file="file://$PROJECT_DIR$/baseRefactoring.xml" />
     <entry file="file://$PROJECT_DIR$/project.default.xml" />
     <entry file="file://$PROJECT_DIR$/codestyles/Default.xml" />
     <entry file="file://$PROJECT_DIR$/venv/src_task1/test.py" />
@@ -432,9 +452,6 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/florenceMask.tif">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/horsesMask.tif">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -498,10 +515,26 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/manMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="15" lean-forward="true" selection-end-line="570" selection-end-column="29" />
+        <state relative-caret-position="69">
+          <caret line="310" column="33" lean-forward="true" selection-start-line="310" selection-start-column="33" selection-end-line="310" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="336" column="33" lean-forward="true" selection-start-line="336" selection-start-column="33" selection-end-line="336" selection-end-column="33" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
