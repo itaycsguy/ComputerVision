@@ -9,7 +9,7 @@ save_directory = "results"
 my_examples_directory = "my_examples"
 
 # image handing:
-Image = "flowers.jpg"
+Image = "boat.jpg"
 inputImage = open_directory + "//" + Image
 
 # where to save handling:
@@ -327,7 +327,7 @@ class Interactive:
         # save results as asked to
         self.save_results(final_mask, trans_img)
 
-        self.save_seq_images(orig_img, seg_img, final_mask, trans_img)
+        # self.save_seq_images(orig_img, seg_img, final_mask, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()

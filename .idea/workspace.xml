@@ -2,7 +2,38 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/Florence.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/balloons.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/balloonsMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/boat.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/boatMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/china.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/chinaMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/corn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/cornMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/fish.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/fishMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/florenceMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/flowers.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/flowersMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/flowersPink.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/flowersPinkMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/guard.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/guardMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/horses.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/horsesMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/image002.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/image003 (1).gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/image003.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/man.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/manMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/moose.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/mooseMask.tif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/soccer.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/zebras.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/assignment_examples/zebrasMask.tif" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +46,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+            <state relative-caret-position="441">
+              <caret line="21" column="15" lean-forward="true" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -112,12 +143,6 @@
               <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="images" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -299,12 +324,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14699684" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14699684" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947312" visible="true" weight="0.26435536" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" visible="true" weight="0.26435536" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -503,8 +528,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        <state relative-caret-position="441">
+          <caret line="21" column="15" lean-forward="true" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
