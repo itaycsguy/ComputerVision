@@ -1,13 +1,15 @@
-import cv2, argparse, os, sys, dlib
+## Students And Developers: Itay Guy, 305104184 & Elias Jadon, 207755737
+
+import cv2, argparse, os
 import numpy as np
-import matplotlib.pyplot as plt
 
 # directory handling:
 open_directory = "images"
 save_directory = "results"
+my_examples_directory = "my_examples"
 
 # image handing:
-Image = "guard.jpg"
+Image = "flowers.jpg"
 inputImage = open_directory + "//" + Image
 
 # where to save handling:
@@ -116,7 +118,7 @@ class ImGraph:
         This method is calculating the final mask result to the image segmentations all together by multivoting technique
     """
     def calc_multivoting_grabcut(self):
-        print("\nProcessing the image..")
+        print("\nProcessing", Image, "..")
         f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
         f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
         f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
@@ -264,6 +266,13 @@ class Interactive:
         print("Results have been saved to", save_directory)
 
 
+    def save_seq_images(self, orig_img, seg_img, final_mask, trans_img):
+        total_seq_image = np.concatenate((orig_img, np.concatenate((seg_img, np.concatenate((final_mask, trans_img), axis=1)), axis=1)), axis=1)
+        if not os.path.exists(my_examples_directory):
+            os.makedirs(my_examples_directory)
+        cv2.imwrite(my_examples_directory + '//' + Image, total_seq_image)
+        print("Results have been saved to", my_examples_directory)
+
     def main_loop(self):
         global orig_img, seg_img, current_segment
         global seg0, seg1, seg2, seg3
@@ -303,7 +312,7 @@ class Interactive:
         final_mask = ig.calc_multivoting_grabcut()
 
         print("Displaying results..")
-        cv2.imshow('Original_image', final_mask.astype(np.uint8))
+        cv2.imshow('Original_image', orig_img.astype(np.uint8))
 
         # show segmentation image
         cv2.imshow('Segmented_image', final_mask.astype(np.uint8))
@@ -316,22 +325,19 @@ class Interactive:
         cv2.destroyAllWindows()
 
         # save results as asked to
-        self.save_results(seg_img, trans_img)
+        self.save_results(final_mask, trans_img)
+
+        self.save_seq_images(orig_img, seg_img, final_mask, trans_img)
 
         # destroy all windows
         cv2.destroyAllWindows()
 
 
 """
-    Left work:
-    ==========
-    1. Save 2 results: seg_img + trans_img
+    Run the program from here with full attention to the description
+    Do not forget to put the right image name with exclusive output names
 """
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Assign names to: inputImage, segmentedImage, segmaskImage at the TOP of the script.')
     args = parser.parse_args()
-    script_dir = "D://PycharmProjects//ComputerVision//Assignment_1//images"
-    for img in os.listdir(script_dir):
-        Image = img
-        Interactive().main_loop()
+    Interactive().main_loop()
