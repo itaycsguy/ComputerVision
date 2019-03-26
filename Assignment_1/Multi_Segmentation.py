@@ -17,6 +17,7 @@ segmentedImage = "Seg_" + Image
 segmaskImage = "SegMask_" + Image
 
 
+# DO NOT TOUCH HERE - PROGRAM'S PARAMETERS
 SEGMENT_ZERO = 0
 SEGMENT_ONE = 1
 SEGMENT_TWO = 2
@@ -128,6 +129,10 @@ class ImGraph:
             f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
         elif self.segments_counter == 4:
             f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
+        else:
+            f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
+            f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
+
         print("Done grab-cut computations..")
 
         ## extract empty pixels:
