@@ -4,6 +4,8 @@
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMask_man.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/SegMask_man.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Seg_man.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/Seg_man.jpg" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,11 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="15" column="31" lean-forward="true" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="358">
+              <caret line="339" column="58" selection-start-line="339" selection-start-column="58" selection-end-line="339" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -49,6 +48,7 @@
       <find>save_results</find>
       <find>open_directory</find>
       <find>Image</find>
+      <find>calc_grabcut_combinations</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -332,39 +332,11 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/boat.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/boatMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/messi.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="30" column="74" selection-start-line="30" selection-start-column="74" selection-end-line="30" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="20" column="23" lean-forward="true" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/Segmentation_Example.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/boatMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/messi.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/test.py" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/Segmentation_Example.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/Subdiv2D.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/ml_KNearest.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
@@ -416,95 +388,55 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/Florence.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/florenceMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horsesMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/chinaMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/cornMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/florenceMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horsesMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/chinaMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/cornMask.tif" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/fish.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image002.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/fishMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebrasMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image002.png" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/fishMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebrasMask.tif" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/horses.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guardMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guardMask.tif" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/moose.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/mooseMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/mooseMask.tif" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/soccer.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/china.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/manMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/manMask.tif" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="310" column="33" lean-forward="true" selection-start-line="310" selection-start-column="33" selection-end-line="310" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="15" column="31" lean-forward="true" selection-start-line="15" selection-start-column="31" selection-end-line="15" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="358">
+          <caret line="339" column="58" selection-start-line="339" selection-start-column="58" selection-end-line="339" selection-end-column="58" />
         </state>
       </provider>
     </entry>

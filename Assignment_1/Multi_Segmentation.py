@@ -27,13 +27,15 @@ SEG_ONE_COLOR = (0, 255, 0)
 SEG_TWO_COLOR = (255, 0, 0)
 SEG_THREE_COLOR = (0, 255, 255)
 
+INIT_REQUIRED_COUNTER = 2
 
 """
     Computation unit which calculates the grabcut to multi-classes objects
 """
 class ImGraph:
-    def __init__(self, image):
+    def __init__(self, image, seg_counter):
         self.img = image
+        self.segments_counter = seg_counter
 
     """
         seg2mask - mapping from segments to mask colors
@@ -74,7 +76,7 @@ class ImGraph:
         f0_complement = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg1 + seg2 + seg3, seg0)
 
         # voting per segment
-        f0 = (2 * f0_123) + f0_12 + f0_13 + f0_23 + f0_1 + f0_2 + f0_3 + f0_complement
+        f0 = f0_1 + f0_2 + f0_3 + f0_complement + f0_12 + f0_13 + f0_23 + (2 * f0_123)
         return f0, f0_complement
 
 
@@ -121,8 +123,11 @@ class ImGraph:
         print("\nProcessing", inputImage, "..")
         f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
         f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
-        f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
-        f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
+        f2 = f2_complement = f3 = f3_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        if self.segments_counter == 3:
+            f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
+        elif self.segments_counter == 4:
+            f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
         print("Done grab-cut computations..")
 
         ## extract empty pixels:
@@ -303,12 +308,26 @@ class Interactive:
             if k == 27:
                 break
 
+
+        if not (seg0 and seg1):
+            print("At least 2 segments are required.")
+            exit(-1)
+
+
         """
             graph cut implementation for 4 segments
             add functions and code as you wish
         """
+
+        seg_counter = INIT_REQUIRED_COUNTER
+        if not seg2:
+            seg_counter = INIT_REQUIRED_COUNTER + 1
+        if not seg3:
+            seg_counter = INIT_REQUIRED_COUNTER + 2
+
         # keeping important data as in object creation
-        ig = ImGraph(orig_img)
+        ig = ImGraph(orig_img, seg_counter)
+
         final_mask = ig.calc_multivoting_grabcut()
 
         print("Displaying results..")
