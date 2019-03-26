@@ -118,7 +118,7 @@ class ImGraph:
         This method is calculating the final mask result to the image segmentations all together by multivoting technique
     """
     def calc_multivoting_grabcut(self):
-        print("\nProcessing", Image, "..")
+        print("\nProcessing", inputImage, "..")
         f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
         f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
         f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
