@@ -3,6 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMask_man.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/SegMask_man.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Seg_man.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/Seg_man.jpg" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,11 +18,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="118" column="44" lean-forward="true" selection-start-line="118" selection-start-column="44" selection-end-line="118" selection-end-column="44" />
+            <state relative-caret-position="147">
+              <caret line="7" column="37" lean-forward="true" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
               <folding>
                 <element signature="e#74#98#0" expanded="true" />
-                <marker date="1553962058538" expanded="true" signature="250:310" ph="..." />
+                <marker date="1553966557845" expanded="true" signature="649:680" ph="..." />
               </folding>
             </state>
           </provider>
@@ -302,7 +305,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.26435536" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947312" visible="true" weight="0.26435536" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -442,11 +445,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="118" column="44" lean-forward="true" selection-start-line="118" selection-start-column="44" selection-end-line="118" selection-end-column="44" />
+        <state relative-caret-position="147">
+          <caret line="7" column="37" lean-forward="true" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
           <folding>
             <element signature="e#74#98#0" expanded="true" />
-            <marker date="1553962058538" expanded="true" signature="250:310" ph="..." />
+            <marker date="1553966557845" expanded="true" signature="649:680" ph="..." />
           </folding>
         </state>
       </provider>
