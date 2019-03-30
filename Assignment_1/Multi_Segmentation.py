@@ -11,6 +11,7 @@ my_examples_directory = "my_examples"
 # image handing:
 Image = "man.jpg"
 inputImage = open_directory + "//" + Image
+# inputImage = "man.jpg"
 
 # where to save handling:
 segmentedImage = "Seg_" + Image
@@ -107,14 +108,25 @@ class ImGraph:
 
         # added more pixels to the final mask segment by empty mask comparison the conflicts
         irrelevant_added_px0 = (empty_px & f01_conflict & f0_complement) | (empty_px & f02_conflict & f0_complement) | (empty_px & f03_conflict & f0_complement)
+        f0_middle = f0_middle + irrelevant_added_px0
+
         empty_px = empty_px - irrelevant_added_px0
         irrelevant_added_px1 = (empty_px & f01_conflict & f1_complement) | (empty_px & f12_conflict & f1_complement) | (empty_px & f13_conflict & f1_complement)
-        empty_px = empty_px - irrelevant_added_px1
-        irrelevant_added_px2 = (empty_px & f02_conflict & f2_complement) | (empty_px & f12_conflict & f2_complement) | (empty_px & f23_conflict & f2_complement)
-        empty_px = empty_px - irrelevant_added_px2
-        irrelevant_added_px3 = empty_px
+        f1_middle = f1_middle + irrelevant_added_px1
 
-        return f0_middle + irrelevant_added_px0, f1_middle + irrelevant_added_px1, f2_middle + irrelevant_added_px2, f3_middle + irrelevant_added_px3
+        if self.segments_counter == 3:
+            empty_px = empty_px - irrelevant_added_px1
+            f2_middle = f2_middle + empty_px
+
+        else:
+            empty_px = empty_px - irrelevant_added_px1
+            irrelevant_added_px2 = (empty_px & f02_conflict & f2_complement) | (empty_px & f12_conflict & f2_complement) | (empty_px & f23_conflict & f2_complement)
+            f2_middle = f2_middle + irrelevant_added_px2
+
+            empty_px = empty_px - irrelevant_added_px2
+            f3_middle = f3_middle + empty_px
+
+        return f0_middle, f1_middle, f2_middle, f3_middle
 
 
     """
@@ -122,21 +134,28 @@ class ImGraph:
     """
     def calc_multivoting_grabcut(self):
         print("\nProcessing", inputImage, "..")
-        f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
-        f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
-        f2 = f2_complement = f3 = f3_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
-        if self.segments_counter == 3:
+        f0 = f0_complement = f1 = f1_complement = f2 = f2_complement = f3 = f3_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        if self.segments_counter == 2:
+            f0 = self.calc_bin_grabcut(seg0, seg1)
+            f1 = np.ones(self.img.shape[:2], dtype=np.uint8) - f0
+        elif self.segments_counter == 3:
+            f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
+            f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
             f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
         elif self.segments_counter == 4:
-            f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
-        else:
+            f0, f0_complement = self.calc_grabcut_combinations(seg0, seg1, seg2, seg3)
+            f1, f1_complement = self.calc_grabcut_combinations(seg1, seg0, seg2, seg3)
             f2, f2_complement = self.calc_grabcut_combinations(seg2, seg1, seg0, seg3)
             f3, f3_complement = self.calc_grabcut_combinations(seg3, seg1, seg2, seg0)
 
         print("Done grab-cut computations..")
 
         ## extract empty pixels:
-        f0_final, f1_final, f2_final, f3_final = self.segmenting_isolation(f0, f0_complement, f1, f1_complement, f2, f2_complement, f3, f3_complement)
+        f0_final = f1_final = f2_final = f3_final = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        if self.segments_counter > 2:
+            f0_final, f1_final, f2_final, f3_final = self.segmenting_isolation(f0, f0_complement, f1, f1_complement, f2, f2_complement, f3, f3_complement)
+        else:
+            f0_final, f1_final = (f0, f1)
         print("Done masks multi-voting isolation and global mask segments enhancing..")
 
         f0_mask = f0_final[:, :, np.newaxis] * SEG_ZERO_COLOR
@@ -325,9 +344,9 @@ class Interactive:
         """
 
         seg_counter = INIT_REQUIRED_COUNTER
-        if not seg2:
+        if seg2:
             seg_counter += 1
-        if not seg3:
+        if seg3:
             seg_counter += 1
 
         # keeping important data as in object creation
