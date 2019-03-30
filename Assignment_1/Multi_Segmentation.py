@@ -4,14 +4,20 @@ import cv2, argparse, os
 import numpy as np
 
 # directory handling:
-open_directory = "images"
 save_directory = "results"
 my_examples_directory = "my_examples"
 
+# CAN TOUCH THESE PARAMETERS WITH FULL OF ATTENTION:
+# **************************************************
+# Stay like this is meaning to open an image which stays beside the script (at the same directory)
+open_directory = "images"
+
+# An example to open an image from another directory:
+# open_directory = "C://Users//itgu1//OneDrive//Desktop//ComputerVision//Assignment_1//Submission_305104184_207755737//"
+
 # image handing:
 Image = "man.jpg"
-inputImage = open_directory + "//" + Image
-# inputImage = "man.jpg"
+inputImage = open_directory + Image
 
 # where to save handling:
 segmentedImage = "Seg_" + Image
@@ -299,7 +305,7 @@ class Interactive:
         total_seq_image = np.concatenate((orig_img, np.concatenate((seg_img, np.concatenate((final_mask, trans_img), axis=1)), axis=1)), axis=1)
         if not os.path.exists(my_examples_directory):
             os.makedirs(my_examples_directory)
-        cv2.imwrite(my_examples_directory + '//' + Image, total_seq_image)
+        cv2.imwrite(my_examples_directory + '//' + inputImage, total_seq_image)
         print("Results have been saved to", my_examples_directory)
 
     def main_loop(self):
