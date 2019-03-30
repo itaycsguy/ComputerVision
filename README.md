@@ -1,6 +1,6 @@
 # Multi Grab-Cut Segmentation Algorithm
 The basic Grab-Cut algorithm is aimed to be running for binary segmentation.
-We have expanding the algorithm to work with up to 4-segments by multi-voting technique you can explore in the code.
+We have expanded the algorithm to work with up to 4-segments by multi-voting technique you can explore in the code.
 
 
 ### Here are some results:
