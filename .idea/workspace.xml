@@ -3,15 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/Assignment_1_report.docx" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/Assignment_1_report.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/Assignment_1_report.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/Assignment_1_report.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/my_examples/moose.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/my_examples/moose.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/my_examples/zebras.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/my_examples/zebras.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMask_moose.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/SegMask_moose.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/results/SegMask_zebras.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/SegMask_zebras.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Seg_moose.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/Seg_moose.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/results/Seg_zebras.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/results/Seg_zebras.png" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,28 +15,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="12" column="42" lean-forward="true" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
+            <state relative-caret-position="399">
+              <caret line="118" column="44" lean-forward="true" selection-start-line="118" selection-start-column="44" selection-end-line="118" selection-end-column="44" />
               <folding>
                 <element signature="e#74#98#0" expanded="true" />
                 <marker date="1553962058538" expanded="true" signature="250:310" ph="..." />
               </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/numeric.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="224" selection-start-line="224" selection-end-line="224" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
-          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -106,6 +83,22 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -123,22 +116,6 @@
               <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="src_task1" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -325,7 +302,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947312" visible="true" weight="0.26435536" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.26435536" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -453,9 +430,6 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/numeric.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="218">
@@ -463,10 +437,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="12" column="42" lean-forward="true" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
+        <state relative-caret-position="399">
+          <caret line="118" column="44" lean-forward="true" selection-start-line="118" selection-start-column="44" selection-end-line="118" selection-end-column="44" />
           <folding>
             <element signature="e#74#98#0" expanded="true" />
             <marker date="1553962058538" expanded="true" signature="250:310" ph="..." />
