@@ -10,7 +10,7 @@ my_examples_directory = "my_examples"
 # CAN TOUCH THESE PARAMETERS WITH FULL OF ATTENTION:
 # **************************************************
 # Stay like this is meaning to open an image which stays beside the script (at the same directory)
-open_directory = "images"
+open_directory = "images//"
 
 # An example to open an image from another directory:
 # open_directory = "C://Users//itgu1//OneDrive//Desktop//ComputerVision//Assignment_1//Submission_305104184_207755737//"
