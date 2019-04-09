@@ -2,38 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0711.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0724.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0753.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0767.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0770.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0771.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0772.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0779.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0781.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0783.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0061.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0062.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0063.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0064.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0065.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0066.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0067.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0068.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0069.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/Elephant/image_0070.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0303.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0310.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0311.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0368.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0369.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0379.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0382.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0383.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0384.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Datasets/MotorBike/image_0385.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,22 +16,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="8" column="42" lean-forward="true" selection-start-line="8" selection-start-column="42" selection-end-line="8" selection-end-column="42" />
+            <state relative-caret-position="211">
+              <caret line="113" column="45" selection-start-line="113" selection-start-column="45" selection-end-line="113" selection-end-column="45" />
               <folding>
-                <element signature="e#74#98#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/HOGDescriptor.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="38" column="72" selection-start-line="38" selection-start-column="61" selection-end-line="38" selection-end-column="72" />
-              <folding>
-                <element signature="e#207#325#0" expanded="true" />
+                <element signature="e#74#83#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -126,22 +84,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -159,6 +101,22 @@
               <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="src_task1" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -367,46 +325,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/balloons.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/boat.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/boatMask.tif" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/messi.jpg" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/test.py" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/Segmentation_Example.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/Subdiv2D.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/ml_KNearest.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/lib/shape_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="596" lean-forward="true" selection-start-line="596" selection-end-line="596" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/shape_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="418" selection-start-line="418" selection-end-line="418" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/ml.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/ml_StatModel.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/linalg/linalg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="2453" selection-start-line="2453" selection-end-line="2453" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/multiarray.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="113">
@@ -414,7 +332,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/collections/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="202">
@@ -492,22 +409,89 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/fhog_object_detector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="75" column="8" selection-start-line="75" selection-start-column="8" selection-end-line="75" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/HOGDescriptor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="38" column="72" selection-start-line="38" selection-start-column="61" selection-end-line="38" selection-end-column="72" />
+        <state relative-caret-position="281">
+          <caret line="149" column="8" selection-start-line="149" selection-start-column="8" selection-end-line="149" selection-end-column="8" />
           <folding>
             <element signature="e#207#325#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0005.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0034.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0040.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0049.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0055.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0016.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0009.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0104.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0152.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0344.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0383.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0667.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0045.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="7258" column="4" selection-start-line="7258" selection-start-column="4" selection-end-line="7258" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-538">
+          <caret line="2512" column="4" selection-start-line="2512" selection-start-column="4" selection-end-line="2512" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="311" column="4" selection-start-line="311" selection-start-column="4" selection-end-line="311" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="8" column="42" lean-forward="true" selection-start-line="8" selection-start-column="42" selection-end-line="8" selection-end-column="42" />
+        <state relative-caret-position="211">
+          <caret line="113" column="45" selection-start-line="113" selection-start-column="45" selection-end-line="113" selection-end-column="45" />
           <folding>
-            <element signature="e#74#98#0" expanded="true" />
+            <element signature="e#74#83#0" expanded="true" />
           </folding>
         </state>
       </provider>
