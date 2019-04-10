@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Assignment_1/man.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" afterDir="false" />
     </list>
@@ -19,17 +20,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="15" lean-forward="true" selection-end-line="570" selection-end-column="29" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="204">
+              <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
+        <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
           <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
@@ -55,6 +53,8 @@
       <find>multivoting_by_grabcut</find>
       <find>elias</find>
       <find>save_results</find>
+      <find>isolation</find>
+      <find>segmenting_isolation</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -87,6 +87,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="images" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -109,28 +131,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="results" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -138,13 +138,14 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\user\Documents\GitHub\ComputerVision\Assignment_1" />
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
+      <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
       <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
-      <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -307,12 +308,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14657739" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14657739" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.26022914" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.29459903" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -334,10 +335,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/venv/test.py" />
-    <entry file="file://$PROJECT_DIR$/baseRefactoring.xml" />
-    <entry file="file://$PROJECT_DIR$/project.default.xml" />
-    <entry file="file://$PROJECT_DIR$/codestyles/Default.xml" />
     <entry file="file://$PROJECT_DIR$/venv/src_task1/test.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/balloons.jpg">
       <provider selected="true" editor-type-id="images" />
@@ -422,20 +419,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowers.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/numpy/core/_multiarray_umath.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/Florence.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/florenceMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horsesMask.tif">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/chinaMask.tif">
@@ -447,31 +435,7 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/fish.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image002.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/fishMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebrasMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horses.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guardMask.tif">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/moose.jpg">
@@ -495,18 +459,68 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image003 (1).gif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image003.gif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image002.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowers.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/florenceMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/fishMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guardMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horses.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horsesMask.tif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/Submission_305104184_207755737/Multi_Segmentation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="15" lean-forward="true" selection-end-line="570" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="221">
+          <caret line="14" lean-forward="true" selection-end-line="385" selection-end-column="29" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/argparse.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30158">
+          <caret line="1778" column="62" lean-forward="true" selection-start-line="1778" selection-start-column="62" selection-end-line="1778" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
+      <provider selected="true" editor-type-id="images" />
     </entry>
   </component>
   <component name="masterDetails">
