@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/Assignment_1/man.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,19 +14,31 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py">
+        <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="204">
               <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+=======
+            <state relative-caret-position="497">
+              <caret line="354" lean-forward="true" selection-start-line="354" selection-end-line="354" />
+              <folding>
+                <element signature="e#74#98#0" expanded="true" />
+                <marker date="1553643723201" expanded="true" signature="250:310" ph="..." />
+              </folding>
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
           <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
+=======
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -53,8 +61,14 @@
       <find>multivoting_by_grabcut</find>
       <find>elias</find>
       <find>save_results</find>
+<<<<<<< HEAD
       <find>isolation</find>
       <find>segmenting_isolation</find>
+=======
+      <find>open_directory</find>
+      <find>Image</find>
+      <find>calc_grabcut_combinations</find>
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -74,6 +88,7 @@
         <option value="$PROJECT_DIR$/Assignment_1/Segmentation_Example.py" />
         <option value="$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" />
         <option value="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
+        <option value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
       </list>
     </option>
   </component>
@@ -89,6 +104,25 @@
     <panes>
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+<<<<<<< HEAD
+=======
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_1" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
           <expand>
             <path>
               <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
@@ -109,6 +143,7 @@
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -131,6 +166,8 @@
           <select />
         </subPane>
       </pane>
+=======
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -160,7 +197,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.MultiSegmentation">
+  <component name="RunManager" selected="Python.Multi_Segmentation">
     <configuration name="Interactive_Drawing" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ComputerVision" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -195,6 +232,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Multi_Segmentation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ComputerVision" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Assignment_1" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -245,34 +303,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="ComputerVision" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src_task1" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src_task1/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Multi_Segmentation" />
         <item itemvalue="Python.MultiSegmentation" />
         <item itemvalue="Python.Interactive_Drawing" />
         <item itemvalue="Python.Segmentation" />
         <item itemvalue="Python.test (3)" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -305,15 +342,23 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
+<<<<<<< HEAD
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14657739" />
+=======
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14699684" />
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.29459903" />
+=======
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.26435536" />
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -335,6 +380,11 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
+=======
+    <entry file="file://$PROJECT_DIR$/project.default.xml" />
+    <entry file="file://$PROJECT_DIR$/codestyles/Default.xml" />
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
     <entry file="file://$PROJECT_DIR$/venv/src_task1/test.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/balloons.jpg">
       <provider selected="true" editor-type-id="images" />
@@ -342,39 +392,11 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/boat.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/boatMask.tif">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/messi.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="30" column="74" selection-start-line="30" selection-start-column="74" selection-end-line="30" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="20" column="23" lean-forward="true" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/Segmentation_Example.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/boatMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/messi.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/test.py" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/Segmentation_Example.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/Subdiv2D.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/ml_KNearest.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
@@ -423,6 +445,7 @@
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/Florence.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -469,11 +492,38 @@
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
+=======
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/florenceMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horsesMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/chinaMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/cornMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/fish.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/image002.png" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/fishMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebrasMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/zebras.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/horses.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guardMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/moose.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/mooseMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/soccer.png">
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPinkMask.tif">
       <provider selected="true" editor-type-id="images" />
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -516,6 +566,32 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+=======
+    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/manMask.tif" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
+    <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="497">
+          <caret line="354" lean-forward="true" selection-start-line="354" selection-end-line="354" />
+          <folding>
+            <element signature="e#74#98#0" expanded="true" />
+            <marker date="1553643723201" expanded="true" signature="250:310" ph="..." />
+          </folding>
+>>>>>>> 69744a5083be2b34995c7d09eacc407e73a1dfaf
         </state>
       </provider>
     </entry>
