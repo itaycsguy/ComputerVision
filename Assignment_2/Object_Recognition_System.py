@@ -58,6 +58,9 @@ class Features:
         # These are parameters which required from the program to get initially
         self._cell_size = cell_size # Descriptor cell computation on the image after resizing
         self._bin_n = bin_n         # Number of bins
+        self._centers = None
+        self._labels = None
+        self._bow = None
 
 
 
@@ -89,6 +92,7 @@ class Features:
         hist = np.sqrt(hist)
         hist /= cv2.norm(hist) + eps
 
+        # print(hist)
         # return the descriptor which is fully describe the image features
         return hist
 
@@ -99,26 +103,20 @@ class Features:
         database_feature_vectors = list()
         feature_vectors_labels = list()
         for image_name, image_label in zip(data.keys(), data.values()):
-            image_instance = cv2.imread(self._database.get_root_dir() + "//" + image_name, 0)
+            # Coloured image
+            image_instance = cv2.imread(self._database.get_root_dir() + "//" + image_name)
             image_instance = cv2.resize(image_instance, (64, 128), interpolation=cv2.INTER_CUBIC)
-            database_feature_vectors.append(self.__get_HOG_desctiptor(image_instance))
+            database_feature_vectors.append(np.array(self.__get_HOG_desctiptor(image_instance), dtype=np.float32))
             feature_vectors_labels.append(image_label)
 
         # Here - DB training-set is transferred to features vectors representation
-
-        # how to make hash to trained vector?
-        ## Clustering to K groups
-        # criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        # ret, label, center = cv2.kmeans(database_feature_vectors, self._database.get_sets_amount(), None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-        #
-        # return {
-        #             0: database_feature_vectors[label.ravel() == 0],
-        #             1: database_feature_vectors[label.ravel() == 1],
-        #             2: database_feature_vectors[label.ravel() == 2]
-        #         }
+        # Clustering into 3 groups at our problem
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        ret, self._labels, self._centers = cv2.kmeans(np.asarray(database_feature_vectors), self._database.get_sets_amount(), None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        return self._centers, self._labels
 
 
-    def feature_vectors_to_BOWs(self):
+    def gen_BOWs(self):
         pass
 
 
