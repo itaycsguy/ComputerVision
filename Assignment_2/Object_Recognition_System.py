@@ -30,6 +30,9 @@ class Database:
                     self._image_hash[outer_dir + "//" + image_name] = Database.ALLOWED_DIRS[outer_dir.lower()]
 
 
+    """
+        Return root training-set directory
+    """
     def get_root_dir(self):
         return self._root_dir
 
@@ -50,54 +53,44 @@ class Database:
 
 
 class Features:
-    def __init__(self, database, hist_size=9):
+    def __init__(self, database, cell_size=8, bin_n=16):
         self._database = database
-        self._hist_size = hist_size
+        # These are parameters which required from the program to get initially
+        self._cell_size = cell_size # Descriptor cell computation on the image after resizing
+        self._bin_n = bin_n         # Number of bins
+
 
 
     def __get_HOG_desctiptor(self, image_instance):
-        image_instance = np.float32(image_instance) / 255.0
-        for row in range(0, image_instance.shape[0], 8):
-            for col in range(0, image_instance.shape[1], 8):
-                sub_image = image_instance[row: (row + 8), col: (col + 8)]
-                gx = cv2.Sobel(sub_image, cv2.CV_32F, 1, 0, ksize=1)
-                gy = cv2.Sobel(sub_image, cv2.CV_32F, 0, 1, ksize=1)
-                magnitude, angle = cv2.cartToPolar(gx, gy, angleInDegrees=True)
+        # Gradients computations
+        gx = cv2.Sobel(image_instance, cv2.CV_32F, 1, 0)
+        gy = cv2.Sobel(image_instance, cv2.CV_32F, 0, 1)
 
-                histograms = list()
-                for x, y in zip(range(0, magnitude.shape[0]), range(0, magnitude.shape[1])):
+        # Degrees computations [0 - 180]
+        mag, ang = cv2.cartToPolar(gx, gy)
 
-                    # build a local histogram
-                    hist_instance = {}
-                    jump_chunk = 180.0 / self._hist_size
-                    for i in np.arange(0, 180, jump_chunk):
-                        hist_instance[i] = 0.0
+        # bin separation by _bin_n steps
+        bin = np.int32(self._bin_n * ang / (2 * np.pi))
 
-                    grad_mag_value = magnitude[x, y]    # magnitude
-                    grad_angle_value = angle[x, y]      # direction
-                    if grad_angle_value in hist_instance.keys():
-                        hist_instance[grad_angle_value] += grad_mag_value
-                    else:
-                        jump_half_size = 180.0 / (2.0 * self._hist_size)
-                        sorted_hist = sorted(hist_instance.keys(), reverse=False)
+        bin_cells = []
+        mag_cells = []
+        # The cell_size can be separated to cell_x, cell_y which at this case they are the same for always
+        for i in range(0, int(image_instance.shape[0] / self._cell_size)):
+            for j in range(0, int(image_instance.shape[1] / self._cell_size)):
+                bin_cells.append(bin[(i * self._cell_size): (i * self._cell_size + self._cell_size), (j * self._cell_size): (j * self._cell_size + self._cell_size)])
+                mag_cells.append(mag[(i * self._cell_size): (i * self._cell_size + self._cell_size), (j * self._cell_size): (j * self._cell_size + self._cell_size)])
 
-                        # Can being into one location only
-                        for i in range(0, len(sorted_hist) - 1):
-                            if sorted_hist[i] < grad_angle_value and sorted_hist[i + 1] > grad_angle_value:
-                                diff = grad_angle_value - sorted_hist[i]
-                                if diff == jump_half_size:
-                                    hist_instance[sorted_hist[i]] += grad_mag_value / 2.0
-                                    hist_instance[sorted_hist[i + 1]] += grad_mag_value / 2.0
-                                elif diff > jump_half_size:
-                                    hist_instance[sorted_hist[i + 1]] += grad_mag_value
-                                else:
-                                    hist_instance[sorted_hist[i]] += grad_mag_value
+        hists = [np.bincount(b.ravel(), m.ravel(), self._bin_n) for b, m in zip(bin_cells, mag_cells)]
+        hist = np.hstack(hists)
 
-                    # need to make it global
-                    histograms.append(hist_instance.copy())
+        # Transform to Hellinger kernel [Normalization issue]
+        eps = 1e-7
+        hist /= hist.sum() + eps
+        hist = np.sqrt(hist)
+        hist /= cv2.norm(hist) + eps
 
-
-
+        # return the descriptor which is fully describe the image features
+        return hist
 
 
 
@@ -110,6 +103,8 @@ class Features:
             image_instance = cv2.resize(image_instance, (64, 128), interpolation=cv2.INTER_CUBIC)
             database_feature_vectors.append(self.__get_HOG_desctiptor(image_instance))
             feature_vectors_labels.append(image_label)
+
+        # Here - DB training-set is transferred to features vectors representation
 
         # how to make hash to trained vector?
         ## Clustering to K groups
