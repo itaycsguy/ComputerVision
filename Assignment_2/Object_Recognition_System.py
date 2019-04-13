@@ -16,6 +16,7 @@ testImageDirName = "/Datasets/Testset"
     A class who holds all the training data + labels
 """
 class Database:
+    TARGET_CLASS = "airplane"
     # Defined at the published assignment
     ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
 
@@ -30,6 +31,10 @@ class Database:
                 inner_dir_path = dir_path + "//" + outer_dir
                 for image_name in os.listdir(inner_dir_path):
                     self._image_hash[outer_dir + "//" + image_name] = Database.ALLOWED_DIRS[outer_dir.lower()]
+
+
+    def get_target_class(self):
+        return Database.ALLOWED_DIRS[Database.TARGET_CLASS]
 
 
     """
@@ -79,6 +84,11 @@ class Features:
         self._centers = None
         self._labels = None
         self._bows = None
+
+
+
+    def get_target_value(self):
+        return self._database.get_target_class()
 
 
 
@@ -351,13 +361,29 @@ class Classifier:
 
 
     """
+    """
+    def __prepare_labels(self, labels, target_value):
+        vals = dlib.array()
+        for label in labels:
+            if label == target_value:
+                vals.append(+1)
+            else:
+                vals.append(-1)
+
+        return vals
+
+
+    """
         Training the classifier
     """
     def train(self):
         # prepare the data for being as type of dlib objects
-        data = self.__prepare_data(self._features.get_bows())                       # -> dlib.vectors
-        labels = dlib.array(self._features.get_feature_vectors_labels_by_image())   # -> dlib.array
-        self._decision_function = self._svm_instance.train(data, labels)            # -> dlib._decision_function_radial_basis
+        # -> dlib.vectors
+        data = self.__prepare_data(self._features.get_bows())
+        # -> dlib.array => [-1,1]
+        labels = self.__prepare_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
+        # -> dlib._decision_function_radial_basis
+        self._decision_function = self._svm_instance.train(data, labels)
         return self._decision_function
 
 
@@ -374,9 +400,9 @@ if __name__ == "__main__":
     # Must object to handle data as features
     feature_instance = Features(db_instance)
     ## Feature extraction process which is necessary while no pre-processing have been made yet
-    feature_instance.generate_visual_word_dict()
-    feature_instance.generate_bows()
-    feature_instance.save()
+    # feature_instance.generate_visual_word_dict()
+    # feature_instance.generate_bows()
+    # feature_instance.save()
     feature_instance.load()
     classifier_instance = Classifier(feature_instance)
     classifier_instance.train()
