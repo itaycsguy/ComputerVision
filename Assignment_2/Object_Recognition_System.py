@@ -82,6 +82,14 @@ class Features:
 
 
 
+    def __reshape(self, raw_hist):
+        hists = list()
+        for i in range(0, len(raw_hist), self._bin_n):
+            hists.append(raw_hist[i:(i + self._bin_n)].ravel())
+
+        return hists
+
+
     """
         HOG descriptor for list of images by using the native API from openCV 
         [1] images - list of openCV opened images
@@ -95,22 +103,21 @@ class Features:
         nbins = self._bin_n
         derivAperture = 1
         winSigma = 4.0
-        histogramNormType = 0
-        L2HysThreshold = 2.0000000000000001e-01
+        histogramNormType = 1
+        L2HysThreshold = 0.2
         gammaCorrection = 0
         nlevels = 64
+        signedGradient = 0
         hog = cv2.HOGDescriptor(winSize, blockSize, blockStride, cellSize, nbins,
                                 derivAperture, winSigma, histogramNormType, L2HysThreshold,
-                                gammaCorrection, nlevels)
+                                gammaCorrection, nlevels, signedGradient)
         # compute(img[, winStride[, padding[, locations]]]) -> descriptors
         winStride = (self._cell_size, self._cell_size)
         padding = (self._cell_size, self._cell_size)
-        locations = ((10, 20), (30, 30), (50, 50), (70, 70),
-                     (90, 90), (110, 110), (130, 130), (150, 150),
-                     (170, 170), (190, 190))
+        locations = []
         for image in images:
             hist = hog.compute(image, winStride, padding, locations)
-            samples.append(hist)
+            samples.append(self.__reshape(hist))
         return np.float32(samples)
 
 
@@ -126,21 +133,23 @@ class Features:
         cellSize = (self._cell_size, self._cell_size)
         nbins = self._bin_n
         derivAperture = 1
-        winSigma = 4.0
+        winSigma = -1.0
         histogramNormType = 1
-        L2HysThreshold = 2.0000000000000001e-01
-        gammaCorrection = 1
+        L2HysThreshold = 0.2
+        gammaCorrection = 0
         nlevels = 64
+        signedGradient = 0
         hog_instance = cv2.HOGDescriptor(winSize, blockSize, blockStride, cellSize, nbins,
                                          derivAperture, winSigma, histogramNormType, L2HysThreshold,
-                                         gammaCorrection, nlevels)
+                                         gammaCorrection, nlevels, signedGradient)
 
         # compute(img[, winStride[, padding[, locations]]]) -> descriptors
         winStride = (self._cell_size, self._cell_size)
         padding = (self._cell_size, self._cell_size)
-        locations = []  # correlated with n-bins number
+        # correlated with n-bins number -> not working at all:
+        locations = []
         hist = hog_instance.compute(image, winStride, padding, locations)
-        return hist
+        return self.__reshape(hist)
 
 
     """
@@ -179,9 +188,6 @@ class Features:
                 for hist in cell_hists.tolist():
                     hists.append(hist)
 
-        ## There are few differences between this implementation and the native HOG from opencv -> take a pick:
-        # print(np.asarray(hists).shape)
-        # print(self.get_hog(image_instance).shape)
         # return the descriptor which is fully describe the image features
         return hists
 
@@ -213,7 +219,7 @@ class Features:
             # Coloured image
             image_instance = cv2.imread(self._database.get_root_dir() + "//" + image_name)
             image_instance = cv2.resize(image_instance, self._win_size, interpolation=cv2.INTER_CUBIC)
-            self._feature_vectors.append(self.__get_HOG_desctiptor(image_instance))
+            self._feature_vectors.append(self.get_native_hog(image_instance))
             self._feature_vectors_labels.append(image_label)
 
         feature_vector_instances = np.asarray(self._reduce_to_2D(self._feature_vectors), dtype=np.float32)
@@ -368,9 +374,9 @@ if __name__ == "__main__":
     # Must object to handle data as features
     feature_instance = Features(db_instance)
     ## Feature extraction process which is necessary while no pre-processing have been made yet
-    # feature_instance.generate_visual_word_dict()
-    # feature_instance.generate_bows()
-    # feature_instance.save()
+    feature_instance.generate_visual_word_dict()
+    feature_instance.generate_bows()
+    feature_instance.save()
     feature_instance.load()
     classifier_instance = Classifier(feature_instance)
     classifier_instance.train()
