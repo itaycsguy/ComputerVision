@@ -328,6 +328,7 @@ class Classifier:
         self._svm_instance = dlib.svm_c_trainer_radial_basis()  # svm_c_trainer_linear() -> the linear case
         self._svm_instance.set_c(self._c)
         # self._svm_instance.be_verbose()                         # linear field
+        self._decision_function = None
 
 
 
@@ -348,11 +349,10 @@ class Classifier:
     """
     def train(self):
         # prepare the data for being as type of dlib objects
-        data = self.__prepare_data(self._features.get_bows())
-        labels = dlib.array(self._features.get_feature_vectors_labels_by_image())
-        # print(len(data))
-        # print(len(labels))
-        self._svm_instance.train(data, labels)
+        data = self.__prepare_data(self._features.get_bows())                       # -> dlib.vectors
+        labels = dlib.array(self._features.get_feature_vectors_labels_by_image())   # -> dlib.array
+        self._decision_function = self._svm_instance.train(data, labels)            # -> dlib._decision_function_radial_basis
+        return self._decision_function
 
 
     def test(self):
