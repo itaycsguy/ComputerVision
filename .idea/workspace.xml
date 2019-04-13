@@ -16,11 +16,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="353" column="28" selection-start-line="353" selection-start-column="28" selection-end-line="353" selection-end-column="28" />
+            <state relative-caret-position="276">
+              <caret line="353" column="84" selection-start-line="353" selection-start-column="84" selection-end-line="353" selection-end-column="84" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
-                <marker date="1555166659779" expanded="true" signature="6988:7080" ph="..." />
+                <marker date="1555167189027" expanded="true" signature="6988:7080" ph="..." />
               </folding>
             </state>
           </provider>
@@ -75,7 +75,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="427" />
     <option name="y" value="219" />
     <option name="width" value="324" />
@@ -524,16 +524,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_radial_basis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
-          <folding>
-            <element signature="e#175#222#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/vectors.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="169">
@@ -541,13 +531,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_radial_basis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-47">
+          <caret line="19" column="134" lean-forward="true" selection-start-line="19" selection-start-column="98" selection-end-line="19" selection-end-column="134" />
+          <folding>
+            <element signature="e#175#222#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="353" column="28" selection-start-line="353" selection-start-column="28" selection-end-line="353" selection-end-column="28" />
+        <state relative-caret-position="276">
+          <caret line="353" column="84" selection-start-line="353" selection-start-column="84" selection-end-line="353" selection-end-column="84" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
-            <marker date="1555166659779" expanded="true" signature="6988:7080" ph="..." />
+            <marker date="1555167189027" expanded="true" signature="6988:7080" ph="..." />
           </folding>
         </state>
       </provider>
