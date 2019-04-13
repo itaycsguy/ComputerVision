@@ -394,6 +394,7 @@ class Classifier:
         labels = self.__prepare_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
         # -> dlib._decision_function_radial_basis
         self._decision_function = self._svm_instance.train(data, labels)
+        # print(self._decision_function(data[0]))
         return self._decision_function
 
 
@@ -410,9 +411,9 @@ if __name__ == "__main__":
     # Must object to handle data as features
     feature_instance = Features(db_instance)
     ## Feature extraction process which is necessary while no pre-processing have been made yet
-    feature_instance.generate_visual_word_dict()
-    feature_instance.generate_bows()
+    # feature_instance.generate_visual_word_dict()
+    # feature_instance.generate_bows()
     # feature_instance.save()
-    # feature_instance.load()
-    # classifier_instance = Classifier(feature_instance)
-    # classifier_instance.train()
+    feature_instance.load()
+    classifier_instance = Classifier(feature_instance)
+    classifier_instance.train()
