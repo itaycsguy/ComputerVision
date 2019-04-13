@@ -6,7 +6,7 @@ import numpy as np
 import argparse
 
 
-trainImageDirName = "D://PycharmProjects//ComputerVision//Assignment_2//Datasets"
+trainImageDirName = "C://Users//user//Documents//GitHub//ComputerVision//Assignment_2//Datasets"
 testImageDirName = "/Datasets/Testset"
 
 
