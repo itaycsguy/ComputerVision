@@ -9,7 +9,7 @@ import argparse
 
 
 trainImageDirName = "C://Users//user//Documents//GitHub//ComputerVision//Assignment_2//Datasets"
-testImageDirName = "/Datasets/Testset"
+testImageDirName = ".//Datasets//Testset"
 
 
 """
@@ -85,6 +85,7 @@ class Features:
         self._patches_centers = None
         self._patches_labels = None
         self._bows = None
+        self._test_bows = None
 
 
     """
@@ -269,22 +270,43 @@ class Features:
     """
         Return feature histogram for each image from the Database
     """
-    def generate_bows(self):
+    def generate_bows(self, feature_vectors, train_mode=True):
         if self._patches_centers is None:
             print("'gen_visual_word_dict()' method should be used as a prior step.")
             return None
 
-        self._bows = list()
+        bows = list()
+        if not train_mode:
+            bows = np.zeros(self._K, dtype=np.uint32)
         patch_loc = 0
-        for fv_image in self._feature_vectors:
-            path_hists = np.zeros(self._K, dtype=np.uint32)
-            for _ in range(0, len(fv_image)):
-                best_class = self._patches_labels[patch_loc]
-                path_hists[best_class] += 1
-                patch_loc += 1
-            self._bows.append(path_hists.tolist())
+        for fv_image in feature_vectors:
+            patch_hists = np.zeros(self._K, dtype=np.uint32)
+            for block_descriptor in fv_image:
+                best_class = -1
+                if train_mode:
+                    best_class = self._patches_labels[patch_loc]
+                else:
+                    best_class = self.__get_simi_class(block_descriptor, self._patches_centers)
+                if best_class != -1:
+                    patch_hists[best_class] += 1
+                    patch_loc += 1
+            # single processing case
+            if train_mode:
+                bows.append(patch_hists.tolist())
+            else:
+                for idx, _ in enumerate(patch_hists):
+                    bows[idx] += patch_hists[idx]
 
-        return self._bows
+        if train_mode:
+            self._bows = bows
+        else:
+            self._test_bows = bows
+
+        return bows
+
+
+    def get_win_size(self):
+        return self._win_size
 
 
     """
@@ -292,6 +314,11 @@ class Features:
     """
     def get_bows(self):
         return self._bows
+
+
+    def get_test_bows(self):
+        return self._test_bows
+
 
     """
         Foreach image there is (height/cell_size * width/cell_size) features
@@ -322,23 +349,24 @@ class Features:
 
 
     """
-        Save the output data from Feature class methods to pickle file for next using -> [bows, labels]
+        Save the output data from Feature class methods to pickle file for next using -> [bows, labels, centers]
     """
     def save(self):
-        obj_data = [self._bows, self._feature_vectors_labels]
+        obj_data = [self._bows, self._feature_vectors_labels, self._patches_centers]
         if not os.path.exists("var"):
             os.mkdir("var")
         pickle.dump(obj_data, open(Features.__PICKLE_LOC, "wb+"))
 
 
     """
-        Load [bows, labels] from saved pickle file at 'var' directory
+        Load [bows, labels, centers] from saved pickle file at 'var' directory
     """
     def load(self):
         feature_obj_data = pickle.load(open(Features.__PICKLE_LOC, "rb"))
         self._bows = feature_obj_data[0]
         self._feature_vectors_labels = feature_obj_data[1]
-        return self._bows, self._feature_vectors_labels
+        self._patches_centers = feature_obj_data[2]
+        return self._bows, self._feature_vectors_labels, self._patches_centers
 
 
 
@@ -402,6 +430,32 @@ class Classifier:
         pass
 
 
+    def recognizer(self):
+        for image_name in os.listdir(testImageDirName):
+            image_path = testImageDirName + "//" + image_name
+            image = cv2.imread(image_path)
+            image = cv2.resize(image, self._features.get_win_size(), interpolation=cv2.INTER_CUBIC)
+
+            # extract features from the image
+            feature_vectors = self._features.get_native_hog(image)
+            bow = self._features.generate_bows(feature_vectors, False)
+            dlib_bow = self.__prepare_data(self._features.generate_bows(feature_vectors, False))
+            print(bow)
+            # determine the visual words these features represent
+
+
+            # build BOW for the image
+
+
+            # classify the BOW using the classifier built in step 4
+
+            cv2.imshow(image_name, image)
+            print("image_name", image_name)
+            cv2.waitKey(0)
+            cv2.destroyWindow(image_name)
+        return
+
+
 
 
 if __name__ == "__main__":
@@ -412,8 +466,9 @@ if __name__ == "__main__":
     feature_instance = Features(db_instance)
     ## Feature extraction process which is necessary while no pre-processing have been made yet
     # feature_instance.generate_visual_word_dict()
-    # feature_instance.generate_bows()
+    # feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
     # feature_instance.save()
     feature_instance.load()
     classifier_instance = Classifier(feature_instance)
     classifier_instance.train()
+    classifier_instance.recognizer()
