@@ -16,6 +16,7 @@ testImageDirName = "/Datasets/Testset"
     A class who holds all the training data + labels
 """
 class Database:
+    TARGET_CLASS = "airplane"
     # Defined at the published assignment
     ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
 
@@ -30,6 +31,12 @@ class Database:
                 inner_dir_path = dir_path + "//" + outer_dir
                 for image_name in os.listdir(inner_dir_path):
                     self._image_hash[outer_dir + "//" + image_name] = Database.ALLOWED_DIRS[outer_dir.lower()]
+
+
+
+    def get_target_class(self):
+        return Database.ALLOWED_DIRS[Database.TARGET_CLASS]
+
 
 
     """
@@ -51,7 +58,6 @@ class Database:
     """
     def get_sets_amount(self):
         return len(Database.ALLOWED_DIRS)
-
 
 
 class Features:
@@ -76,12 +82,21 @@ class Features:
         self._feature_vectors = None
         self._feature_vectors_labels = None
         # computed information
-        self._centers = None
-        self._labels = None
+        self._patches_centers = None
+        self._patches_labels = None
         self._bows = None
 
 
+    """
+        Return the target class
+    """
+    def get_target_value(self):
+        return self._database.get_target_class()
 
+
+    """
+        Return a reshape structure of the HOG API returning
+    """
     def __reshape(self, raw_hist):
         hists = list()
         for i in range(0, len(raw_hist), self._bin_n):
@@ -215,6 +230,7 @@ class Features:
         data = self._database.get_data_hash()
         self._feature_vectors = []
         self._feature_vectors_labels = list()
+        self._patchs_labels = list()
         for image_name, image_label in zip(data.keys(), data.values()):
             # Coloured image
             image_instance = cv2.imread(self._database.get_root_dir() + "//" + image_name)
@@ -228,7 +244,9 @@ class Features:
         # Clustering into K groups at our problem
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         # Input all visual word from the DB
-        return_value, self._labels, self._centers = cv2.kmeans(feature_vector_instances, self._K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        return_value, labels, self._patches_centers = cv2.kmeans(feature_vector_instances, self._K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        self._patches_labels = labels.ravel()
+
 
 
     """
@@ -252,16 +270,18 @@ class Features:
         Return feature histogram for each image from the Database
     """
     def generate_bows(self):
-        if self._centers is None:
+        if self._patches_centers is None:
             print("'gen_visual_word_dict()' method should be used as a prior step.")
             return None
+
         self._bows = list()
+        patch_loc = 0
         for fv_image in self._feature_vectors:
             path_hists = np.zeros(self._K, dtype=np.uint32)
-            for block_descriptor in fv_image:
-                best_class = self.__get_simi_class(block_descriptor, self._centers)
-                if best_class != -1:
-                    path_hists[best_class] += 1
+            for _ in range(0, len(fv_image)):
+                best_class = self._patches_labels[patch_loc]
+                path_hists[best_class] += 1
+                patch_loc += 1
             self._bows.append(path_hists.tolist())
 
         return self._bows
@@ -291,14 +311,14 @@ class Features:
         Can be used after kmeans execution [as part of the algorithm output]
     """
     def get_quantized_center(self):
-        return self._centers
+        return self._patches_centers
 
 
     """
         Can be used after kmeans execution [as part of the algorithm output]
     """
     def get_quantized_labels(self):
-        return self._labels
+        return self._patches_labels
 
 
     """
@@ -351,13 +371,30 @@ class Classifier:
 
 
     """
+    """
+    def __prepare_labels(self, labels, target_value):
+        vals = dlib.array()
+        for label in labels:
+            if label == target_value:
+                vals.append(+1)
+            else:
+                vals.append(-1)
+
+        return vals
+
+
+    """
         Training the classifier
     """
     def train(self):
         # prepare the data for being as type of dlib objects
-        data = self.__prepare_data(self._features.get_bows())                       # -> dlib.vectors
-        labels = dlib.array(self._features.get_feature_vectors_labels_by_image())   # -> dlib.array
-        self._decision_function = self._svm_instance.train(data, labels)            # -> dlib._decision_function_radial_basis
+        # -> dlib.vectors
+        data = self.__prepare_data(self._features.get_bows())
+        # -> dlib.array => [-1,1]
+        labels = self.__prepare_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
+        # -> dlib._decision_function_radial_basis
+        self._decision_function = self._svm_instance.train(data, labels)
+        # print(self._decision_function(data[0]))
         return self._decision_function
 
 
@@ -374,9 +411,9 @@ if __name__ == "__main__":
     # Must object to handle data as features
     feature_instance = Features(db_instance)
     ## Feature extraction process which is necessary while no pre-processing have been made yet
-    feature_instance.generate_visual_word_dict()
-    feature_instance.generate_bows()
-    feature_instance.save()
+    # feature_instance.generate_visual_word_dict()
+    # feature_instance.generate_bows()
+    # feature_instance.save()
     feature_instance.load()
     classifier_instance = Classifier(feature_instance)
     classifier_instance.train()
