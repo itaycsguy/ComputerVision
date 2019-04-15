@@ -440,12 +440,9 @@ class Classifier:
             feature_vectors = self._features.get_native_hog(image)
             bow = self._features.generate_bows(feature_vectors, False)
             dlib_bow = self.__prepare_data(self._features.generate_bows(feature_vectors, False))
-            print(bow)
+
             # determine the visual words these features represent
-
-
             # build BOW for the image
-
 
             # classify the BOW using the classifier built in step 4
 
