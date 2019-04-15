@@ -24,7 +24,6 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
     </list>
@@ -39,8 +38,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="626" column="10" lean-forward="true" selection-start-line="626" selection-start-column="10" selection-end-line="626" selection-end-column="10" />
+            <state relative-caret-position="351">
+              <caret line="659" lean-forward="true" selection-start-line="659" selection-end-line="659" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -330,15 +329,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17857143" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.2651391" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.28494042" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -498,8 +497,8 @@
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_radial_basis.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="626" column="10" lean-forward="true" selection-start-line="626" selection-start-column="10" selection-end-line="626" selection-end-column="10" />
+        <state relative-caret-position="351">
+          <caret line="659" lean-forward="true" selection-start-line="659" selection-end-line="659" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>

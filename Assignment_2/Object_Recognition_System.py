@@ -688,6 +688,7 @@ if __name__ == "__main__":
             classifier_instance.show_test_recall()
             feature_instance.show_current_k()
             time.sleep(3)
+
     db_instance = Database(trainImageDirName)
     # Must object to handle data as features
     feature_instance = Features(db_instance)
