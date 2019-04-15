@@ -6,9 +6,11 @@ import numpy as np
 import dlib
 import pickle
 import argparse
+import matplotlib.pyplot as plt
+import numpy as np
 
 
-trainImageDirName = "D://PycharmProjects//ComputerVision//Assignment_2//Datasets"
+trainImageDirName = ".//Datasets"
 testImageDirName = ".//Datasets//Testset"
 
 
@@ -470,10 +472,10 @@ class Classifier:
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
             self._recognition_results[image_name] = prediction_activation
 
-            # cv2.imshow(image_name, image)
-            # print("image_name", image_name)
-            # cv2.waitKey(0)
-            # cv2.destroyWindow(image_name)
+            cv2.imshow(image_name, image)
+            print("image_name", image_name)
+            cv2.waitKey(0)
+            cv2.destroyWindow(image_name)
 
 
 
@@ -559,7 +561,24 @@ class Classifier:
         result = self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1])
         print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 1], result))
 
+    def ROCCurve(self,Recall,Precision,Accuracy,dependent_variable,name):
+        linear = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0]
+        fig, axs = plt.subplots(2, 1, constrained_layout=True)
+        axs[0].plot()
+        axs[0].plot(Recall, Precision, '-')
+        # axs.plot(t1, f(t1), 'o')
+        # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
+        axs[0].plot(linear, linear, '--')
+        axs[0].set_xlabel('Recall')
+        axs[0].set_ylabel('Precision')
+        fig.suptitle('ROC Curve (Dependent Variable - ' + name + ')', fontsize=16)
 
+        axs[1].plot(Accuracy, dependent_variable, '--')
+        axs[1].set_xlabel('dependent variable - ' + name)
+        #axs[1].set_title('Accuracy Function')
+        axs[1].set_ylabel('Accuracy')
+
+        plt.show()
 
 """
     TODO:
@@ -575,16 +594,45 @@ if __name__ == "__main__":
     db_instance = Database(trainImageDirName)
     # Must object to handle data as features
     feature_instance = Features(db_instance)
-    ## Feature extraction process which is necessary while no pre-processing have been made yet
-    # feature_instance.generate_visual_word_dict()
-    # feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
-    # feature_instance.save()
-    # feature_instance.load()
+    # ## Feature extraction process which is necessary while no pre-processing have been made yet
+    feature_instance.generate_visual_word_dict()
+    feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
+    feature_instance.save()
+    feature_instance.load()
     classifier_instance = Classifier(feature_instance)
-    # classifier_instance.train()
+    classifier_instance.train()
     # classifier_instance.recognizer()
     # classifier_instance.save()
-    classifier_instance.load()
-    classifier_instance.show_test_accuracy()
-    classifier_instance.show_test_precision()
-    classifier_instance.show_test_recall()
+    # classifier_instance.load()
+    # classifier_instance.show_test_accuracy()
+    # classifier_instance.show_test_precision()
+    # classifier_instance.show_test_recall()
+
+
+    Recall = []
+    Precision = []
+    Accuracy = []
+    dependent_variable = []
+    name = 'K'
+    for k in range(1,10):
+
+        # You Need to update this Arrays:
+        current_recal = k
+        current_precision = k
+        current_Accuracy = k
+        current_dependent_variable = k
+        # #############################
+
+
+        Recall.append(current_recal)
+        Precision.append(current_precision)
+        Accuracy.append(current_Accuracy)
+        dependent_variable.append(current_dependent_variable)
+
+
+    classifier_instance.ROCCurve(Recall, Precision,Accuracy,dependent_variable,name)
+
+
+
+
+
