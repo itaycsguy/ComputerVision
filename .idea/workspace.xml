@@ -2,9 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
+      <change beforePath="D:/GitHub/realmeeting/realmeeting.sln" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting.sln" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Resources/Resource.designer.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Resources/Resource.designer.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/realmeeting.Android.csproj" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/realmeeting.Android.csproj" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/App.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/App.xaml" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/App.xaml.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/MainPage.xaml" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/MainPage.xaml.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/Package.appxmanifest" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/Package.appxmanifest" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/realmeeting.UWP.csproj" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.UWP/realmeeting.UWP.csproj" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/AppDelegate.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/AppDelegate.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/Info.plist" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/Info.plist" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/Main.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/Main.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/realmeeting.iOS.csproj" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.iOS/realmeeting.iOS.csproj" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
+      <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
-              <caret line="585" column="32" lean-forward="true" selection-start-line="585" selection-start-column="32" selection-end-line="585" selection-end-column="32" />
+            <state relative-caret-position="-455">
+              <caret line="637" lean-forward="true" selection-start-line="637" selection-end-line="637" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -56,6 +79,8 @@
       <find>testImageDirName</find>
       <find>resize</find>
       <find>generate_bows</find>
+      <find>_image_hash</find>
+      <find>get_data_hash</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -90,6 +115,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="Datasets" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -107,22 +154,6 @@
               <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="src_task1" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -475,8 +506,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="585" column="32" lean-forward="true" selection-start-line="585" selection-start-column="32" selection-end-line="585" selection-end-column="32" />
+        <state relative-caret-position="-455">
+          <caret line="637" lean-forward="true" selection-start-line="637" selection-end-line="637" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
