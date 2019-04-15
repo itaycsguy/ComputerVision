@@ -8,15 +8,18 @@ import pickle
 import argparse
 
 
-trainImageDirName = "C://Users//user//Documents//GitHub//ComputerVision//Assignment_2//Datasets"
+trainImageDirName = "D://PycharmProjects//ComputerVision//Assignment_2//Datasets"
 testImageDirName = ".//Datasets//Testset"
+
 
 
 """
     A class who holds all the training data + labels
 """
 class Database:
+    PICKLE_DIR = "var"
     TARGET_CLASS = "airplane"
+
     # Defined at the published assignment
     ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
 
@@ -33,10 +36,11 @@ class Database:
                     self._image_hash[outer_dir + "//" + image_name] = Database.ALLOWED_DIRS[outer_dir.lower()]
 
 
-
+    """
+        Return the defined target class number by its name
+    """
     def get_target_class(self):
         return Database.ALLOWED_DIRS[Database.TARGET_CLASS]
-
 
 
     """
@@ -60,8 +64,9 @@ class Database:
         return len(Database.ALLOWED_DIRS)
 
 
+
 class Features:
-    __PICKLE_LOC = "var//Features.pkl"
+    __PICKLE_FILE = "Features.pkl"
 
     """
         [1] database  - a Database object
@@ -278,24 +283,20 @@ class Features:
         bows = list()
         if not train_mode:
             bows = np.zeros(self._K, dtype=np.uint32)
+
         patch_loc = 0
         for fv_image in feature_vectors:
-            patch_hists = np.zeros(self._K, dtype=np.uint32)
-            for block_descriptor in fv_image:
-                best_class = -1
-                if train_mode:
+            if train_mode:
+                patch_hists = np.zeros(self._K, dtype=np.uint32)
+                for _ in range(0, len(fv_image)):
                     best_class = self._patches_labels[patch_loc]
-                else:
-                    best_class = self.__get_simi_class(block_descriptor, self._patches_centers)
-                if best_class != -1:
                     patch_hists[best_class] += 1
                     patch_loc += 1
-            # single processing case
-            if train_mode:
                 bows.append(patch_hists.tolist())
             else:
-                for idx, _ in enumerate(patch_hists):
-                    bows[idx] += patch_hists[idx]
+                best_class = self.__get_simi_class(fv_image, self._patches_centers)
+                if best_class != -1:
+                    bows[best_class] += 1
 
         if train_mode:
             self._bows = bows
@@ -305,6 +306,9 @@ class Features:
         return bows
 
 
+    """
+        Return the defined win_size to use at HOG descriptor computation
+    """
     def get_win_size(self):
         return self._win_size
 
@@ -316,6 +320,9 @@ class Features:
         return self._bows
 
 
+    """
+        Return the computed test bow
+    """
     def get_test_bows(self):
         return self._test_bows
 
@@ -355,14 +362,14 @@ class Features:
         obj_data = [self._bows, self._feature_vectors_labels, self._patches_centers]
         if not os.path.exists("var"):
             os.mkdir("var")
-        pickle.dump(obj_data, open(Features.__PICKLE_LOC, "wb+"))
+        pickle.dump(obj_data, open(Database.PICKLE_DIR + "//" + Features.__PICKLE_FILE, "wb+"))
 
 
     """
         Load [bows, labels, centers] from saved pickle file at 'var' directory
     """
     def load(self):
-        feature_obj_data = pickle.load(open(Features.__PICKLE_LOC, "rb"))
+        feature_obj_data = pickle.load(open(Database.PICKLE_DIR + "//" + Features.__PICKLE_FILE, "rb"))
         self._bows = feature_obj_data[0]
         self._feature_vectors_labels = feature_obj_data[1]
         self._patches_centers = feature_obj_data[2]
@@ -371,6 +378,7 @@ class Features:
 
 
 class Classifier:
+    __PICKLE_FILE = "Classifier.pkl"
 
     """
         [1] features -  a Feature class object
@@ -379,10 +387,14 @@ class Classifier:
     def __init__(self, features, c=10):
         self._features = features
         self._c = c
-        self._svm_instance = dlib.svm_c_trainer_radial_basis()  # svm_c_trainer_linear() -> the linear case
+        self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
         self._svm_instance.set_c(self._c)
-        # self._svm_instance.be_verbose()                         # linear field
+        self._svm_instance.be_verbose()                      # linear field
         self._decision_function = None
+        # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
+        classes_num = 2
+        self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
+        self._recognition_results = None
 
 
 
@@ -399,6 +411,7 @@ class Classifier:
 
 
     """
+        Return labels as expected by dlib API
     """
     def __prepare_labels(self, labels, target_value):
         vals = dlib.array()
@@ -426,34 +439,135 @@ class Classifier:
         return self._decision_function
 
 
-    def test(self):
-        pass
-
-
+    """
+        Executing the whole recognition process as same as we did to at the training step
+        *** At this process we use the linear classifier which it looks better then radial basis 
+    """
     def recognizer(self):
+        if not os.path.exists(testImageDirName):
+            print(testImageDirName, "directory does not exist.")
+            return
+
+        self._recognition_results = {}
         for image_name in os.listdir(testImageDirName):
             image_path = testImageDirName + "//" + image_name
             image = cv2.imread(image_path)
             image = cv2.resize(image, self._features.get_win_size(), interpolation=cv2.INTER_CUBIC)
 
-            # extract features from the image
+            # Extracting features from an input new test image & computing the visual words
             feature_vectors = self._features.get_native_hog(image)
-            bow = self._features.generate_bows(feature_vectors, False)
-            dlib_bow = self.__prepare_data(self._features.generate_bows(feature_vectors, False))
 
-            # determine the visual words these features represent
-            # build BOW for the image
+            # Build single BOW of dlib type
+            dlib_bow = dlib.vector(self._features.generate_bows(feature_vectors, False))
 
-            # classify the BOW using the classifier built in step 4
+            # Classifying a BOW using the classifier we have built in step 4
+            prediction_activation = self.__activation(dlib_bow)         # -> [1, -1] by the activation function
+            actual_activation = self.__pseudo_activation(image_name)    # -> # -> [1, -1] by the activation function
 
-            cv2.imshow(image_name, image)
-            print("image_name", image_name)
-            cv2.waitKey(0)
-            cv2.destroyWindow(image_name)
-        return
+            # Given 2 classes determination -> need to determine for kind of binary problem
+            self.__update_confusion_matrix(prediction_activation, actual_activation)
+
+            #  A raw data image -> 1:1 [no another image with the same name on that test session]
+            self._recognition_results[image_name] = prediction_activation
+
+            # cv2.imshow(image_name, image)
+            # print("image_name", image_name)
+            # cv2.waitKey(0)
+            # cv2.destroyWindow(image_name)
 
 
 
+    """
+        Operating an activation function to determine the classification of dlib_bow
+        [1] dlib_bow - bow conversion to dlib type
+    """
+    def __activation(self, dlib_bow):
+        float_value = self._decision_function(dlib_bow)
+        if float_value > 0.0:
+            return 1
+        else:
+            return -1
+
+
+    """
+        Pseudo activation operation - taking an image, split it than determine it's class from Database class hash
+        [1] image name - input test image name
+    """
+    def __pseudo_activation(self, image_name):
+        actual_value = Database.ALLOWED_DIRS[image_name.split("_")[0]]
+        if actual_value != 0:
+            return -1
+        return 1
+
+
+    """
+        Taking this problem as kind of binary problem and compare them
+        [1] prediction  => [1,-1]
+        [1] actual      => [1,-1]
+    """
+    def __update_confusion_matrix(self, prediction, actual):
+        pred_loc = 1
+        actual_loc = 0
+        if prediction == actual:
+            pred_loc = actual_loc = 0
+        elif prediction == 1:
+            pred_loc = 0
+            actual_loc = 1
+
+        self._confusion_matrix[pred_loc, actual_loc] += 1
+
+
+    """
+        Saving: confusion matrix & recognition results hash to a pickle file to var directory
+    """
+    def save(self):
+        # Saving the results
+        data = [self._confusion_matrix, self._recognition_results]
+        pickle.dump(data, open(Database.PICKLE_DIR + "//" + Classifier.__PICKLE_FILE, "wb+"))
+
+
+    """
+        Loading: confusion matrix from index 0 & recognition results from index 1 to their class variables
+    """
+    def load(self):
+        data = pickle.load(open(Database.PICKLE_DIR + "//" + Classifier.__PICKLE_FILE, "rb"))
+        self._confusion_matrix = data[0]
+        self._recognition_results = data[1]
+        return self._confusion_matrix, self._recognition_results
+
+
+    """
+        print the accuracy
+    """
+    def show_test_accuracy(self):
+        result = (self._confusion_matrix[0, 0] + self._confusion_matrix[0, 1]) / self._confusion_matrix.sum()
+        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 1], self._confusion_matrix.sum(), result))
+
+
+    """
+        print the precision
+    """
+    def show_test_precision(self):
+        result = self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
+        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 0], result))
+
+
+    """
+        print the recall
+    """
+    def show_test_recall(self):
+        result = self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1])
+        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 1], result))
+
+
+
+"""
+    TODO:
+    A.
+    [1] ROC Curve visualize progressing by K of kmeans algorithm and display results at the optimal point
+    [2] It's Accuracy (by the exact definition)
+    B. continue by the assignment instructions 
+"""
 
 if __name__ == "__main__":
 
@@ -465,7 +579,12 @@ if __name__ == "__main__":
     # feature_instance.generate_visual_word_dict()
     # feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
     # feature_instance.save()
-    feature_instance.load()
+    # feature_instance.load()
     classifier_instance = Classifier(feature_instance)
-    classifier_instance.train()
-    classifier_instance.recognizer()
+    # classifier_instance.train()
+    # classifier_instance.recognizer()
+    # classifier_instance.save()
+    classifier_instance.load()
+    classifier_instance.show_test_accuracy()
+    classifier_instance.show_test_precision()
+    classifier_instance.show_test_recall()
