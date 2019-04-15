@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import dlib
 import pickle
+import time
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,14 +29,51 @@ class Database:
     """
         Making an hash which holds the data efficiently and conveniently
     """
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, FINAL_CLASSES=True, datasets=None):
+        if not os.path.exists(dir_path):
+            print(dir_path, "does not exist.")
+            return
         self._root_dir = dir_path
         self._image_hash = {}
+        self.append_datasets(datasets)
+        if FINAL_CLASSES:
+            self.load_datasets_from_dir()
+
+
+    """
+        Print out the avaliable datasets
+    """
+    def show_avaliable_datasets(self):
+        dir_names = "("
+        key_length = len(Database.ALLOWED_DIRS.keys())
+        for i, dir_name in enumerate(Database.ALLOWED_DIRS.keys()):
+            dir_names += dir_name
+            if i < (key_length-1):
+                dir_names += ", "
+        dir_names += ")"
+        print(dir_names)
+
+
+    """
+        Loading the datasets from the indicated directory
+    """
+    def load_datasets_from_dir(self, dir_path=None):
+        if dir_path is None:
+            dir_path = self._root_dir
         for outer_dir in os.listdir(dir_path):
             if outer_dir.lower() in Database.ALLOWED_DIRS.keys():
                 inner_dir_path = dir_path + "//" + outer_dir
                 for image_name in os.listdir(inner_dir_path):
                     self._image_hash[outer_dir + "//" + image_name] = Database.ALLOWED_DIRS[outer_dir.lower()]
+
+
+    """
+        Appending the new dataset names to the Hash for being use as samples to the algorithm
+    """
+    def append_datasets(self, datasets):
+        if datasets is not None:
+            for dataset in datasets:
+                Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
 
 
     """
@@ -87,12 +125,21 @@ class Features:
         self._K = k                     # kmeans algorithm parameter
         # meta information
         self._feature_vectors = None
+        # the same as self._feature_vectors except to the issue it is flatted to 2D structure
+        self._feature_vector_instances_2D = None
         self._feature_vectors_labels = None
         # computed information
         self._patches_centers = None
         self._patches_labels = None
         self._bows = None
         self._test_bows = None
+
+
+    """
+        Print out the current k parameter value
+    """
+    def show_current_k(self):
+        print("Current K to the clustering algorithm:", self._K)
 
 
     """
@@ -231,7 +278,7 @@ class Features:
     """
         Generating all blocks descriptors in the DB by HOG method and quantize it through kmeans algorithm
     """
-    def generate_visual_word_dict(self):
+    def generate_visual_word_dict(self, NEED_CLUSTERING=True):
         if self._database is None:
             print("No available database is found.")
             return
@@ -246,15 +293,28 @@ class Features:
             self._feature_vectors.append(self.get_native_hog(image_instance))
             self._feature_vectors_labels.append(image_label)
 
-        feature_vector_instances = np.asarray(self._reduce_to_2D(self._feature_vectors), dtype=np.float32)
-
+        self._feature_vector_instances_2D = np.asarray(self._reduce_to_2D(self._feature_vectors), dtype=np.float32)
         # Here - DB training-set is transferred to features vectors representation
-        # Clustering into K groups at our problem
+        if NEED_CLUSTERING:
+            # Clustering into K groups at our problem
+            self.cluster_data()
+
+    """
+        Clustering the data to k groups using kmeans algorithm
+    """
+    def cluster_data(self, k=None):
+        if k is None:
+            k = self._K
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        # Input all visual word from the DB
-        return_value, labels, self._patches_centers = cv2.kmeans(feature_vector_instances, self._K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        return_value, labels, self._patches_centers = cv2.kmeans(self._feature_vector_instances_2D, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
         self._patches_labels = labels.ravel()
 
+
+    """
+        Make the k clusters to be changeable for the user execution
+    """
+    def set_K(self, k):
+        self._K = k
 
 
     """
@@ -581,16 +641,53 @@ class Classifier:
         plt.show()
 
 """
-    TODO:
-    A.
-    [1] ROC Curve visualize progressing by K of kmeans algorithm and display results at the optimal point
-    [2] It's Accuracy (by the exact definition)
-    B. continue by the assignment instructions 
+    Get all more optional datasets from the entry directory that is defined
 """
+def get_all_rest_datasets():
+    if not os.path.exists(trainImageDirName):
+        print(trainImageDirName, "does not exit.")
+        exit(-1)
+    new_dir_names = list()
+    for dir in os.listdir(trainImageDirName):
+        dir_lower = dir.lower()
+        if dir_lower not in Database.ALLOWED_DIRS.keys() and (os.path.realpath(testImageDirName) != os.path.realpath(trainImageDirName + "//" + dir)):
+            new_dir_names.append([dir_lower])
+
+    return new_dir_names
+
 
 if __name__ == "__main__":
 
     ## Must object to initial the program
+    db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
+    additional_dirs = get_all_rest_datasets()
+    for dir_name in additional_dirs:
+        db_instance.append_datasets(dir_name)
+        db_instance.load_datasets_from_dir()
+        db_instance.show_avaliable_datasets()
+        # Must object to handle data as features
+        feature_instance = Features(db_instance)
+        ## Feature extraction process which is necessary while no pre-processing have been made yet
+        feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
+        ## can get from cmd parameters or to determine through the main function
+        chunk = range(8, 12)
+        # iterating over 10 k values
+        for k in chunk:
+            feature_instance.set_K(k)
+            feature_instance.cluster_data()
+            feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
+            feature_instance.save()
+            feature_instance.load()
+            classifier_instance = Classifier(feature_instance)
+            classifier_instance.train()
+            classifier_instance.recognizer()
+            classifier_instance.save()
+            classifier_instance.load()
+            classifier_instance.show_test_accuracy()
+            classifier_instance.show_test_precision()
+            classifier_instance.show_test_recall()
+            feature_instance.show_current_k()
+            time.sleep(3)
     db_instance = Database(trainImageDirName)
     # Must object to handle data as features
     feature_instance = Features(db_instance)
