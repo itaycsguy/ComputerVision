@@ -544,19 +544,19 @@ class Classifier:
             fontColor = (255, 255, 255)
             lineType = 2
 
-            prediction = 'Airplane'
-            if (prediction_activation[0] == -1):
-                prediction = 'Not Airplane'
-            cv2.putText(image, prediction,
-                        bottomLeftCornerOfText,
-                        font,
-                        fontScale,
-                        fontColor,
-                        lineType)
-            cv2.imshow("Test Images", image)
-            cv2.waitKey(0)
+            # prediction = 'Airplane'
+            # if (prediction_activation[0] == -1):
+            #     prediction = 'Not Airplane'
+            # cv2.putText(image, prediction,
+            #             bottomLeftCornerOfText,
+            #             font,
+            #             fontScale,
+            #             fontColor,
+            #             lineType)
+            # cv2.imshow("Test Images", image)
+            # cv2.waitKey(0)
 
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
         return y_true, y_score
 
 
@@ -592,13 +592,13 @@ class Classifier:
         [1] actual      => [1,-1]
     """
     def __update_confusion_matrix(self, prediction, actual):
-        prediction = prediction[1]
-        actual = actual[1]
-        if prediction < 0:
+        prediction = prediction[0]
+        actual = actual[0]
+        if prediction <= 0:
             prediction = 1
         else:
             prediction = 0
-        if actual < 0:
+        if actual <= 0:
             actual = 1
         else:
             actual = 0
@@ -629,15 +629,17 @@ class Classifier:
     """
     def get_test_accuracy(self):
         TP = self._confusion_matrix[0, 0]
-        FN = self._confusion_matrix[1, 1]
-        return (TP + FN) / self._confusion_matrix.sum()
+        TN = self._confusion_matrix[1, 1]
+        return (TP + TN) / self._confusion_matrix.sum()
 
 
     """
         print the accuracy
     """
     def show_test_accuracy(self):
-        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[1, 1], self._confusion_matrix.sum(), self.get_test_accuracy()))
+        TP = self._confusion_matrix[0, 0]
+        TN = self._confusion_matrix[1, 1]
+        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(TP, TN, self._confusion_matrix.sum(), self.get_test_accuracy()))
 
 
 
@@ -646,7 +648,7 @@ class Classifier:
     """
     def get_test_precision(self):
         TP = self._confusion_matrix[0, 0]
-        FP = self._confusion_matrix[1, 0]
+        FP = self._confusion_matrix[0, 1]
         return TP / (TP + FP)
 
 
@@ -655,7 +657,9 @@ class Classifier:
         print the precision
     """
     def show_test_precision(self):
-        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[0, 1], self.get_test_precision()))
+        TP = self._confusion_matrix[0, 0]
+        FP = self._confusion_matrix[0, 1]   # predicted 1 but it is -1
+        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(TP, TP, FP, self.get_test_precision()))
 
 
     """
@@ -663,7 +667,7 @@ class Classifier:
     """
     def get_test_recall(self):
         TP = self._confusion_matrix[0, 0]
-        FN = self._confusion_matrix[0, 1]
+        FN = self._confusion_matrix[1, 0]
         return TP / (TP + FN)
 
 
@@ -671,7 +675,9 @@ class Classifier:
         print the recall
     """
     def show_test_recall(self):
-        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 0], self.get_test_recall()))
+        TP = self._confusion_matrix[0, 0]
+        FN = self._confusion_matrix[1, 0]
+        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(TP, TP, FN, self.get_test_recall()))
 
 
     def show_test_c(self):
@@ -780,6 +786,7 @@ def driver(datasets, k, c, SLEEP_TIME_OUT=3):
     feature_instance.show_current_k()
     classifier_instance.show_test_c()
     time.sleep(SLEEP_TIME_OUT)
+    print(classifier_instance._confusion_matrix)
     return y_true, y_score, accuracy, precision, recall, dependent_variable
 
 
