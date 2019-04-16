@@ -35,6 +35,9 @@ class Database:
             return
         self._root_dir = dir_path
         self._image_hash = {}
+        if datasets is not None:
+            for idx, item in enumerate(datasets):
+                datasets[idx] = item[0]
         self.append_datasets(datasets)
         if FINAL_CLASSES:
             self.load_datasets_from_dir()
@@ -44,7 +47,7 @@ class Database:
         Print out the avaliable datasets
     """
     def show_avaliable_datasets(self):
-        dir_names = "("
+        dir_names = "Avaliable datasets => ("
         key_length = len(Database.ALLOWED_DIRS.keys())
         for i, dir_name in enumerate(Database.ALLOWED_DIRS.keys()):
             dir_names += dir_name
@@ -533,7 +536,6 @@ class Classifier:
             y_true.append(actual_activation)
             y_score.append(prediction_activation)
 
-
             # Given 2 classes determination -> need to determine for kind of binary problem
             self.__update_confusion_matrix(prediction_activation, actual_activation)
 
@@ -544,44 +546,34 @@ class Classifier:
             # cv2.imshow("Predict: " + str(prediction_activation), image)
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
-            if (image_name[0] == 'a') & (prediction_activation == -1):
-                fn = fn+1
-            if (image_name[0] == 'e') & (prediction_activation == 1):
-                fp = fp+1
-            if (image_name[0] == 'm') & (prediction_activation == 1):
-                fp = fp+1
 
-
-
-            #print("Image Name:" + str(prediction_activation), image_name)
-
-
-        print("FP = " + str(fp))
-        print("fn = " + str(fn))
+        return y_true, y_score
 
 
 
     """
         Operating an activation function to determine the classification of dlib_bow
         [1] dlib_bow - bow conversion to dlib type
+        Return [class, score]
     """
     def __activation(self, dlib_bow):
         float_value = self._decision_function(dlib_bow)
         if float_value > 0.0:
-            return 1
+            return 1, float_value
         else:
-            return -1
+            return -1, float_value
 
 
     """
         Pseudo activation operation - taking an image, split it than determine it's class from Database class hash
         [1] image name - input test image name
+        Return [class, score]
     """
     def __pseudo_activation(self, image_name):
         actual_value = Database.ALLOWED_DIRS[image_name.split("_")[0]]
         if actual_value != 0:
-            return -1
-        return 1
+            return -1, np.float32(actual_value)
+        return 1, np.float32(actual_value)
 
 
     """
@@ -590,6 +582,8 @@ class Classifier:
         [1] actual      => [1,-1]
     """
     def __update_confusion_matrix(self, prediction, actual):
+        prediction = prediction[1]
+        actual = actual[1]
         if prediction < 0:
             prediction = 1
         else:
@@ -664,186 +658,149 @@ class Classifier:
         print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 0], self.get_test_recall()))
 
 
-    """
-        get the TPR/Recall
-    """
-    def get_test_TPR(self):
-        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
-
-
-    """
-        get the FPR/Precision
-    """
-    def get_test_FPR(self):
-        return self._confusion_matrix[0, 1] / (self._confusion_matrix[0, 1] + self._confusion_matrix[1, 1])
+    def show_test_c(self):
+        print("Current C for the SVM margin width:", self._c)
 
 
 
-    # @staticmethod
-    # def ROC_Curve(y_true, y_score):
-    #     fpr, tpr, thresholds = roc_curve(y_true, y_score)
-    #     roc_auc = auc(fpr, tpr)
-    #     plt.figure()
-    #     plt.xlabel('False Positive Rate')
-    #     plt.ylabel('True Positive Rate')
-    #     plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
-    #     plt.xlim([0.0, 1.0])
-    #     plt.ylim([0.0, 1.05])
-    #     plt.title('SVM Classifier ROC Curve')
-    #     plt.plot(fpr, tpr, color='blue', lw=2, label='AUC = %0.2f)' % roc_auc)
-    #     plt.legend(loc="lower right")
-    #     plt.show()
+    @staticmethod
+    def ROC_Curve(y_true, y_score):
+        # fpr, tpr, thresholds = roc_curve(y_true, y_score)
+        # roc_auc = auc(fpr, tpr)
+        # plt.figure()
+        # plt.xlabel('False Positive Rate')
+        # plt.ylabel('True Positive Rate')
+        # plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+        # plt.xlim([0.0, 1.0])
+        # plt.ylim([0.0, 1.05])
+        # plt.title('SVM Classifier ROC Curve')
+        # plt.plot(fpr, tpr, color='blue', lw=2, label='AUC = %0.2f)' % roc_auc)
+        # plt.legend(loc="lower right")
+        # plt.show()
 
-
-        linearX = [0.0, 0.5, 1.0]
-        linearY = [1.0, 0.5, 0.0]
-        fig, axs = plt.subplots(2, 1, constrained_layout=True)
-        axs[0].plot()
-        axs[0].plot(recall, precision, '-')
-
-        # axs.plot(t1, f(t1), 'o')
-        # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
-
-        axs[0].plot(linearX, linearY, '--')
-        axs[0].set_xlabel('Recall')
-        axs[0].set_ylabel('Precision')
-        fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
-        axs[1].plot(dependent_variable, accuracy, '--')
-        axs[1].set_xlabel('K')
-        axs[1].set_ylabel('Accuracy')
+        from sklearn.metrics import precision_recall_curve
+        precision, recall, thresholds = precision_recall_curve(y_true, y_score)
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.title('SVM Classifier Precision-Recall Curve')
+        plt.plot(recall, precision, color='blue', lw=2, label='')
+        plt.legend(loc="lower right")
         plt.show()
 
-    def TODOITAY(self,parameter1,parameter2,...,parametern):
+
+        # linearX = [0.0, 0.5, 1.0]
+        # linearY = [1.0, 0.5, 0.0]
+        # fig, axs = plt.subplots(2, 1, constrained_layout=True)
+        # axs[0].plot()
+        # axs[0].plot(recall, precision, '-')
+        #
+        # # axs.plot(t1, f(t1), 'o')
+        # # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
+        #
+        # axs[0].plot(linearX, linearY, '--')
+        # axs[0].set_xlabel('Recall')
+        # axs[0].set_ylabel('Precision')
+        # fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
+        # axs[1].plot(dependent_variable, accuracy, '--')
+        # axs[1].set_xlabel('K')
+        # axs[1].set_ylabel('Accuracy')
+        # plt.show()
 
 
 
 """
     Get all more optional datasets from the entry directory that is defined
 """
-def get_all_rest_datasets():
+def get_all_rest_datasets(count):
     if not os.path.exists(trainImageDirName):
         print(trainImageDirName, "does not exit.")
         exit(-1)
     new_dir_names = list()
     for dir in os.listdir(trainImageDirName):
         dir_lower = dir.lower()
-        if dir_lower not in Database.ALLOWED_DIRS.keys() and (os.path.realpath(testImageDirName) != os.path.realpath(trainImageDirName + "//" + dir)):
+        if (len(new_dir_names) < count) and (dir_lower not in Database.ALLOWED_DIRS.keys() and
+                                             (os.path.realpath(testImageDirName) != os.path.realpath(trainImageDirName + "//" + dir))):
             new_dir_names.append([dir_lower])
 
     return new_dir_names
 
 
-def exe_all_functions_code():
-    ## All functions:
-    ## Must object to initial the program
-    TIME_OUT = 3
-    db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
-    additional_dirs = get_all_rest_datasets()
-    for dir_name in additional_dirs:
-        db_instance.append_datasets(dir_name)
-        db_instance.load_datasets_from_dir()
-        db_instance.show_avaliable_datasets()
-        # Must object to handle data as features
-        feature_instance = Features(db_instance)
-        ## Feature extraction process which is necessary while no pre-processing have been made yet
-        feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
-        ## can get from cmd parameters or to determine through the main function
-        chunk = range(2, 16)
-        # iterating over 10 k values
-        for k in chunk:
-            feature_instance.set_K(k)
-            feature_instance.cluster_data()
-            feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
-            feature_instance.save()
-            feature_instance.load()
-            classifier_instance = Classifier(feature_instance)
-            classifier_instance.train()
-            classifier_instance.recognizer()
-            classifier_instance.save()
-            classifier_instance.load()
-            classifier_instance.show_test_accuracy()
-            classifier_instance.show_test_precision()
-            classifier_instance.show_test_recall()
-            feature_instance.show_current_k()
-            time.sleep(TIME_OUT)
+def driver(datasets, k, c, SLEEP_TIME_OUT=3):
+    recall = list()
+    precision = list()
+    accuracy = list()
+    dependent_variable = list()
+    db_instance = Database(trainImageDirName, FINAL_CLASSES=True, datasets=get_all_rest_datasets(datasets))
+    db_instance.show_avaliable_datasets()
+    feature_instance = Features(db_instance, k=k)
+    feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
+    feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
+    feature_instance.save()
+    feature_instance.load()
+    classifier_instance = Classifier(feature_instance, c)
+    classifier_instance.train()
+    y_true, y_score = classifier_instance.recognizer()
+    classifier_instance.save()
+    classifier_instance.load()
+    accuracy.append(classifier_instance.get_test_accuracy())
+    precision.append(classifier_instance.get_test_precision())
+    recall.append(classifier_instance.get_test_recall())
+    dependent_variable.append(k)
+    classifier_instance.show_test_accuracy()
+    classifier_instance.show_test_precision()
+    classifier_instance.show_test_recall()
+    feature_instance.show_current_k()
+    classifier_instance.show_test_c()
+    time.sleep(SLEEP_TIME_OUT)
+    return y_true, y_score, accuracy, precision, recall, dependent_variable
 
 
-def exe_all_functions_code_by_c():
-    ## All functions:
-    ## Must object to initial the program
-    TIME_OUT = 3
-    db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
-    additional_dirs = get_all_rest_datasets()
-    for dir_name in additional_dirs:
-        db_instance.append_datasets(dir_name)
-        db_instance.load_datasets_from_dir()
-        db_instance.show_avaliable_datasets()
-        # Must object to handle data as features
-        feature_instance = Features(db_instance)
-        ## Feature extraction process which is necessary while no pre-processing have been made yet
-        feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
-        feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
-        feature_instance.save()
-        feature_instance.load()
-        ## can get from cmd parameters or to determine through the main function
-        chunk = range(10, 50)
-        # iterating over 10 k values
-        for c in chunk:
-            classifier_instance = Classifier(feature_instance, c)
-            classifier_instance.train()
-            classifier_instance.recognizer()
-            classifier_instance.save()
-            classifier_instance.load()
-            classifier_instance.show_test_accuracy()
-            classifier_instance.show_test_precision()
-            classifier_instance.show_test_recall()
-            feature_instance.show_current_k()
-            time.sleep(TIME_OUT)
+def run(**kwargs):
+    datasets = 3
+    k = 10
+    c = 10.0
+    for key, value in kwargs.items():
+        if key.lower() == "c" and np.float32(value) > 0.0:
+            c = np.float32(value)
+        elif key.lower() == "k" and np.uint32(value) > 1:
+            k = np.uint32(value)
+        elif key.lower() == "datasets" and np.uint32(value) > 3:
+            datasets = np.uint32(value)
+
+    return driver(datasets, k, c)
+
+
 
 
 if __name__ == "__main__":
+    
+    y_true_glob = list()
+    y_scores_glob = list()
+    accuracy = list()
+    precision = list()
+    recall = list()
 
-    recall = []
-    precision = []
-    accuracy = []
-    dependent_variable = []
-    name = 'K'
+    datasets = [3, 4, 5, 6]
+    K = range(2, 30)
+    C = np.arange(0.1, 20.1, 1.0)
 
-    #TIME_OUT = 3
-    db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
-    additional_dirs = get_all_rest_datasets()
-    for dir_name in additional_dirs:
-        db_instance.append_datasets(dir_name)
-        db_instance.load_datasets_from_dir()
-        db_instance.show_avaliable_datasets()
-        # Must object to handle data as features
-        feature_instance = Features(db_instance)
-        ## Feature extraction process which is necessary while no pre-processing have been made yet
-        feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
-        feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
-        feature_instance.save()
-        feature_instance.load()
-        ## can get from cmd parameters or to determine through the main function
-        chunk = range(10, 20)
-        # iterating over 10 k values
-        for c in chunk:
-            classifier_instance = Classifier(feature_instance, c)
-            classifier_instance.train()
-            classifier_instance.recognizer()
-            classifier_instance.save()
-            classifier_instance.load()
-            classifier_instance.show_test_accuracy()
-            classifier_instance.show_test_precision()
-            classifier_instance.show_test_recall()
-            feature_instance.show_current_k()
-            # time.sleep(TIME_OUT)
-            print("Current Threshold margin (for svm): ", c)
+    for ds, k, c in zip(datasets, K, C):
+        y_true, y_score, acc, prec, rec, dependent_variable = run(datasets=ds, k=k, c=c)
+
+        accuracy.append(acc)
+        precision.append(prec)
+        recall.append(rec)
+
+        for true, score in zip(y_true, y_score):
+            y_true_glob.append(true)
+            y_scores_glob.append(score)
+
     precision.sort(reverse=True)
     recall.sort()
-    Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
-
-
-
+    Classifier.ROC_Curve(y_true_glob, y_scores_glob)
 
 
 
