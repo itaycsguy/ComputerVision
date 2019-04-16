@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
+      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting.sln" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting.sln" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" afterDir="false" />
@@ -24,9 +27,6 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,8 +39,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="638" selection-start-line="638" selection-end-line="638" />
+            <state relative-caret-position="192">
+              <caret line="547" column="45" selection-start-line="547" selection-start-column="45" selection-end-line="547" selection-end-column="45" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -103,9 +103,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="width" value="55" />
-    <option name="height" value="26" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="width" value="136" />
+    <option name="height" value="39" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -113,28 +113,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="Datasets" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -152,6 +130,22 @@
               <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="src_task1" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -330,7 +324,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17857143" />
@@ -338,7 +332,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.2651391" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.1767594" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -498,8 +492,8 @@
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_radial_basis.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="638" selection-start-line="638" selection-end-line="638" />
+        <state relative-caret-position="192">
+          <caret line="547" column="45" selection-start-line="547" selection-start-column="45" selection-end-line="547" selection-end-column="45" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>

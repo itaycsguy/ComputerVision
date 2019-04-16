@@ -524,18 +524,19 @@ class Classifier:
 
             # Classifying a BOW using the classifier we have built in step 4
             prediction_activation = self.__activation(dlib_bow)         # -> [1, -1] by the activation function
-            actual_activation = self.__pseudo_activation(image_name)    # -> # -> [1, -1] by the activation function
+            actual_activation = self.__pseudo_activation(image_name)    # -> [1, -1] by the activation function
 
             # Given 2 classes determination -> need to determine for kind of binary problem
             self.__update_confusion_matrix(prediction_activation, actual_activation)
 
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
             self._recognition_results[image_name] = prediction_activation
-
-            cv2.imshow(image_name, image)
-            print("image_name", image_name)
-            cv2.waitKey(0)
-            cv2.destroyWindow(image_name)
+            #
+            # image = cv2.imread(image_path)
+            # cv2.imshow("Predict: " + str(prediction_activation), image)
+            # print("Image Name:" + str(prediction_activation), image_name)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
 
 
 
@@ -571,7 +572,10 @@ class Classifier:
         pred_loc = 1
         actual_loc = 0
         if prediction == actual:
-            pred_loc = actual_loc = 0
+            if prediction == -1:
+                pred_loc = actual_loc = 1
+            else:
+                pred_loc = actual_loc = 0
         elif prediction == 1:
             pred_loc = 0
             actual_loc = 1
@@ -599,46 +603,91 @@ class Classifier:
 
 
     """
+        get the accuracy
+    """
+    def get_test_accuracy(self):
+        return (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1]) / self._confusion_matrix.sum()
+
+
+    """
         print the accuracy
     """
     def show_test_accuracy(self):
-        result = (self._confusion_matrix[0, 0] + self._confusion_matrix[0, 1]) / self._confusion_matrix.sum()
-        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 1], self._confusion_matrix.sum(), result))
+        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[1, 1], self._confusion_matrix.sum(), self.get_test_accuracy()))
+
+
+
+    """
+        get the precision
+    """
+    def get_test_precision(self):
+        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[0, 1])
+
 
 
     """
         print the precision
     """
     def show_test_precision(self):
-        result = self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
-        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 0], result))
+        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[0, 1], self.get_test_precision()))
+
+
+    """
+        get the recall
+    """
+    def get_test_recall(self):
+        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
 
 
     """
         print the recall
     """
     def show_test_recall(self):
-        result = self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1])
-        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 1], result))
+        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 0], self.get_test_recall()))
 
-    def ROCCurve(self,Recall,Precision,Accuracy,dependent_variable,name):
-        linear = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0]
+
+    """
+        get the TPR/Recall
+    """
+    def get_test_TPR(self):
+        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
+
+
+    """
+        get the FPR/Precision
+    """
+    def get_test_FPR(self):
+        return self._confusion_matrix[0, 1] / (self._confusion_matrix[0, 1] + self._confusion_matrix[1, 1])
+
+
+
+    @staticmethod
+    def ROC_Curve(recall, precision, accuracy, dependent_variable, name):
+
+        # linear = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+        linear = np.arange(0.0, 1.0, 0.1)
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
         axs[0].plot()
-        axs[0].plot(Recall, Precision, '-')
+        axs[0].plot(recall, precision, '-')
+
         # axs.plot(t1, f(t1), 'o')
         # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
+
         axs[0].plot(linear, linear, '--')
         axs[0].set_xlabel('Recall')
         axs[0].set_ylabel('Precision')
         fig.suptitle('ROC Curve (Dependent Variable - ' + name + ')', fontsize=16)
 
-        axs[1].plot(Accuracy, dependent_variable, '--')
+        axs[1].plot(dependent_variable, accuracy, '--')
         axs[1].set_xlabel('dependent variable - ' + name)
-        #axs[1].set_title('Accuracy Function')
-        axs[1].set_ylabel('Accuracy')
 
+        #axs[1].set_title('Accuracy Function')
+
+        axs[1].set_ylabel('Accuracy')
         plt.show()
+
+
 
 """
     Get all more optional datasets from the entry directory that is defined
@@ -656,9 +705,11 @@ def get_all_rest_datasets():
     return new_dir_names
 
 
-if __name__ == "__main__":
 
+def exe_all_functions_code():
+    ## All functions:
     ## Must object to initial the program
+    TIME_OUT = 3
     db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
     additional_dirs = get_all_rest_datasets()
     for dir_name in additional_dirs:
@@ -670,7 +721,7 @@ if __name__ == "__main__":
         ## Feature extraction process which is necessary while no pre-processing have been made yet
         feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
         ## can get from cmd parameters or to determine through the main function
-        chunk = range(8, 12)
+        chunk = range(8, 13)
         # iterating over 10 k values
         for k in chunk:
             feature_instance.set_K(k)
@@ -687,47 +738,59 @@ if __name__ == "__main__":
             classifier_instance.show_test_precision()
             classifier_instance.show_test_recall()
             feature_instance.show_current_k()
-            time.sleep(3)
-    db_instance = Database(trainImageDirName)
-    # Must object to handle data as features
-    feature_instance = Features(db_instance)
-    # ## Feature extraction process which is necessary while no pre-processing have been made yet
-    feature_instance.generate_visual_word_dict()
-    feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
-    feature_instance.save()
-    feature_instance.load()
-    classifier_instance = Classifier(feature_instance)
-    classifier_instance.train()
-    # classifier_instance.recognizer()
-    # classifier_instance.save()
-    # classifier_instance.load()
-    # classifier_instance.show_test_accuracy()
-    # classifier_instance.show_test_precision()
-    # classifier_instance.show_test_recall()
+            time.sleep(TIME_OUT)
 
 
-    Recall = []
-    Precision = []
-    Accuracy = []
+
+if __name__ == "__main__":
+
+    ## Functionality Example:
+    #########################
+    # exe_all_functions_code()
+
+    recall = []
+    precision = []
+    accuracy = []
     dependent_variable = []
     name = 'K'
-    for k in range(1,10):
 
-        # You Need to update this Arrays:
-        current_recal = k
-        current_precision = k
-        current_Accuracy = k
-        current_dependent_variable = k
-        # #############################
+    db_instance = Database(trainImageDirName)
+    db_instance.show_avaliable_datasets()
+    # Must object to handle data as features
+    feature_instance = Features(db_instance)
+    ## Feature extraction process which is necessary while no pre-processing have been made yet
+    feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
+    ## can get from cmd parameters or to determine through the main function
+    chunk = range(10, 30)
+    # iterating over 10 k values
 
+    classifier_instance = None
+    for k in chunk:
+        feature_instance.set_K(k)
+        feature_instance.cluster_data()
+        feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
+        feature_instance.save()
+        feature_instance.load()
+        classifier_instance = Classifier(feature_instance)
+        classifier_instance.train()
+        classifier_instance.recognizer()
+        classifier_instance.save()
+        classifier_instance.load()
 
-        Recall.append(current_recal)
-        Precision.append(current_precision)
-        Accuracy.append(current_Accuracy)
-        dependent_variable.append(current_dependent_variable)
+        accuracy.append(classifier_instance.get_test_accuracy())
+        precision.append(classifier_instance.get_test_FPR())
+        recall.append(classifier_instance.get_test_TPR())
+        # precision.append(classifier_instance.get_test_precision())
+        # recall.append(classifier_instance.get_test_recall())
+        dependent_variable.append(k)
 
+        # classifier_instance.show_test_accuracy()
+        # classifier_instance.show_test_precision()
+        # classifier_instance.show_test_recall()
+        feature_instance.show_current_k()
 
-    classifier_instance.ROCCurve(Recall, Precision,Accuracy,dependent_variable,name)
+    print(classifier_instance._confusion_matrix)
+    Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
 
 
 
