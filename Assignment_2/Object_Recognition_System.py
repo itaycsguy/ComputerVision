@@ -537,11 +537,26 @@ class Classifier:
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
             self._recognition_results[image_name] = prediction_activation
 
-            # image = cv2.imread(image_path)
-            # cv2.imshow("Predict: " + str(prediction_activation), image)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
+            image = cv2.imread(image_path)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            bottomLeftCornerOfText = (50, 70)
+            fontScale = 1
+            fontColor = (255, 255, 255)
+            lineType = 2
 
+            prediction = 'Airplane'
+            if (prediction_activation[0] == -1):
+                prediction = 'Not Airplane'
+            cv2.putText(image, prediction,
+                        bottomLeftCornerOfText,
+                        font,
+                        fontScale,
+                        fontColor,
+                        lineType)
+            cv2.imshow("Test Images", image)
+            cv2.waitKey(0)
+
+        cv2.destroyAllWindows()
         return y_true, y_score
 
 
@@ -803,17 +818,17 @@ if __name__ == "__main__":
     loop_length = 20
     dataset_init = 0
     k_start = 5
-    c_init = 1.0
+    c_init = 0.1
 
     # [k_start, k_start + 1, k_start + 2, ..., k_start + loop_length + 1]
     # [5, 6, ..., 15]
     # K = range(k_start, k_start + loop_length + 1)
-    K = 10 * np.ones(loop_length, dtype=np.uint32)
+    K = 15 * np.ones(loop_length, dtype=np.uint32)
     # [0, 0, 0, ..., 0] => for loop_length size
     dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
     # [10.0, 10.0, 10.0, ..., 10.0] => for loop_length size
     # C = c_init * np.ones(loop_length, dtype=np.float32)
-    C = np.arange(c_init, c_init + loop_length + 1, 1.0)
+    C = np.arange(c_init, c_init + 0 + 1, 0.1)
 
     for ds_amt, k, c in zip(dataset_amounts, K, C):
         y_true, y_score, acc, prec, rec, dependent_variable = run(dataset_amount=ds_amt, k=k, c=c)
@@ -830,7 +845,7 @@ if __name__ == "__main__":
 
     precision.sort(reverse=True)
     recall.sort()
-    Classifier.ROC_Curve(accuracy, precision, recall, K)
+    Classifier.ROC_Curve(accuracy, precision, recall, C)
     # Classifier.ROC_Curve(y_true_glob, y_scores_glob)
 
 
