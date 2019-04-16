@@ -6,14 +6,12 @@ import numpy as np
 import dlib
 import pickle
 import time
-import argparse
 import matplotlib.pyplot as plt
 import numpy as np
-
+import argparse
 
 trainImageDirName = ".//Datasets"
 testImageDirName = ".//Datasets//Testset"
-
 
 
 """
@@ -452,9 +450,8 @@ class Classifier:
     def __init__(self, features, c=10):
         self._features = features
         self._c = c
-        self._svm_instance = dlib.svm_c_trainer_histogram_intersection()    # -> the linear case
+        self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
         self._svm_instance.set_c(self._c)
-        # self._svm_instance.be_verbose()                      # linear field
         self._decision_function = None
         # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
         classes_num = 2
@@ -513,11 +510,9 @@ class Classifier:
             print(testImageDirName, "directory does not exist.")
             return
 
-        y_true = []
-        y_score = []
+        y_true = list()
+        y_score = list()
         self._recognition_results = {}
-        fn = 0
-        fp = 0
         for image_name in os.listdir(testImageDirName):
             image_path = testImageDirName + "//" + image_name
             image = cv2.imread(image_path)
@@ -663,6 +658,9 @@ class Classifier:
 
 
 
+    """
+        Plot the desired Curve for choosing the optimal parameter
+    """
     @staticmethod
     def ROC_Curve(y_true, y_score):
         # fpr, tpr, thresholds = roc_curve(y_true, y_score)
@@ -690,7 +688,6 @@ class Classifier:
         plt.legend(loc="lower right")
         plt.show()
 
-
         # linearX = [0.0, 0.5, 1.0]
         # linearY = [1.0, 0.5, 0.0]
         # fig, axs = plt.subplots(2, 1, constrained_layout=True)
@@ -714,20 +711,25 @@ class Classifier:
 """
     Get all more optional datasets from the entry directory that is defined
 """
-def get_all_rest_datasets(count):
+def get_all_rest_datasets(count=0):
     if not os.path.exists(trainImageDirName):
         print(trainImageDirName, "does not exit.")
         exit(-1)
     new_dir_names = list()
     for dir in os.listdir(trainImageDirName):
+        if len(new_dir_names) == count:
+            break
         dir_lower = dir.lower()
-        if (len(new_dir_names) < count) and (dir_lower not in Database.ALLOWED_DIRS.keys() and
-                                             (os.path.realpath(testImageDirName) != os.path.realpath(trainImageDirName + "//" + dir))):
+        if dir_lower not in Database.ALLOWED_DIRS.keys() and (os.path.realpath(testImageDirName) != os.path.realpath(trainImageDirName + "//" + dir)):
             new_dir_names.append([dir_lower])
 
     return new_dir_names
 
 
+
+"""
+    Running the system using determined parameters
+"""
 def driver(datasets, k, c, SLEEP_TIME_OUT=3):
     recall = list()
     precision = list()
@@ -758,8 +760,11 @@ def driver(datasets, k, c, SLEEP_TIME_OUT=3):
     return y_true, y_score, accuracy, precision, recall, dependent_variable
 
 
+"""
+    Determine the parameter to execute over
+"""
 def run(**kwargs):
-    datasets = 3
+    dataset_amount = 0
     k = 10
     c = 10.0
     for key, value in kwargs.items():
@@ -767,28 +772,37 @@ def run(**kwargs):
             c = np.float32(value)
         elif key.lower() == "k" and np.uint32(value) > 1:
             k = np.uint32(value)
-        elif key.lower() == "datasets" and np.uint32(value) > 3:
-            datasets = np.uint32(value)
+        elif key.lower() == "dataset_amount" and np.uint32(value) > 0:
+            dataset_amount = np.uint32(value)
 
-    return driver(datasets, k, c)
-
+    return driver(dataset_amount, k, c)
 
 
 
 if __name__ == "__main__":
-    
+
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
     precision = list()
     recall = list()
 
-    datasets = [3, 4, 5, 6]
-    K = range(2, 30)
-    C = np.arange(0.1, 20.1, 1.0)
+    # Configurable Section:
+    # *********************
+    loop_length = 10
+    dataset_init = 0
+    k_start = 5
+    c_init = 10.0
 
-    for ds, k, c in zip(datasets, K, C):
-        y_true, y_score, acc, prec, rec, dependent_variable = run(datasets=ds, k=k, c=c)
+    # [k_start, k_start + 1, k_start + 2, ..., k_start + loop_length + 1]
+    K = range(k_start, k_start + loop_length + 1)
+    # [0, 0, 0, ..., 0] => for loop_length size
+    dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
+    # [10.0, 10.0, 10.0, ..., 10.0] => for loop_length size
+    C = c_init * np.ones(loop_length, dtype=np.float32)
+
+    for ds_amt, k, c in zip(dataset_amounts, K, C):
+        y_true, y_score, acc, prec, rec, dependent_variable = run(dataset_amount=ds_amt, k=k, c=c)
 
         accuracy.append(acc)
         precision.append(prec)
@@ -798,9 +812,11 @@ if __name__ == "__main__":
             y_true_glob.append(true)
             y_scores_glob.append(score)
 
+        print("")
+
     precision.sort(reverse=True)
     recall.sort()
-    Classifier.ROC_Curve(y_true_glob, y_scores_glob)
+    # Classifier.ROC_Curve(y_true_glob, y_scores_glob)
 
 
 
@@ -852,7 +868,3 @@ if __name__ == "__main__":
     # precision.sort(reverse=True)
     # recall.sort()
     # Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
-
-
-
-
