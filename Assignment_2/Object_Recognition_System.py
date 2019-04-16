@@ -510,6 +510,8 @@ class Classifier:
             print(testImageDirName, "directory does not exist.")
             return
 
+        y_true = []
+        y_score = []
         self._recognition_results = {}
         fn = 0
         fp = 0
@@ -527,6 +529,10 @@ class Classifier:
             # Classifying a BOW using the classifier we have built in step 4
             prediction_activation = self.__activation(dlib_bow)         # -> [1, -1] by the activation function
             actual_activation = self.__pseudo_activation(image_name)    # -> [1, -1] by the activation function
+
+            y_true.append(actual_activation)
+            y_score.append(prediction_activation)
+
 
             # Given 2 classes determination -> need to determine for kind of binary problem
             self.__update_confusion_matrix(prediction_activation, actual_activation)
@@ -584,18 +590,15 @@ class Classifier:
         [1] actual      => [1,-1]
     """
     def __update_confusion_matrix(self, prediction, actual):
-        pred_loc = 1
-        actual_loc = 0
-        if prediction == actual:
-            if prediction == -1:
-                pred_loc = actual_loc = 1
-            else:
-                pred_loc = actual_loc = 0
-        elif prediction == 1:
-            pred_loc = 0
-            actual_loc = 1
-
-        self._confusion_matrix[pred_loc, actual_loc] += 1
+        if prediction < 0:
+            prediction = 1
+        else:
+            prediction = 0
+        if actual < 0:
+            actual = 1
+        else:
+            actual = 0
+        self._confusion_matrix[prediction, actual] += 1
 
 
     """
@@ -676,10 +679,21 @@ class Classifier:
 
 
 
-    @staticmethod
-    def ROC_Curve(recall, precision, accuracy, dependent_variable, name):
+    # @staticmethod
+    # def ROC_Curve(y_true, y_score):
+    #     fpr, tpr, thresholds = roc_curve(y_true, y_score)
+    #     roc_auc = auc(fpr, tpr)
+    #     plt.figure()
+    #     plt.xlabel('False Positive Rate')
+    #     plt.ylabel('True Positive Rate')
+    #     plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+    #     plt.xlim([0.0, 1.0])
+    #     plt.ylim([0.0, 1.05])
+    #     plt.title('SVM Classifier ROC Curve')
+    #     plt.plot(fpr, tpr, color='blue', lw=2, label='AUC = %0.2f)' % roc_auc)
+    #     plt.legend(loc="lower right")
+    #     plt.show()
 
-        # linear = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
         linearX = [0.0, 0.5, 1.0]
         linearY = [1.0, 0.5, 0.0]
@@ -693,18 +707,13 @@ class Classifier:
         axs[0].plot(linearX, linearY, '--')
         axs[0].set_xlabel('Recall')
         axs[0].set_ylabel('Precision')
-        fig.suptitle('ROC Curve (Dependent Variable - ' + name + ')', fontsize=16)
-
+        fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
         axs[1].plot(dependent_variable, accuracy, '--')
-        axs[1].set_xlabel('dependent variable - ' + name)
-
-        #axs[1].set_title('Accuracy Function')
-
+        axs[1].set_xlabel('K')
         axs[1].set_ylabel('Accuracy')
         plt.show()
 
     def TODOITAY(self,parameter1,parameter2,...,parametern):
-
 
 
 
@@ -724,7 +733,6 @@ def get_all_rest_datasets():
     return new_dir_names
 
 
-
 def exe_all_functions_code():
     ## All functions:
     ## Must object to initial the program
@@ -740,7 +748,7 @@ def exe_all_functions_code():
         ## Feature extraction process which is necessary while no pre-processing have been made yet
         feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
         ## can get from cmd parameters or to determine through the main function
-        chunk = range(8, 13)
+        chunk = range(2, 16)
         # iterating over 10 k values
         for k in chunk:
             feature_instance.set_K(k)
