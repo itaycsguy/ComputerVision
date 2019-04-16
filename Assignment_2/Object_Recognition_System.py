@@ -685,7 +685,7 @@ class Classifier:
     def ROC_Curve(recall, precision, accuracy, dependent_variable):
         # linear = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
         linear = np.arange(0.0, 1.1, 0.1)
-        fig, axs = plt.subplots(2, 1, constrained_layout=True)
+        fig, axs = plt.subplots(2, 1)
         axs[0].plot()
         axs[0].plot(recall, precision, '-')
         axs[0].plot(linear, linear, '--')
@@ -773,9 +773,6 @@ if __name__ == "__main__":
     # from sklearn.metrics import auc
     # from sklearn.metrics import confusion_matrix
 
-    y_true_glob = []
-    y_score_glob = []
-
     classifier_instance = None
 
     chunk = range(2, 16)
@@ -789,17 +786,15 @@ if __name__ == "__main__":
         feature_instance.load()
         classifier_instance = Classifier(feature_instance)
         classifier_instance.train()
-        y_true, y_score = classifier_instance.recognizer()
-
-        for t, s in zip(y_true, y_score):
-            y_true_glob.append(t)
-            y_score_glob.append(s)
+        classifier_instance.recognizer()
 
         classifier_instance.save()
         classifier_instance.load()
 
-        recall.append(classifier_instance.get_test_recall())
-        precision.append(classifier_instance.get_test_precision())
+        rec = classifier_instance.get_test_recall()
+        recall.append((rec-np.pi)/((1-np.pi)*rec))
+        prec = classifier_instance.get_test_precision()
+        precision.append((prec-np.pi)/((1-np.pi)*prec))
         accuracy.append(classifier_instance.get_test_accuracy())
 
         classifier_instance.show_test_accuracy()
