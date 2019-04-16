@@ -613,7 +613,9 @@ class Classifier:
         get the accuracy
     """
     def get_test_accuracy(self):
-        return (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1]) / self._confusion_matrix.sum()
+        TP = self._confusion_matrix[0, 0]
+        FN = self._confusion_matrix[1, 1]
+        return (TP + FN) / self._confusion_matrix.sum()
 
 
     """
@@ -628,7 +630,9 @@ class Classifier:
         get the precision
     """
     def get_test_precision(self):
-        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[0, 1])
+        TP = self._confusion_matrix[0, 0]
+        FP = self._confusion_matrix[1, 0]
+        return TP / (TP + FP)
 
 
 
@@ -643,7 +647,9 @@ class Classifier:
         get the recall
     """
     def get_test_recall(self):
-        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
+        TP = self._confusion_matrix[0, 0]
+        FN = self._confusion_matrix[0, 1]
+        return TP / (TP + FN)
 
 
     """
@@ -701,9 +707,9 @@ class Classifier:
         axs[0].plot(linearX, linearY, '--')
         axs[0].set_xlabel('Recall')
         axs[0].set_ylabel('Precision')
-        fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
+        fig.suptitle('Precision-Recall Curve', fontsize=16)
         axs[1].plot(K, accuracy, '--')
-        axs[1].set_xlabel('K')
+        axs[1].set_xlabel('Dependent-Parameter: K')
         axs[1].set_ylabel('Accuracy')
         plt.show()
 
@@ -711,6 +717,7 @@ class Classifier:
 
 """
     Get all more optional datasets from the entry directory that is defined
+    [1] count - number of additional datasets
 """
 def get_all_rest_datasets(count=0):
     if not os.path.exists(trainImageDirName):
@@ -763,6 +770,9 @@ def driver(datasets, k, c, SLEEP_TIME_OUT=3):
 
 """
     Determine the parameter to execute over
+    [1] c=?
+    [2] k=?
+    [3] dataset_amount=?
 """
 def run(**kwargs):
     dataset_amount = 0
@@ -790,7 +800,7 @@ if __name__ == "__main__":
 
     # Configurable Section:
     # *********************
-    loop_length = 4
+    loop_length = 20
     dataset_init = 0
     k_start = 5
     c_init = 1.0
