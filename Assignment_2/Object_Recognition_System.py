@@ -660,9 +660,10 @@ class Classifier:
 
     """
         Plot the desired Curve for choosing the optimal parameter
+        - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(y_true, y_score):
+    def ROC_Curve(accuracy, precision, recall, K):
         # fpr, tpr, thresholds = roc_curve(y_true, y_score)
         # roc_auc = auc(fpr, tpr)
         # plt.figure()
@@ -676,35 +677,35 @@ class Classifier:
         # plt.legend(loc="lower right")
         # plt.show()
 
-        from sklearn.metrics import precision_recall_curve
-        precision, recall, thresholds = precision_recall_curve(y_true, y_score)
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.title('SVM Classifier Precision-Recall Curve')
-        plt.plot(recall, precision, color='blue', lw=2, label='')
-        plt.legend(loc="lower right")
-        plt.show()
-
-        # linearX = [0.0, 0.5, 1.0]
-        # linearY = [1.0, 0.5, 0.0]
-        # fig, axs = plt.subplots(2, 1, constrained_layout=True)
-        # axs[0].plot()
-        # axs[0].plot(recall, precision, '-')
-        #
-        # # axs.plot(t1, f(t1), 'o')
-        # # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
-        #
-        # axs[0].plot(linearX, linearY, '--')
-        # axs[0].set_xlabel('Recall')
-        # axs[0].set_ylabel('Precision')
-        # fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
-        # axs[1].plot(dependent_variable, accuracy, '--')
-        # axs[1].set_xlabel('K')
-        # axs[1].set_ylabel('Accuracy')
+        # from sklearn.metrics import precision_recall_curve
+        # precision, recall, thresholds = precision_recall_curve(y_true, y_score)
+        # plt.xlabel('Recall')
+        # plt.ylabel('Precision')
+        # plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+        # plt.xlim([0.0, 1.0])
+        # plt.ylim([0.0, 1.05])
+        # plt.title('SVM Classifier Precision-Recall Curve')
+        # plt.plot(recall, precision, color='blue', lw=2, label='')
+        # plt.legend(loc="lower right")
         # plt.show()
+
+        linearX = [0.0, 0.5, 1.0]
+        linearY = [1.0, 0.5, 0.0]
+        fig, axs = plt.subplots(2, 1, constrained_layout=True)
+        axs[0].plot()
+        axs[0].plot(recall, precision, '-')
+
+        # axs.plot(t1, f(t1), 'o')
+        # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
+
+        axs[0].plot(linearX, linearY, '--')
+        axs[0].set_xlabel('Recall')
+        axs[0].set_ylabel('Precision')
+        fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
+        axs[1].plot(K, accuracy, '--')
+        axs[1].set_xlabel('K')
+        axs[1].set_ylabel('Accuracy')
+        plt.show()
 
 
 
@@ -789,17 +790,20 @@ if __name__ == "__main__":
 
     # Configurable Section:
     # *********************
-    loop_length = 10
+    loop_length = 4
     dataset_init = 0
     k_start = 5
-    c_init = 10.0
+    c_init = 1.0
 
     # [k_start, k_start + 1, k_start + 2, ..., k_start + loop_length + 1]
-    K = range(k_start, k_start + loop_length + 1)
+    # [5, 6, ..., 15]
+    # K = range(k_start, k_start + loop_length + 1)
+    K = 10 * np.ones(loop_length, dtype=np.uint32)
     # [0, 0, 0, ..., 0] => for loop_length size
     dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
     # [10.0, 10.0, 10.0, ..., 10.0] => for loop_length size
-    C = c_init * np.ones(loop_length, dtype=np.float32)
+    # C = c_init * np.ones(loop_length, dtype=np.float32)
+    C = np.arange(c_init, c_init + loop_length + 1, 1.0)
 
     for ds_amt, k, c in zip(dataset_amounts, K, C):
         y_true, y_score, acc, prec, rec, dependent_variable = run(dataset_amount=ds_amt, k=k, c=c)
@@ -816,6 +820,7 @@ if __name__ == "__main__":
 
     precision.sort(reverse=True)
     recall.sort()
+    Classifier.ROC_Curve(accuracy, precision, recall, K)
     # Classifier.ROC_Curve(y_true_glob, y_scores_glob)
 
 
