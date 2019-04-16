@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="778" column="4" selection-start-line="778" selection-start-column="4" selection-end-line="778" selection-end-column="4" />
+            <state relative-caret-position="91">
+              <caret line="853" selection-start-line="853" selection-end-line="853" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -60,6 +62,9 @@
       <find>precision</find>
       <find>currentk</find>
       <find>data</find>
+      <find>get_test_FPR</find>
+      <find>FPR</find>
+      <find>get_test_precision</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -84,9 +89,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="width" value="55" />
-    <option name="height" value="26" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="676" />
+    <option name="width" value="697" />
+    <option name="height" value="735" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -308,12 +314,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17857143" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.45178765" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.4222586" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -489,8 +495,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="778" column="4" selection-start-line="778" selection-start-column="4" selection-end-line="778" selection-end-column="4" />
+        <state relative-caret-position="91">
+          <caret line="853" selection-start-line="853" selection-end-line="853" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
