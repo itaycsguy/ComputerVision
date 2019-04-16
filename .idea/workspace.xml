@@ -71,6 +71,9 @@
       <find>precision</find>
       <find>currentk</find>
       <find>data</find>
+      <find>get_test_FPR</find>
+      <find>FPR</find>
+      <find>get_test_precision</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -95,9 +98,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="width" value="55" />
-    <option name="height" value="26" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="676" />
+    <option name="width" value="697" />
+    <option name="height" value="735" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">

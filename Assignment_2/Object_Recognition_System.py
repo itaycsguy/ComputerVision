@@ -834,42 +834,21 @@ if __name__ == "__main__":
     # dependent_variable = []
     # name = 'K'
     #
-    # db_instance = Database(trainImageDirName)
-    # db_instance.show_avaliable_datasets()
-    # # Must object to handle data as features
-    # feature_instance = Features(db_instance)
-    # ## Feature extraction process which is necessary while no pre-processing have been made yet
-    # feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
-    # ## can get from cmd parameters or to determine through the main function
-    # chunk = range(10, 12)
-    # # iterating over 10 k values
+    # datasets = [3, 4, 5, 6]
+    # K = range(2, 30)
+    # C = np.arange(0.1, 20.1, 1.0)
     #
-    # classifier_instance = None
-    # for k in chunk:
-    #     feature_instance.set_K(k)
-    #     feature_instance.cluster_data()
-    #     feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
-    #     feature_instance.save()
-    #     feature_instance.load()
-    #     classifier_instance = Classifier(feature_instance)
-    #     classifier_instance.train()
-    #     classifier_instance.recognizer()
-    #     classifier_instance.save()
-    #     classifier_instance.load()
+    # for ds, k, c in zip(datasets, K, C):
+    #     y_true, y_score, acc, prec, rec, dependent_variable = run(datasets=ds, k=k, c=c)
     #
-    #     accuracy.append(classifier_instance.get_test_accuracy())
-    #     precision.append(classifier_instance.get_test_FPR())
-    #     recall.append(classifier_instance.get_test_TPR())
-    #     # precision.append(classifier_instance.get_test_precision())
-    #     # recall.append(classifier_instance.get_test_recall())
-    #     dependent_variable.append(k)
+    #     accuracy.append(acc)
+    #     precision.append(prec)
+    #     recall.append(rec)
     #
-    #     # classifier_instance.show_test_accuracy()
-    #     # classifier_instance.show_test_precision()
-    #     # classifier_instance.show_test_recall()
-    #     feature_instance.show_current_k()
+    #     for true, score in zip(y_true, y_score):
+    #         y_true_glob.append(true)
+    #         y_scores_glob.append(score)
     #
-    # print(classifier_instance._confusion_matrix)
     # precision.sort(reverse=True)
     # recall.sort()
     # Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
