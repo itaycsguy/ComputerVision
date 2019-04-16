@@ -449,9 +449,9 @@ class Classifier:
     def __init__(self, features, c=10):
         self._features = features
         self._c = c
-        self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
+        self._svm_instance = dlib.svm_c_trainer_histogram_intersection()    # -> the linear case
         self._svm_instance.set_c(self._c)
-        self._svm_instance.be_verbose()                      # linear field
+        # self._svm_instance.be_verbose()                      # linear field
         self._decision_function = None
         # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
         classes_num = 2
@@ -513,6 +513,8 @@ class Classifier:
         y_true = []
         y_score = []
         self._recognition_results = {}
+        fn = 0
+        fp = 0
         for image_name in os.listdir(testImageDirName):
             image_path = testImageDirName + "//" + image_name
             image = cv2.imread(image_path)
@@ -537,13 +539,25 @@ class Classifier:
 
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
             self._recognition_results[image_name] = prediction_activation
-            #
+
             # image = cv2.imread(image_path)
             # cv2.imshow("Predict: " + str(prediction_activation), image)
-            # print("Image Name:" + str(prediction_activation), image_name)
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
-        return y_true, y_score
+            if (image_name[0] == 'a') & (prediction_activation == -1):
+                fn = fn+1
+            if (image_name[0] == 'e') & (prediction_activation == 1):
+                fp = fp+1
+            if (image_name[0] == 'm') & (prediction_activation == 1):
+                fp = fp+1
+
+
+
+            #print("Image Name:" + str(prediction_activation), image_name)
+
+
+        print("FP = " + str(fp))
+        print("fn = " + str(fn))
 
 
 
@@ -681,14 +695,16 @@ class Classifier:
     #     plt.show()
 
 
-    @staticmethod
-    def ROC_Curve(recall, precision, accuracy, dependent_variable):
-        # linear = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-        linear = np.arange(0.0, 1.1, 0.1)
-        fig, axs = plt.subplots(2, 1)
+        linearX = [0.0, 0.5, 1.0]
+        linearY = [1.0, 0.5, 0.0]
+        fig, axs = plt.subplots(2, 1, constrained_layout=True)
         axs[0].plot()
         axs[0].plot(recall, precision, '-')
-        axs[0].plot(linear, linear, '--')
+
+        # axs.plot(t1, f(t1), 'o')
+        # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
+
+        axs[0].plot(linearX, linearY, '--')
         axs[0].set_xlabel('Recall')
         axs[0].set_ylabel('Precision')
         fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
@@ -696,6 +712,9 @@ class Classifier:
         axs[1].set_xlabel('K')
         axs[1].set_ylabel('Accuracy')
         plt.show()
+
+    def TODOITAY(self,parameter1,parameter2,...,parametern):
+
 
 
 """
@@ -749,61 +768,133 @@ def exe_all_functions_code():
             time.sleep(TIME_OUT)
 
 
+def exe_all_functions_code_by_c():
+    ## All functions:
+    ## Must object to initial the program
+    TIME_OUT = 3
+    db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
+    additional_dirs = get_all_rest_datasets()
+    for dir_name in additional_dirs:
+        db_instance.append_datasets(dir_name)
+        db_instance.load_datasets_from_dir()
+        db_instance.show_avaliable_datasets()
+        # Must object to handle data as features
+        feature_instance = Features(db_instance)
+        ## Feature extraction process which is necessary while no pre-processing have been made yet
+        feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
+        feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
+        feature_instance.save()
+        feature_instance.load()
+        ## can get from cmd parameters or to determine through the main function
+        chunk = range(10, 50)
+        # iterating over 10 k values
+        for c in chunk:
+            classifier_instance = Classifier(feature_instance, c)
+            classifier_instance.train()
+            classifier_instance.recognizer()
+            classifier_instance.save()
+            classifier_instance.load()
+            classifier_instance.show_test_accuracy()
+            classifier_instance.show_test_precision()
+            classifier_instance.show_test_recall()
+            feature_instance.show_current_k()
+            time.sleep(TIME_OUT)
+
 
 if __name__ == "__main__":
-
-    ## Functionality Example:
-    #########################
-    # exe_all_functions_code()
-
-    db_instance = Database(trainImageDirName)
-    db_instance.show_avaliable_datasets()
-    # Must object to handle data as features
-    feature_instance = Features(db_instance)
-    ## Feature extraction process which is necessary while no pre-processing have been made yet
-    feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
-    ## can get from cmd parameters or to determine through the main function
 
     recall = []
     precision = []
     accuracy = []
-    K = []
+    dependent_variable = []
+    name = 'K'
 
-    # from sklearn.metrics import roc_curve
-    # from sklearn.metrics import auc
-    # from sklearn.metrics import confusion_matrix
-
-    classifier_instance = None
-
-    chunk = range(2, 16)
-    # iterating over chunk values
-    for k in chunk:
-        K.append(k)
-        feature_instance.set_K(k)
-        feature_instance.cluster_data()
+    #TIME_OUT = 3
+    db_instance = Database(trainImageDirName, FINAL_CLASSES=False)
+    additional_dirs = get_all_rest_datasets()
+    for dir_name in additional_dirs:
+        db_instance.append_datasets(dir_name)
+        db_instance.load_datasets_from_dir()
+        db_instance.show_avaliable_datasets()
+        # Must object to handle data as features
+        feature_instance = Features(db_instance)
+        ## Feature extraction process which is necessary while no pre-processing have been made yet
+        feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
         feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
         feature_instance.save()
         feature_instance.load()
-        classifier_instance = Classifier(feature_instance)
-        classifier_instance.train()
-        classifier_instance.recognizer()
+        ## can get from cmd parameters or to determine through the main function
+        chunk = range(10, 20)
+        # iterating over 10 k values
+        for c in chunk:
+            classifier_instance = Classifier(feature_instance, c)
+            classifier_instance.train()
+            classifier_instance.recognizer()
+            classifier_instance.save()
+            classifier_instance.load()
+            classifier_instance.show_test_accuracy()
+            classifier_instance.show_test_precision()
+            classifier_instance.show_test_recall()
+            feature_instance.show_current_k()
+            # time.sleep(TIME_OUT)
+            print("Current Threshold margin (for svm): ", c)
+    precision.sort(reverse=True)
+    recall.sort()
+    Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
 
-        classifier_instance.save()
-        classifier_instance.load()
 
-        rec = classifier_instance.get_test_recall()
-        recall.append((rec-np.pi)/((1-np.pi)*rec))
-        prec = classifier_instance.get_test_precision()
-        precision.append((prec-np.pi)/((1-np.pi)*prec))
-        accuracy.append(classifier_instance.get_test_accuracy())
 
-        classifier_instance.show_test_accuracy()
-        classifier_instance.show_test_precision()
-        classifier_instance.show_test_recall()
-        feature_instance.show_current_k()
 
-    Classifier.ROC_Curve(recall, precision, accuracy, K)
 
+
+
+    ######################################
+    ## Changing K-means
+    # recall = []
+    # precision = []
+    # accuracy = []
+    # dependent_variable = []
+    # name = 'K'
+    #
+    # db_instance = Database(trainImageDirName)
+    # db_instance.show_avaliable_datasets()
+    # # Must object to handle data as features
+    # feature_instance = Features(db_instance)
+    # ## Feature extraction process which is necessary while no pre-processing have been made yet
+    # feature_instance.generate_visual_word_dict(NEED_CLUSTERING=False)
+    # ## can get from cmd parameters or to determine through the main function
+    # chunk = range(10, 12)
+    # # iterating over 10 k values
+    #
+    # classifier_instance = None
+    # for k in chunk:
+    #     feature_instance.set_K(k)
+    #     feature_instance.cluster_data()
+    #     feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
+    #     feature_instance.save()
+    #     feature_instance.load()
+    #     classifier_instance = Classifier(feature_instance)
+    #     classifier_instance.train()
+    #     classifier_instance.recognizer()
+    #     classifier_instance.save()
+    #     classifier_instance.load()
+    #
+    #     accuracy.append(classifier_instance.get_test_accuracy())
+    #     precision.append(classifier_instance.get_test_FPR())
+    #     recall.append(classifier_instance.get_test_TPR())
+    #     # precision.append(classifier_instance.get_test_precision())
+    #     # recall.append(classifier_instance.get_test_recall())
+    #     dependent_variable.append(k)
+    #
+    #     # classifier_instance.show_test_accuracy()
+    #     # classifier_instance.show_test_precision()
+    #     # classifier_instance.show_test_recall()
+    #     feature_instance.show_current_k()
+    #
+    # print(classifier_instance._confusion_matrix)
+    # precision.sort(reverse=True)
+    # recall.sort()
+    # Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
 
 
 
