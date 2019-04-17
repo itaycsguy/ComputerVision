@@ -20,6 +20,7 @@ testImageDirName = ".//Datasets//Testset"
 class Database:
     PICKLE_DIR = "var"
     TARGET_CLASS = "airplane"
+    MIN_ADD_DB = 0
 
     # Defined at the published assignment
     ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
@@ -108,6 +109,8 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
+    DEF_K = 10
+    MIN_K = 1
 
     """
         [1] database  - a Database object
@@ -116,7 +119,7 @@ class Features:
         [4] bin_n     - number of bins for the histogram at each cell, default: 9
         [5] win_size  - size the image (expecting to 2^x type of size), default: (64, 128)
     """
-    def __init__(self, database, k=10, cell_size=8, bin_n=9, win_size=(64, 128)):
+    def __init__(self, database, k=DEF_K, cell_size=8, bin_n=9, win_size=(64, 128)):
         # Database reference
         self._database = database
         # These are parameters which required from the program to get initially
@@ -442,12 +445,14 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
+    DEF_C = 10.0
+    MIN_C = 0.0
 
     """
         [1] features -  a Feature class object
         [2] c        - margin flexible variable (the actual width)
     """
-    def __init__(self, features, c=10):
+    def __init__(self, features, c=DEF_C):
         self._features = features
         self._c = c
         self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
@@ -544,19 +549,19 @@ class Classifier:
             fontColor = (255, 255, 255)
             lineType = 2
 
-            prediction = 'Airplane'
-            if (prediction_activation[0] == -1):
-                prediction = 'Not Airplane'
-            cv2.putText(image, prediction,
-                        bottomLeftCornerOfText,
-                        font,
-                        fontScale,
-                        fontColor,
-                        lineType)
-            cv2.imshow("Test Images", image)
-            cv2.waitKey(0)
+            # prediction = 'Airplane'
+            # if (prediction_activation[0] == -1):
+            #     prediction = 'Not Airplane'
+            # cv2.putText(image, prediction,
+            #             bottomLeftCornerOfText,
+            #             font,
+            #             fontScale,
+            #             fontColor,
+            #             lineType)
+            # cv2.imshow("Test Images", image)
+            # cv2.waitKey(0)
 
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
         return y_true, y_score
 
 
@@ -592,13 +597,13 @@ class Classifier:
         [1] actual      => [1,-1]
     """
     def __update_confusion_matrix(self, prediction, actual):
-        prediction = prediction[1]
-        actual = actual[1]
-        if prediction < 0:
+        prediction = prediction[0]
+        actual = actual[0]
+        if prediction <= 0:
             prediction = 1
         else:
             prediction = 0
-        if actual < 0:
+        if actual <= 0:
             actual = 1
         else:
             actual = 0
@@ -628,14 +633,18 @@ class Classifier:
         get the accuracy
     """
     def get_test_accuracy(self):
-        return (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1]) / self._confusion_matrix.sum()
+        TP = self._confusion_matrix[0, 0]
+        TN = self._confusion_matrix[1, 1]
+        return (TP + TN) / self._confusion_matrix.sum()
 
 
     """
         print the accuracy
     """
     def show_test_accuracy(self):
-        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[1, 1], self._confusion_matrix.sum(), self.get_test_accuracy()))
+        TP = self._confusion_matrix[0, 0]
+        TN = self._confusion_matrix[1, 1]
+        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(TP, TN, self._confusion_matrix.sum(), self.get_test_accuracy()))
 
 
 
@@ -643,7 +652,9 @@ class Classifier:
         get the precision
     """
     def get_test_precision(self):
-        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[0, 1])
+        TP = self._confusion_matrix[0, 0]
+        FP = self._confusion_matrix[0, 1]
+        return TP / (TP + FP)
 
 
 
@@ -651,25 +662,36 @@ class Classifier:
         print the precision
     """
     def show_test_precision(self):
-        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[0, 1], self.get_test_precision()))
+        TP = self._confusion_matrix[0, 0]
+        FP = self._confusion_matrix[0, 1]   # predicted 1 but it is -1
+        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(TP, TP, FP, self.get_test_precision()))
 
 
     """
         get the recall
     """
     def get_test_recall(self):
-        return self._confusion_matrix[0, 0] / (self._confusion_matrix[0, 0] + self._confusion_matrix[1, 0])
+        TP = self._confusion_matrix[0, 0]
+        FN = self._confusion_matrix[1, 0]
+        return TP / (TP + FN)
 
 
     """
         print the recall
     """
     def show_test_recall(self):
-        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(self._confusion_matrix[0, 0], self._confusion_matrix[0, 0], self._confusion_matrix[1, 0], self.get_test_recall()))
+        TP = self._confusion_matrix[0, 0]
+        FN = self._confusion_matrix[1, 0]
+        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(TP, TP, FN, self.get_test_recall()))
 
 
     def show_test_c(self):
         print("Current C for the SVM margin width:", self._c)
+
+
+    def show_test_confusion_matrix(self):
+        print("Current confusion matrix:\n", self._confusion_matrix)
+
 
 
 
@@ -678,54 +700,33 @@ class Classifier:
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(accuracy, precision, recall, K):
-        # fpr, tpr, thresholds = roc_curve(y_true, y_score)
-        # roc_auc = auc(fpr, tpr)
-        # plt.figure()
-        # plt.xlabel('False Positive Rate')
-        # plt.ylabel('True Positive Rate')
-        # plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
-        # plt.xlim([0.0, 1.0])
-        # plt.ylim([0.0, 1.05])
-        # plt.title('SVM Classifier ROC Curve')
-        # plt.plot(fpr, tpr, color='blue', lw=2, label='AUC = %0.2f)' % roc_auc)
-        # plt.legend(loc="lower right")
-        # plt.show()
+    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name):
+        linear_x = [0.0, 0.5, 1.0]
+        linear_y = [1.0, 0.5, 0.0]
 
-        # from sklearn.metrics import precision_recall_curve
-        # precision, recall, thresholds = precision_recall_curve(y_true, y_score)
-        # plt.xlabel('Recall')
-        # plt.ylabel('Precision')
-        # plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
-        # plt.xlim([0.0, 1.0])
-        # plt.ylim([0.0, 1.05])
-        # plt.title('SVM Classifier Precision-Recall Curve')
-        # plt.plot(recall, precision, color='blue', lw=2, label='')
-        # plt.legend(loc="lower right")
-        # plt.show()
-
-        linearX = [0.0, 0.5, 1.0]
-        linearY = [1.0, 0.5, 0.0]
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
-        axs[0].plot()
+
         axs[0].plot(recall, precision, '-')
-
-        # axs.plot(t1, f(t1), 'o')
-        # axs.plot(t3, np.cos(2 * np.pi * t3), '--')
-
-        axs[0].plot(linearX, linearY, '--')
+        axs[0].plot(linear_x, linear_y, '--')
+        axs[0].set_xlim(0.0, 1.0)
+        axs[0].set_ylim(0.0, 1.0)
         axs[0].set_xlabel('Recall')
         axs[0].set_ylabel('Precision')
-        fig.suptitle('ROC Curve (Dependent Variable: K)', fontsize=16)
-        axs[1].plot(K, accuracy, '--')
-        axs[1].set_xlabel('K')
+
+        fig.suptitle('ROC Curve', fontsize=16)
+
+        axs[1].set_ylim(0.0, 1.0)
+        axs[1].plot(dependent_var, accuracy, '--')
+        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
         axs[1].set_ylabel('Accuracy')
+
         plt.show()
 
 
 
 """
     Get all more optional datasets from the entry directory that is defined
+    [1] count - number of additional datasets
 """
 def get_all_rest_datasets(count=0):
     if not os.path.exists(trainImageDirName):
@@ -747,10 +748,6 @@ def get_all_rest_datasets(count=0):
     Running the system using determined parameters
 """
 def driver(datasets, k, c, SLEEP_TIME_OUT=3):
-    recall = list()
-    precision = list()
-    accuracy = list()
-    dependent_variable = list()
     db_instance = Database(trainImageDirName, FINAL_CLASSES=True, datasets=get_all_rest_datasets(datasets))
     db_instance.show_avaliable_datasets()
     feature_instance = Features(db_instance, k=k)
@@ -763,32 +760,35 @@ def driver(datasets, k, c, SLEEP_TIME_OUT=3):
     y_true, y_score = classifier_instance.recognizer()
     classifier_instance.save()
     classifier_instance.load()
-    accuracy.append(classifier_instance.get_test_accuracy())
-    precision.append(classifier_instance.get_test_precision())
-    recall.append(classifier_instance.get_test_recall())
-    dependent_variable.append(k)
+    accuracy = classifier_instance.get_test_accuracy()
+    precision = classifier_instance.get_test_precision()
+    recall = classifier_instance.get_test_recall()
     classifier_instance.show_test_accuracy()
     classifier_instance.show_test_precision()
     classifier_instance.show_test_recall()
     feature_instance.show_current_k()
     classifier_instance.show_test_c()
+    classifier_instance.show_test_confusion_matrix()
     time.sleep(SLEEP_TIME_OUT)
-    return y_true, y_score, accuracy, precision, recall, dependent_variable
+    return y_true, y_score, accuracy, precision, recall
 
 
 """
     Determine the parameter to execute over
+    [1] dataset_amount=?
+    [2] k=?
+    [3] c=?
 """
 def run(**kwargs):
     dataset_amount = 0
-    k = 10
-    c = 10.0
+    k = Features.DEF_K
+    c = Classifier.DEF_C
     for key, value in kwargs.items():
-        if key.lower() == "c" and np.float32(value) > 0.0:
+        if key.lower() == "c" and np.float32(value) > Classifier.MIN_C:
             c = np.float32(value)
-        elif key.lower() == "k" and np.uint32(value) > 1:
+        elif key.lower() == "k" and np.uint32(value) > Features.MIN_K:
             k = np.uint32(value)
-        elif key.lower() == "dataset_amount" and np.uint32(value) > 0:
+        elif key.lower() == "dataset_amount" and np.uint32(value) > Database.MIN_ADD_DB:
             dataset_amount = np.uint32(value)
 
     return driver(dataset_amount, k, c)
@@ -805,65 +805,60 @@ if __name__ == "__main__":
 
     # Configurable Section:
     # *********************
-    loop_length = 20
+    LOAD = True
+    DEP_VAR_NAME = "K"
+    loop_length = 50
+
     dataset_init = 0
-    k_start = 5
-    c_init = 0.1
+    k_init = 5
+    c_init = 5.0
 
-    # [k_start, k_start + 1, k_start + 2, ..., k_start + loop_length + 1]
-    # [5, 6, ..., 15]
-    # K = range(k_start, k_start + loop_length + 1)
-    K = 15 * np.ones(loop_length, dtype=np.uint32)
-    # [0, 0, 0, ..., 0] => for loop_length size
     dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
-    # [10.0, 10.0, 10.0, ..., 10.0] => for loop_length size
-    # C = c_init * np.ones(loop_length, dtype=np.float32)
-    C = np.arange(c_init, c_init + 0 + 1, 0.1)
+    DEP_VAR = range(k_init, k_init + loop_length, 1)
+    if DEP_VAR_NAME == "C":
+        DEP_VAR = np.arange(c_init, c_init + loop_length, 1.0)
 
-    for ds_amt, k, c in zip(dataset_amounts, K, C):
-        y_true, y_score, acc, prec, rec, dependent_variable = run(dataset_amount=ds_amt, k=k, c=c)
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    if LOAD:
+        data = pickle.load(open(run_data_path, "rb"))
+        y_true_glob = data[0]
+        y_scores_glob = data[1]
+        accuracy = data[2]
+        precision = data[3]
+        recall = data[4]
+    else:
+        for ds_amt, dep_var in zip(dataset_amounts, DEP_VAR):
+            res = None
+            if DEP_VAR_NAME == "C":
+                res = run(dataset_amount=ds_amt, c=dep_var)
+            else:
+                res = run(dataset_amount=ds_amt, k=dep_var)
+            y_true, y_score, acc, prec, rec = res
 
-        accuracy.append(acc)
-        precision.append(prec)
-        recall.append(rec)
+            accuracy.append(acc)
+            precision.append(prec)
+            recall.append(rec)
 
-        for true, score in zip(y_true, y_score):
-            y_true_glob.append(true)
-            y_scores_glob.append(score)
+            for true, score in zip(y_true, y_score):
+                y_true_glob.append(true)
+                y_scores_glob.append(score)
 
-        print("")
+            print("")
 
-    precision.sort(reverse=True)
-    recall.sort()
-    Classifier.ROC_Curve(accuracy, precision, recall, C)
-    # Classifier.ROC_Curve(y_true_glob, y_scores_glob)
+        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
+    precision.sort()
+    recall.sort(reverse=True)
 
-
-
-    ######################################
-    ## Changing K-means
-    # recall = []
-    # precision = []
-    # accuracy = []
-    # dependent_variable = []
-    # name = 'K'
+    # for idx, y in enumerate(y_true_glob):
+    #     y_true_glob[idx] = y[0]
     #
-    # datasets = [3, 4, 5, 6]
-    # K = range(2, 30)
-    # C = np.arange(0.1, 20.1, 1.0)
-    #
-    # for ds, k, c in zip(datasets, K, C):
-    #     y_true, y_score, acc, prec, rec, dependent_variable = run(datasets=ds, k=k, c=c)
-    #
-    #     accuracy.append(acc)
-    #     precision.append(prec)
-    #     recall.append(rec)
-    #
-    #     for true, score in zip(y_true, y_score):
-    #         y_true_glob.append(true)
-    #         y_scores_glob.append(score)
-    #
-    # precision.sort(reverse=True)
-    # recall.sort()
-    # Classifier.ROC_Curve(recall, precision, accuracy, dependent_variable, name)
+    # for idx, y in enumerate(y_scores_glob):
+    #     y_scores_glob[idx] = y[1]
+
+    # from sklearn.metrics import precision_recall_curve
+    # precision, recall, _ = precision_recall_curve(y_true_glob, y_scores_glob)
+    # print(precision)
+    # print(recall)
+
+    Classifier.ROC_Curve(accuracy, precision, recall, DEP_VAR, DEP_VAR_NAME)
