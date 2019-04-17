@@ -109,7 +109,7 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_K = 10
+    DEF_K = 22
     MIN_K = 1
 
     """
@@ -445,8 +445,8 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
-    DEF_C = 10.0
-    MIN_C = 0.0
+    DEF_C = 5.0
+    MIN_C = 0.01
 
     """
         [1] features -  a Feature class object
@@ -693,6 +693,19 @@ class Classifier:
         print("Current confusion matrix:\n", self._confusion_matrix)
 
 
+    @staticmethod
+    def find_optimum(accuracy, dependent_var, dependent_name):
+        max_acc = 0
+        var = -1
+        for y, x in zip(accuracy, dependent_var):
+            if max_acc < y:
+                max_acc = y
+                var = x
+
+        if max_acc > 0 and var > -1:
+            print("An optimal parameter was found " + dependent_name + ":", var)
+
+        return var, max_acc
 
 
     """
@@ -700,25 +713,50 @@ class Classifier:
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name):
+    def ROC_Curve(optimum_var, accuracy, precision, recall, dependent_var, dependent_var_name, USE_OPT=False):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
-        fig, axs = plt.subplots(2, 1, constrained_layout=True)
+        if not USE_OPT:
+            fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-        axs[0].plot(recall, precision, '-')
-        axs[0].plot(linear_x, linear_y, '--')
-        axs[0].set_xlim(0.0, 1.0)
-        axs[0].set_ylim(0.0, 1.0)
-        axs[0].set_xlabel('Recall')
-        axs[0].set_ylabel('Precision')
+            axs[0].plot(recall, precision, '--', linewidth=2)
 
-        fig.suptitle('ROC Curve', fontsize=16)
+            # xi = np.linspace(recall[0], recall[-1])
+            # yi = np.interp(recall, xi, precision, None)
+            # axs[0].plot(recall, precision, '--', xi, yi, '-', linewidth=2)
 
-        axs[1].set_ylim(0.0, 1.0)
-        axs[1].plot(dependent_var, accuracy, '--')
-        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
-        axs[1].set_ylabel('Accuracy')
+            axs[0].plot(linear_x, linear_y, '-', linewidth=0.5)
+            axs[0].set_xlim(0.0, 1.0)
+            axs[0].set_ylim(0.0, 1.0)
+            axs[0].set_xlabel('Recall')
+            axs[0].set_ylabel('Precision')
+            axs[0].legend(['data', 'boundary'], loc='best')
+
+            fig.suptitle('ROC Curve', fontsize=16)
+
+            axs[1].set_ylim(0.0, 1.0)
+            axs[1].plot(dependent_var, accuracy, '-', linewidth=2)
+
+            op_x = [optimum_var[0]]
+            op_y = [optimum_var[1]]
+            axs[1].plot(op_x, op_y, 'rp', markersize=14)
+            axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
+            axs[1].set_ylabel('Accuracy')
+            axs[1].legend(['data', 'optimum'], loc='best')
+
+        else:
+            fig, axs = plt.subplots(1, 1, constrained_layout=True)
+
+            axs.plot(recall, precision, '--', linewidth=2)
+            axs.plot(linear_x, linear_y, '-', linewidth=0.5)
+            axs.set_xlim(0.0, 1.0)
+            axs.set_ylim(0.0, 1.0)
+            axs.set_xlabel('Recall')
+            axs.set_ylabel('Precision')
+            axs.legend(['data', 'boundary'], loc='best')
+
+            fig.suptitle('ROC Curve', fontsize=16)
 
         plt.show()
 
@@ -805,20 +843,28 @@ if __name__ == "__main__":
 
     # Configurable Section:
     # *********************
-    LOAD = True
+    LOAD = False
+    USE_OPT = True
     DEP_VAR_NAME = "K"
     loop_length = 50
+    opt_length = 4
 
     dataset_init = 0
     k_init = 5
     c_init = 5.0
 
-    dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
-    DEP_VAR = range(k_init, k_init + loop_length, 1)
-    if DEP_VAR_NAME == "C":
-        DEP_VAR = np.arange(c_init, c_init + loop_length, 1.0)
+    dataset_amounts = range(0, opt_length)
+    DEP_VAR = np.zeros(opt_length, dtype=np.uint32)
+    run_data_path = Database.PICKLE_DIR
+    if not USE_OPT:
+        run_data_path += "//Run_data_" + DEP_VAR_NAME + ".pkl"
+        dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
+        DEP_VAR = range(k_init, k_init + loop_length, 1)
+        if DEP_VAR_NAME == "C":
+            DEP_VAR = np.arange(c_init, c_init + loop_length, 1.0)
+    else:
+        run_data_path += "//Datasets_Run_data.pkl"
 
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
     if LOAD:
         data = pickle.load(open(run_data_path, "rb"))
         y_true_glob = data[0]
@@ -861,4 +907,5 @@ if __name__ == "__main__":
     # print(precision)
     # print(recall)
 
-    Classifier.ROC_Curve(accuracy, precision, recall, DEP_VAR, DEP_VAR_NAME)
+    optimum = Classifier.find_optimum(accuracy, DEP_VAR, DEP_VAR_NAME)
+    Classifier.ROC_Curve(optimum, accuracy, precision, recall, DEP_VAR, DEP_VAR_NAME, USE_OPT)
