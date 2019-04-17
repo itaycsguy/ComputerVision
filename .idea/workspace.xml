@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
-    </list>
+    <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
