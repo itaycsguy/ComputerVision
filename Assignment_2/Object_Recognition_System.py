@@ -109,6 +109,7 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
+    DEF_K = 10
     MIN_K = 1
 
     """
@@ -118,7 +119,7 @@ class Features:
         [4] bin_n     - number of bins for the histogram at each cell, default: 9
         [5] win_size  - size the image (expecting to 2^x type of size), default: (64, 128)
     """
-    def __init__(self, database, k=10, cell_size=8, bin_n=9, win_size=(64, 128)):
+    def __init__(self, database, k=DEF_K, cell_size=8, bin_n=9, win_size=(64, 128)):
         # Database reference
         self._database = database
         # These are parameters which required from the program to get initially
@@ -444,13 +445,14 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
+    DEF_C = 10.0
     MIN_C = 0.0
 
     """
         [1] features -  a Feature class object
         [2] c        - margin flexible variable (the actual width)
     """
-    def __init__(self, features, c=10):
+    def __init__(self, features, c=DEF_C):
         self._features = features
         self._c = c
         self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
@@ -698,17 +700,11 @@ class Classifier:
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(accuracy, precision, recall, K=None, C=None):
+    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
-        num_figes = 1
-        if K:
-            num_figes += 1
-        if C:
-            num_figes += 1
-
-        fig, axs = plt.subplots(num_figes, 1, constrained_layout=True)
+        fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
         axs[0].plot(recall, precision, '-')
         axs[0].plot(linear_x, linear_y, '--')
@@ -717,22 +713,12 @@ class Classifier:
         axs[0].set_xlabel('Recall')
         axs[0].set_ylabel('Precision')
 
-        fig.suptitle('ROC Curve [Precision-Recall]', fontsize=16)
+        fig.suptitle('ROC Curve', fontsize=16)
 
-        if C is not None:
-            axs[1].set_ylim(0.0, 1.0)
-            axs[1].plot(C, accuracy, '--')
-            axs[1].set_xlabel('Dependent-Parameter: C')
-            axs[1].set_ylabel('Accuracy')
-
-        if K is not None:
-            idx = 1
-            if C is not None:
-                idx += 1
-            axs[idx].set_ylim(0.0, 1.0)
-            axs[idx].plot(K, accuracy, '--')
-            axs[idx].set_xlabel('Dependent-Parameter: K')
-            axs[idx].set_ylabel('Accuracy')
+        axs[1].set_ylim(0.0, 1.0)
+        axs[1].plot(dependent_var, accuracy, '--')
+        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
+        axs[1].set_ylabel('Accuracy')
 
         plt.show()
 
@@ -795,8 +781,8 @@ def driver(datasets, k, c, SLEEP_TIME_OUT=3):
 """
 def run(**kwargs):
     dataset_amount = 0
-    k = 10
-    c = 10.0
+    k = Features.DEF_K
+    c = Classifier.DEF_C
     for key, value in kwargs.items():
         if key.lower() == "c" and np.float32(value) > Classifier.MIN_C:
             c = np.float32(value)
@@ -819,33 +805,60 @@ if __name__ == "__main__":
 
     # Configurable Section:
     # *********************
+    LOAD = True
+    DEP_VAR_NAME = "K"
     loop_length = 50
+
     dataset_init = 0
-    k_start = 2
-    c_init = 10.0
+    k_init = 5
+    c_init = 5.0
 
-    # [0, 0, 0, ..., 0] => for loop_length size
     dataset_amounts = dataset_init * np.ones(loop_length, dtype=np.uint32)
-    # [k_start, k_start + 1, k_start + 2, ..., k_start + loop_length + 1]
-    K = range(k_start, k_start + loop_length)
-    # K = 10 * np.ones(loop_length, dtype=np.uint32)
-    # [10.0, 10.0, 10.0, ..., 10.0] => for loop_length size
-    C = c_init * np.ones(loop_length, dtype=np.float32)
-    # C = np.arange(1.0, 21.0, 1.0)
+    DEP_VAR = range(k_init, k_init + loop_length, 1)
+    if DEP_VAR_NAME == "C":
+        DEP_VAR = np.arange(c_init, c_init + loop_length, 1.0)
 
-    for ds_amt, k, c in zip(dataset_amounts, K, C):
-        y_true, y_score, acc, prec, rec = run(dataset_amount=ds_amt, k=k, c=c)
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    if LOAD:
+        data = pickle.load(open(run_data_path, "rb"))
+        y_true_glob = data[0]
+        y_scores_glob = data[1]
+        accuracy = data[2]
+        precision = data[3]
+        recall = data[4]
+    else:
+        for ds_amt, dep_var in zip(dataset_amounts, DEP_VAR):
+            res = None
+            if DEP_VAR_NAME == "C":
+                res = run(dataset_amount=ds_amt, c=dep_var)
+            else:
+                res = run(dataset_amount=ds_amt, k=dep_var)
+            y_true, y_score, acc, prec, rec = res
 
-        accuracy.append(acc)
-        precision.append(prec)
-        recall.append(rec)
+            accuracy.append(acc)
+            precision.append(prec)
+            recall.append(rec)
 
-        for true, score in zip(y_true, y_score):
-            y_true_glob.append(true)
-            y_scores_glob.append(score)
+            for true, score in zip(y_true, y_score):
+                y_true_glob.append(true)
+                y_scores_glob.append(score)
 
-        print("")
+            print("")
 
-    precision.sort(reverse=True)
-    recall.sort()
-    Classifier.ROC_Curve(accuracy, precision, recall, K, None)
+        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
+
+    precision.sort()
+    recall.sort(reverse=True)
+
+    # for idx, y in enumerate(y_true_glob):
+    #     y_true_glob[idx] = y[0]
+    #
+    # for idx, y in enumerate(y_scores_glob):
+    #     y_scores_glob[idx] = y[1]
+
+    # from sklearn.metrics import precision_recall_curve
+    # precision, recall, _ = precision_recall_curve(y_true_glob, y_scores_glob)
+    # print(precision)
+    # print(recall)
+
+    Classifier.ROC_Curve(accuracy, precision, recall, DEP_VAR, DEP_VAR_NAME)
