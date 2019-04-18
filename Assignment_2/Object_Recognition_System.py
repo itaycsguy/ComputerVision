@@ -90,6 +90,18 @@ class Database:
         return Database.ALLOWED_DIRS[Database.TARGET_CLASS]
 
 
+    def get_target1_class(self):
+        return Database.ALLOWED_DIRS["airplane"]
+
+
+    def get_target2_class(self):
+        return Database.ALLOWED_DIRS["elephant"]
+
+
+    def get_target3_class(self):
+        return Database.ALLOWED_DIRS["motorbike"]
+
+
     """
         Return root training-set directory
     """
@@ -114,7 +126,7 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_K = 10
+    DEF_K = 10  # optimum k clusters
     MIN_K = 1
 
     """
@@ -149,6 +161,18 @@ class Features:
     """
     def show_current_k(self):
         print("Current K to the clustering algorithm:", self._K)
+
+
+    def get_target1_value(self):
+        return self._database.get_target1_class()
+
+
+    def get_target2_value(self):
+        return self._database.get_target2_class()
+
+
+    def get_target3_value(self):
+        return self._database.get_target3_class()
 
 
     """
@@ -450,9 +474,9 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
-    DEF_C = 10.0
+    DEF_C = 10.0    # optimum margin with of SVM
     MIN_C = 0.01
-    DEF_NN_THRESH = 250
+    DEF_NN_THRESH = 250     # optimum distance for nearest-neighbor
     LINEAR_SVM = 0
     NN = 1
 
@@ -470,6 +494,9 @@ class Classifier:
         else:
             self._nn_thresh = Classifier.DEF_NN_THRESH
         self._decision_function = None
+        self._decision_function1 = None
+        self._decision_function2 = None
+        self._decision_function3 = None
         # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
         classes_num = 2
         self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
@@ -529,9 +556,16 @@ class Classifier:
             # -> dlib.vectors
             data = self.__prepare_dlib_data(self._features.get_bows())
             # -> dlib.array => [-1,1]
-            labels = self.__prepare_dlib_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
+            # labels = self.__prepare_dlib_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
+            actual_labels = self._features.get_feature_vectors_labels_by_image()
+            labels1 = self.__prepare_dlib_labels(actual_labels, self._features.get_target1_value())     # airplane
+            labels2 = self.__prepare_dlib_labels(actual_labels, self._features.get_target2_value())     # elephant
+            labels3 = self.__prepare_dlib_labels(actual_labels, self._features.get_target3_value())     # motorbike
             # -> dlib._decision_function_radial_basis
-            self._decision_function = self._svm_instance.train(data, labels)
+            # self._decision_function = self._svm_instance.train(data, labels)
+            self._decision_function1 = self._svm_instance.train(data, labels1)
+            self._decision_function2 = self._svm_instance.train(data, labels2)
+            self._decision_function3 = self._svm_instance.train(data, labels3)
             # print(self._decision_function(data[0]))
         return self._decision_function
 
@@ -549,6 +583,19 @@ class Classifier:
                 closest_class = labels[curr_idx]
         return closest_class
 
+
+
+    def __multi_NN_activation(self, bow):
+        data = self._features.get_bows()
+        labels = self._features.get_feature_vectors_labels_by_image()
+        best_mse = np.Inf
+        closest_class = 0
+        for curr_idx, bow_item in enumerate(data):
+            curr_mse = np.square(bow - bow_item).mean(axis=0)  # pseudo-code: (1/n) * sum((ai-bi)^2)
+            if curr_mse < self._nn_thresh and curr_mse < best_mse:
+                best_mse = curr_mse
+                closest_class = labels[curr_idx]
+        return closest_class
 
 
     """
@@ -579,9 +626,9 @@ class Classifier:
                 dlib_bow = dlib.vector(bow)
 
                 # Classifying a BOW using the classifier we have built in step 4
-                prediction_activation = self.__activation(dlib_bow)         # -> [1, -1] by the activation function
+                prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [1, -1] by the activation function
             else:
-                prediction_activation = self.__NN_activation(bow)
+                prediction_activation = self.__multi_NN_activation(bow) # self.__NN_activation(bow)
 
             actual_activation = self.__pseudo_activation(image_name)    # -> [1, -1] by the activation function
 
@@ -632,6 +679,23 @@ class Classifier:
 
 
     """
+        Operating an activation function to determine the classification of dlib_bow
+        [1] dlib_bow - bow conversion to dlib type
+        Return [class, score]
+    """
+    def __multi_activation(self, dlib_bow):
+        float_value1 = self._decision_function1(dlib_bow)
+        float_value2 = self._decision_function2(dlib_bow)
+        float_value3 = self._decision_function3(dlib_bow)
+        # here we have 3 classes probability
+        classes = [float_value1, float_value2, float_value3]
+        idx = np.argmax(classes)
+        # return value of form: (0/1/2, 0.0-1.0)
+        return idx, classes[idx]
+
+
+
+    """
         Pseudo activation operation - taking an image, split it than determine it's class from Database class hash
         [1] image name - input test image name
         Return [class, score]
@@ -664,6 +728,13 @@ class Classifier:
             actual = 1
         else:
             actual = 0
+        self._confusion_matrix[prediction, actual] += 1
+
+
+    def __update_multi_confusion_matrix(self, prediction, actual):
+        if self._type == Classifier.LINEAR_SVM:
+            prediction = prediction[0]
+        actual = actual[0]
         self._confusion_matrix[prediction, actual] += 1
 
 
@@ -797,7 +868,7 @@ class Classifier:
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(optimum_var, accuracy, precision, recall, dependent_var, dependent_var_name, USE_OPT=False, datasets_list=None):
+    def ROC_Curve(optimum_var, accuracy, precision, recall, dependent_var, dependent_var_name):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
@@ -909,38 +980,29 @@ def run(additional_datasets, classifier, **kwargs):
                 c = np.float32(value)
         elif key.lower() == "c" and np.float32(value) > 0:
                 c = np.float32(value)
-        elif key.lower() == "k" and np.uint32(value) > Features.MIN_K:
+        if key.lower() == "k" and np.uint32(value) > Features.MIN_K:
             k = np.uint32(value)
 
     return driver(classifier, additional_datasets, k, c)
 
 
-
-def make_assignment_steps(CLASSIFIER=Classifier.LINEAR_SVM, LOAD=False, USE_OPT=False, DEP_VAR_NAME="C", loop_length=100, k_init=5, c_init=250):
+def run_by_c(classifier, init, loop_length, LOAD=False):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
     precision = list()
     recall = list()
-
-    DEP_VAR = range(k_init, k_init + loop_length, 1)
-    if DEP_VAR_NAME == "C":
-        if CLASSIFIER == Classifier.NN:
-            DEP_VAR = np.arange(c_init, c_init + 10 * loop_length, 100.0)
-        else:
-            c_init = 5.0
-            DEP_VAR = np.arange(c_init, c_init + loop_length, 1.0)
-    run_data_path = Database.PICKLE_DIR
-
-    if not USE_OPT:
-        run_data_path += "//Run_data_" + DEP_VAR_NAME + ".pkl"
-        datasets = list()
-        for _ in range(loop_length):
-            datasets.append(list())
+    datasets = list()
+    DEP_VAR_NAME = "C"
+    DEP_VAR = None
+    if classifier == Classifier.NN:
+        DEP_VAR = np.arange(init, init + 10 * loop_length, 100.0)
     else:
-        datasets = [get_all_rest_datasets(0), get_all_rest_datasets(1), get_all_rest_datasets(2), get_all_rest_datasets(3)]
-        run_data_path += "//Datasets_Run_data.pkl"
+        DEP_VAR = np.arange(init, init + loop_length, 1.0)
 
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    for _ in range(loop_length):
+        datasets.append(list())
     if LOAD:
         data = pickle.load(open(run_data_path, "rb"))
         y_true_glob = data[0]
@@ -950,18 +1012,100 @@ def make_assignment_steps(CLASSIFIER=Classifier.LINEAR_SVM, LOAD=False, USE_OPT=
         recall = data[4]
     else:
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            res = None
-            if DEP_VAR_NAME == "C":
-                if USE_OPT:
-                    res = run(ds_amt, CLASSIFIER)
-                else:
-                    res = run(ds_amt, CLASSIFIER, c=dep_var)
-            else:
-                if USE_OPT:
-                    res = run(ds_amt, CLASSIFIER)
-                else:
-                    res = run(ds_amt, CLASSIFIER, k=dep_var)
-            y_true, y_score, acc, prec, rec = res
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
+
+            accuracy.append(acc)
+            precision.append(prec)
+            recall.append(rec)
+
+            for true, score in zip(y_true, y_score):
+                y_true_glob.append(true)
+                y_scores_glob.append(score)
+
+            print("")
+
+        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
+
+    precision_sorted = precision.copy()
+    precision_sorted.sort()
+    recall_sorted = recall.copy()
+    recall_sorted.sort(reverse=True)
+
+    optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
+    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+
+
+
+def run_by_k(classifier, init, loop_length, LOAD=False):
+    y_true_glob = list()
+    y_scores_glob = list()
+    accuracy = list()
+    precision = list()
+    recall = list()
+    datasets = list()
+    DEP_VAR_NAME = "K"
+    DEP_VAR = None
+    if classifier == Classifier.NN:
+        DEP_VAR = np.arange(init, init + loop_length, 100.0)
+    else:
+        DEP_VAR = np.arange(init, init + loop_length, 1.0)
+
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    for _ in range(loop_length):
+        datasets.append(list())
+    if LOAD:
+        data = pickle.load(open(run_data_path, "rb"))
+        y_true_glob = data[0]
+        y_scores_glob = data[1]
+        accuracy = data[2]
+        precision = data[3]
+        recall = data[4]
+    else:
+        for ds_amt, dep_var in zip(datasets, DEP_VAR):
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, k=dep_var)
+
+            accuracy.append(acc)
+            precision.append(prec)
+            recall.append(rec)
+
+            for true, score in zip(y_true, y_score):
+                y_true_glob.append(true)
+                y_scores_glob.append(score)
+
+            print("")
+
+        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
+
+    precision_sorted = precision.copy()
+    precision_sorted.sort()
+    recall_sorted = recall.copy()
+    recall_sorted.sort(reverse=True)
+
+    optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
+    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+
+
+def run_by_multi_datasets(classifier, LOAD=False):
+    y_true_glob = list()
+    y_scores_glob = list()
+    accuracy = list()
+    precision = list()
+    recall = list()
+
+    run_data_path = Database.PICKLE_DIR
+    datasets = [get_all_rest_datasets(0), get_all_rest_datasets(1), get_all_rest_datasets(2), get_all_rest_datasets(3)]
+    run_data_path = Database.PICKLE_DIR + "//Datasets_Run_data.pkl"
+    DEP_VAR = np.zeros(4)
+    if LOAD:
+        data = pickle.load(open(run_data_path, "rb"))
+        y_true_glob = data[0]
+        y_scores_glob = data[1]
+        accuracy = data[2]
+        precision = data[3]
+        recall = data[4]
+    else:
+        for ds_amt, dep_var in zip(datasets, DEP_VAR):
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
 
             accuracy.append(acc)
             precision.append(prec)
@@ -991,18 +1135,16 @@ def make_assignment_steps(CLASSIFIER=Classifier.LINEAR_SVM, LOAD=False, USE_OPT=
     # print(precision)
     # print(recall)
 
+    Classifier.Accuracy_Sets(accuracy, list(range(3, 7)))
 
-    optimum = None
-    if not USE_OPT and DEP_VAR_NAME == "C":
-        # For the 6.a. section
-        optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-        Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, USE_OPT)
-    elif not USE_OPT:
-        Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, USE_OPT)
-    else:
-        Classifier.Accuracy_Sets(accuracy, list(range(len(datasets) + 3, len(datasets) + 3)))
 
 
 if __name__ == "__main__":
 
-    make_assignment_steps(CLASSIFIER=Classifier.NN, DEP_VAR_NAME="K")
+    # run_by_multi_datasets(Classifier.NN, LOAD=False)
+    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
+    # run_by_k(Classifier.NN, 5.0, 500, LOAD=True)
+    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)
+    # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)
+    # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False)
+    pass
