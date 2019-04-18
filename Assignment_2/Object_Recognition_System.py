@@ -632,6 +632,8 @@ class Classifier:
 
             actual_activation = self.__pseudo_activation(image_name)    # -> [0, 1, 2] by the activation function
 
+
+
             y_true.append(actual_activation)
             y_score.append(prediction_activation)
 
@@ -649,12 +651,14 @@ class Classifier:
             fontColor = (255, 255, 255)
             lineType = 2
 
+
             prediction = 'Error'
-            if (prediction_activation == 0):
+
+            if (prediction_activation[0] == 0):
                 prediction = 'Airplane'
-            if (prediction_activation == 1):
+            if (prediction_activation[0] == 1):
                 prediction = 'Elephant'
-            if (prediction_activation == 2):
+            if (prediction_activation[0] == 2):
                 prediction = 'MotorBike'
             cv2.putText(image, prediction,
                         bottomLeftCornerOfText,
@@ -1189,8 +1193,8 @@ def run_by_multi_datasets(classifier, LOAD=False):
 
 if __name__ == "__main__":
 
-    run_by_multi_datasets(Classifier.NN, LOAD=False)
-    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
+    # run_by_multi_datasets(Classifier.NN, LOAD=False)
+    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
     # run_by_k(Classifier.NN, 5.0, 3, LOAD=False)
     # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)
     # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)
