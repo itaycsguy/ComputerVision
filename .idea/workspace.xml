@@ -24,7 +24,6 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,8 +36,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="847" lean-forward="true" selection-start-line="847" selection-end-line="847" />
+            <state relative-caret-position="502">
+              <caret line="852" column="17" lean-forward="true" selection-start-line="852" selection-start-column="17" selection-end-line="852" selection-end-column="17" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -555,8 +554,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="847" lean-forward="true" selection-start-line="847" selection-end-line="847" />
+        <state relative-caret-position="502">
+          <caret line="852" column="17" lean-forward="true" selection-start-line="852" selection-start-column="17" selection-end-line="852" selection-end-column="17" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
