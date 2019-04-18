@@ -1032,7 +1032,7 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
     recall_sorted.sort(reverse=True)
 
     optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    # Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
 
 
 
@@ -1082,7 +1082,7 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
     recall_sorted.sort(reverse=True)
 
     optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    # Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
 
 
 def run_by_multi_datasets(classifier, LOAD=False):
