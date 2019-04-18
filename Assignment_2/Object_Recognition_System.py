@@ -861,4 +861,18 @@ if __name__ == "__main__":
     # print(precision)
     # print(recall)
 
+
+
+    print(accuracy)
+    max = 0
+    arg = 0
+    for i in range(0,accuracy.__len__()):
+        if accuracy[i] > max:
+            max = accuracy[i]
+            arg = i
+
+
+    print("max = " + str(max))
+    print("arg = " + str(DEP_VAR[arg]))
+
     Classifier.ROC_Curve(accuracy, precision, recall, DEP_VAR, DEP_VAR_NAME)
