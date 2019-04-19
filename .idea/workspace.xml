@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="776" />
+    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="759" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting.sln" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting.sln" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" afterDir="false" />
@@ -31,6 +27,12 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_C.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_C.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,8 +45,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="1149" column="8" lean-forward="true" selection-start-line="1149" selection-start-column="8" selection-end-line="1149" selection-end-column="8" />
+            <state relative-caret-position="135">
+              <caret line="1175" column="88" selection-start-line="1175" selection-start-column="88" selection-end-line="1175" selection-end-column="88" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -63,11 +65,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>currentk</find>
-      <find>data</find>
-      <find>get_test_FPR</find>
-      <find>FPR</find>
-      <find>get_test_precision</find>
       <find>recogniz</find>
       <find>load</find>
       <find>DEF_C</find>
@@ -93,6 +90,11 @@
       <find>__update_multi_confusion_matrix</find>
       <find>ALLOWED_DIRS</find>
       <find>__pseudo_activation</find>
+      <find>__NN</find>
+      <find>Features</find>
+      <find>NN</find>
+      <find>get_target1_value</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -140,12 +142,6 @@
               <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="var" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -354,7 +350,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.2503536" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.49222064" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -546,8 +542,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="1149" column="8" lean-forward="true" selection-start-line="1149" selection-start-column="8" selection-end-line="1149" selection-end-column="8" />
+        <state relative-caret-position="135">
+          <caret line="1175" column="88" selection-start-line="1175" selection-start-column="88" selection-end-line="1175" selection-end-column="88" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>

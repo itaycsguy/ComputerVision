@@ -19,7 +19,6 @@ testImageDirName = ".//Datasets//Testset"
 """
 class Database:
     PICKLE_DIR = "var"
-    TARGET_CLASS = "airplane"
     MIN_ADD_DB = 0
 
     # Defined at the published assignment
@@ -83,13 +82,6 @@ class Database:
                 Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
 
 
-    """
-        Return the defined target class number by its name
-    """
-    def get_target_class(self):
-        return Database.ALLOWED_DIRS[Database.TARGET_CLASS]
-
-
     def get_target1_class(self):
         return Database.ALLOWED_DIRS["airplane"]
 
@@ -129,6 +121,7 @@ class Features:
     DEF_K = 10  # optimum k clusters
     MIN_K = 1
 
+
     """
         [1] database  - a Database object
         [2] k         - clusters amount, default: 10
@@ -163,14 +156,23 @@ class Features:
         print("Current K to the clustering algorithm:", self._K)
 
 
+    """
+        Return 'airplane'
+    """
     def get_target1_value(self):
         return self._database.get_target1_class()
 
 
+    """
+        Return 'elephant'
+    """
     def get_target2_value(self):
         return self._database.get_target2_class()
 
 
+    """
+        Return 'motorbike'
+    """
     def get_target3_value(self):
         return self._database.get_target3_class()
 
@@ -451,6 +453,13 @@ class Features:
 
 
     """
+        Return the DB reference
+    """
+    def get_database(self):
+        return self._database
+
+
+    """
         Save the output data from Feature class methods to pickle file for next using -> [bows, labels, centers]
     """
     def save(self):
@@ -497,12 +506,14 @@ class Classifier:
         self._decision_function1 = None
         self._decision_function2 = None
         self._decision_function3 = None
-        # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
-        classes_num = 3
+        classes_num = len(Database.ALLOWED_DIRS.keys())
         self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._recognition_results = None
 
 
+    """
+        Set a new threshold to the NN distance
+    """
     def set_nn_thresh(self, thresh):
         self._nn_thresh = thresh
 
@@ -567,10 +578,12 @@ class Classifier:
             self._decision_function2 = self._svm_instance.train(data, labels2)
             self._decision_function3 = self._svm_instance.train(data, labels3)
 
-        return self._decision_function1,self._decision_function2,self._decision_function3
+        return self._decision_function1, self._decision_function2, self._decision_function3
 
 
-
+    """
+        Implementation to the NN classifier
+    """
     def __NN_activation(self, bow):
         data = self._features.get_bows()
         labels = self.__prepare_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
@@ -584,7 +597,9 @@ class Classifier:
         return closest_class
 
 
-
+    """
+        Implementation to the multi-class NN classifier
+    """
     def __multi_NN_activation(self, bow):
         data = self._features.get_bows()
         labels = self._features.get_feature_vectors_labels_by_image()
@@ -632,8 +647,6 @@ class Classifier:
 
             actual_activation = self.__pseudo_activation(image_name)    # -> [0, 1, 2] by the activation function
 
-
-
             y_true.append(actual_activation)
             y_score.append(prediction_activation)
 
@@ -644,47 +657,34 @@ class Classifier:
             self._recognition_results[image_name] = prediction_activation
 
 
-            image = cv2.imread(image_path)
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            bottomLeftCornerOfText = (50, 70)
-            fontScale = 1
-            fontColor = (255, 255, 255)
-            lineType = 2
-
-
-            prediction = 'Error'
-
-            if (prediction_activation[0] == 0):
-                prediction = 'Airplane'
-            if (prediction_activation[0] == 1):
-                prediction = 'Elephant'
-            if (prediction_activation[0] == 2):
-                prediction = 'MotorBike'
-            cv2.putText(image, prediction,
-                        bottomLeftCornerOfText,
-                        font,
-                        fontScale,
-                        fontColor,
-                        lineType)
-            cv2.imshow("Test Images", image)
-            cv2.waitKey(0)
+            # image = cv2.imread(image_path)
+            # font = cv2.FONT_HERSHEY_SIMPLEX
+            # bottomLeftCornerOfText = (50, 70)
+            # fontScale = 1
+            # fontColor = (255, 255, 255)
+            # lineType = 2
+            #
+            #
+            # prediction = 'Error'
+            # print(prediction_activation)
+            # if (prediction_activation[0] == 0):
+            #     prediction = 'Airplane'
+            # if (prediction_activation[0] == 1):
+            #     prediction = 'Elephant'
+            # if (prediction_activation[0] == 2):
+            #     prediction = 'MotorBike'
+            # cv2.putText(image,
+            #             prediction,
+            #             bottomLeftCornerOfText,
+            #             font,
+            #             fontScale,
+            #             fontColor,
+            #             lineType)
+            # cv2.imshow("Test Images", image)
+            # cv2.waitKey(0)
 
         # cv2.destroyAllWindows()
         return y_true, y_score
-
-
-
-    """
-        Operating an activation function to determine the classification of dlib_bow
-        [1] dlib_bow - bow conversion to dlib type
-        Return [class, score]
-    """
-    def __activation(self, dlib_bow):
-        float_value = self._decision_function(dlib_bow)
-        if float_value > 0.0:
-            return 1, float_value
-        else:
-            return -1, float_value
 
 
     """
@@ -711,40 +711,23 @@ class Classifier:
     """
     def __pseudo_activation(self, image_name):
         # Actual_activation
-        return Database.ALLOWED_DIRS[image_name.split("_")[0]]
+        target_class = Database.ALLOWED_DIRS[image_name.split("_")[0]]
+        return target_class
 
 
-
-
-
+    """
+        Set the margin width to the SVM classifier
+    """
     def set_C(self, c):
         self._c = c
 
 
-    # """
-    #     Taking this problem as kind of binary problem and compare them
-    #     [1] prediction  => [1,-1]
-    #     [1] actual      => [1,-1]
-    # """
-    # def __update_confusion_matrix(self, prediction, actual):
-    #     if self._type == Classifier.LINEAR_SVM:
-    #         prediction = prediction[0]
-    #     actual = actual[0]
-    #     if prediction <= 0:
-    #         prediction = 1
-    #     else:
-    #         prediction = 0
-    #     if actual <= 0:
-    #         actual = 1
-    #     else:
-    #         actual = 0
-    #     self._confusion_matrix[prediction, actual] += 1
-
-
+    """
+        Updating the confusion matrix to multi-class
+    """
     def __update_multi_confusion_matrix(self, prediction, actual): # prediction = [0,1,2] , actual = [0,1,2]
         if self._type == Classifier.LINEAR_SVM:
             prediction = prediction[0]
-
         self._confusion_matrix[prediction, actual] += 1
 
 
@@ -778,7 +761,7 @@ class Classifier:
 
 
     """
-        get the precision
+        Return the precision to the airplane class
     """
     def get_test_precision_airplane(self):
         TP_A = self._confusion_matrix[0, 0]
@@ -787,6 +770,10 @@ class Classifier:
         print("Precision: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
         return result
 
+
+    """
+        Return the precision to the elephant class
+    """
     def get_test_precision_elephant(self):
         TP_A = self._confusion_matrix[1, 1]
         FP_A = self._confusion_matrix[1, 0] + self._confusion_matrix[1, 2]
@@ -794,6 +781,10 @@ class Classifier:
         print("Precision: TP_B / (TP_B + FN_B) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
         return result
 
+
+    """
+        Return the precision to the motorbike class
+    """
     def get_test_precision_motorbike(self):
         TP_A = self._confusion_matrix[2, 2]
         FP_A = self._confusion_matrix[2, 0] + self._confusion_matrix[2, 1]
@@ -803,7 +794,7 @@ class Classifier:
 
 
     """
-        get the recall
+        Return the recall to the airplane class
     """
     def get_test_recall_airplane(self):
         TP_A = self._confusion_matrix[0, 0]
@@ -812,6 +803,10 @@ class Classifier:
         print("Recall: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
         return result
 
+
+    """
+        Return the recall to the elephant class
+    """
     def get_test_recall_elephant(self):
         TP_A = self._confusion_matrix[1, 1]
         FN_A = self._confusion_matrix[0, 1] + self._confusion_matrix[2, 1]
@@ -819,6 +814,10 @@ class Classifier:
         print("Recall: TP_B / (TP_B + FN_B) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
         return result
 
+
+    """
+        Return the recall to the motorbike class
+    """
     def get_test_recall_motorbike(self):
         TP_A = self._confusion_matrix[2, 2]
         FN_A = self._confusion_matrix[0, 2] + self._confusion_matrix[1, 2]
@@ -827,9 +826,9 @@ class Classifier:
         return result
 
 
-
-
-
+    """
+        display out c
+    """
     def show_test_c(self):
         if self._type == Classifier.LINEAR_SVM:
             print("Current C for the SVM margin width:", self._c)
@@ -837,10 +836,17 @@ class Classifier:
             print("Current NN threshold:", self._nn_thresh)
 
 
+    """
+        display out the confusion matrix
+    """
     def show_test_confusion_matrix(self):
         print("Current confusion matrix:\n", self._confusion_matrix)
 
 
+
+    """
+        Return the optimum paramter under accuracy condition
+    """
     @staticmethod
     def find_optimum_by_accuracy(accuracy, dependent_var, dependent_name):
         max_acc = 0
@@ -895,10 +901,6 @@ class Classifier:
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
         axs[0].plot(recall, precision, '--', linewidth=2)
-
-        # xi = np.linspace(recall[0], recall[-1])
-        # yi = np.interp(recall, xi, precision, None)
-        # axs[0].plot(recall, precision, '--', xi, yi, '-', linewidth=2)
 
         axs[0].plot(linear_x, linear_y, '-', linewidth=0.5)
 
@@ -970,10 +972,10 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
                  classifier_instance.get_test_precision_elephant(),
                  classifier_instance.get_test_precision_motorbike()
                  ]
-    recall =  [classifier_instance.get_test_recall_airplane(),
-               classifier_instance.get_test_recall_elephant(),
-               classifier_instance.get_test_recall_motorbike()
-               ]
+    recall = [classifier_instance.get_test_recall_airplane(),
+              classifier_instance.get_test_recall_elephant(),
+              classifier_instance.get_test_recall_motorbike()
+              ]
 
     feature_instance.show_current_k()
     classifier_instance.show_test_c()
@@ -1058,15 +1060,9 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
 
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-
-    # precision_sorted = precision.copy()
-    # precision_sorted.sort()
-    # recall_sorted = recall.copy()
-    # recall_sorted.sort(reverse=True)
     precision_sorted = [precision_airplane.sort(),precision_elephant.sort(),precision_motorbike.sort()]
     recall_sorted = [recall_airplane.sort(),recall_elephant.sort(),recall_motorbike.sort()]
 
-    # optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
     Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
 
 
@@ -1105,7 +1101,6 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
             y_true, y_score, acc, prec, rec = run(ds_amt, classifier, k=dep_var)
 
-
             accuracy.append(acc)
             precision_airplane.append(prec[0])
             precision_elephant.append(prec[1])
@@ -1126,14 +1121,9 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
 
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    # precision_sorted = precision.copy()
-    # precision_sorted.sort()
-    # recall_sorted = recall.copy()
-    # recall_sorted.sort(reverse=True)
     precision_sorted = [precision_airplane.sort(), precision_elephant.sort(), precision_motorbike.sort()]
     recall_sorted = [recall_airplane.sort(), recall_elephant.sort(), recall_motorbike.sort()]
 
-    # optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
     Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
 
 
@@ -1176,17 +1166,6 @@ def run_by_multi_datasets(classifier, LOAD=False):
     recall_sorted = recall.copy()
     recall_sorted.sort(reverse=True)
 
-    # for idx, y in enumerate(y_true_glob):
-    #     y_true_glob[idx] = y[0]
-    #
-    # for idx, y in enumerate(y_scores_glob):
-    #     y_scores_glob[idx] = y[1]
-
-    # from sklearn.metrics import precision_recall_curve
-    # precision, recall, _ = precision_recall_curve(y_true_glob, y_scores_glob)
-    # print(precision)
-    # print(recall)
-
     Classifier.Accuracy_Sets(accuracy, list(range(3, 7)))
 
 
@@ -1194,9 +1173,8 @@ def run_by_multi_datasets(classifier, LOAD=False):
 if __name__ == "__main__":
 
     # run_by_multi_datasets(Classifier.NN, LOAD=False)
-    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
-    # run_by_k(Classifier.NN, 5.0, 3, LOAD=False)
-    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)
-    # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)
-    # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False)
-    pass
+    run_by_multi_datasets(Classifier.NN, LOAD=False) # BUG in appending more directories
+    # run_by_k(Classifier.NN, 5.0, 1000, LOAD=False)  # working well -> the most value is 0.73 accuracy
+    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)  # unstable -> running between 0.5 to 0.9
+    # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
+    # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False) # unstable
