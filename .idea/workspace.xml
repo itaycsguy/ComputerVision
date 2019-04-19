@@ -36,8 +36,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="502">
-              <caret line="852" column="17" lean-forward="true" selection-start-line="852" selection-start-column="17" selection-end-line="852" selection-end-column="17" />
+            <state relative-caret-position="307">
+              <caret line="1149" column="8" lean-forward="true" selection-start-line="1149" selection-start-column="8" selection-end-line="1149" selection-end-column="8" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -120,10 +120,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="427" />
-    <option name="y" value="219" />
-    <option name="width" value="324" />
-    <option name="height" value="88" />
+    <option name="x" value="1067" />
+    <option name="y" value="547" />
+    <option name="width" value="810" />
+    <option name="height" value="220" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -342,15 +342,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22391017" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.19176598" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.2503536" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -554,8 +554,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="852" column="17" lean-forward="true" selection-start-line="852" selection-start-column="17" selection-end-line="852" selection-end-column="17" />
+        <state relative-caret-position="307">
+          <caret line="1149" column="8" lean-forward="true" selection-start-line="1149" selection-start-column="8" selection-end-line="1149" selection-end-column="8" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
