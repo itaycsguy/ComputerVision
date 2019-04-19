@@ -498,7 +498,7 @@ class Classifier:
         self._decision_function2 = None
         self._decision_function3 = None
         # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
-        classes_num = 2
+        classes_num = 3
         self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._recognition_results = None
 
@@ -566,8 +566,8 @@ class Classifier:
             self._decision_function1 = self._svm_instance.train(data, labels1)
             self._decision_function2 = self._svm_instance.train(data, labels2)
             self._decision_function3 = self._svm_instance.train(data, labels3)
-            # print(self._decision_function(data[0]))
-        return self._decision_function
+
+        return self._decision_function1,self._decision_function2,self._decision_function3
 
 
 
@@ -626,39 +626,48 @@ class Classifier:
                 dlib_bow = dlib.vector(bow)
 
                 # Classifying a BOW using the classifier we have built in step 4
-                prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [1, -1] by the activation function
+                prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [0, 1, 2] by the activation function
             else:
                 prediction_activation = self.__multi_NN_activation(bow) # self.__NN_activation(bow)
 
-            actual_activation = self.__pseudo_activation(image_name)    # -> [1, -1] by the activation function
+            actual_activation = self.__pseudo_activation(image_name)    # -> [0, 1, 2] by the activation function
+
+
 
             y_true.append(actual_activation)
             y_score.append(prediction_activation)
 
             # Given 2 classes determination -> need to determine for kind of binary problem
-            self.__update_confusion_matrix(prediction_activation, actual_activation)
+            self.__update_multi_confusion_matrix(prediction_activation, actual_activation)
 
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
             self._recognition_results[image_name] = prediction_activation
 
-            # image = cv2.imread(image_path)
-            # font = cv2.FONT_HERSHEY_SIMPLEX
-            # bottomLeftCornerOfText = (50, 70)
-            # fontScale = 1
-            # fontColor = (255, 255, 255)
-            # lineType = 2
-            #
-            # prediction = 'Airplane'
-            # if (prediction_activation[0] == -1):
-            #     prediction = 'Not Airplane'
-            # cv2.putText(image, prediction,
-            #             bottomLeftCornerOfText,
-            #             font,
-            #             fontScale,
-            #             fontColor,
-            #             lineType)
-            # cv2.imshow("Test Images", image)
-            # cv2.waitKey(0)
+
+            image = cv2.imread(image_path)
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            bottomLeftCornerOfText = (50, 70)
+            fontScale = 1
+            fontColor = (255, 255, 255)
+            lineType = 2
+
+
+            prediction = 'Error'
+
+            if (prediction_activation[0] == 0):
+                prediction = 'Airplane'
+            if (prediction_activation[0] == 1):
+                prediction = 'Elephant'
+            if (prediction_activation[0] == 2):
+                prediction = 'MotorBike'
+            cv2.putText(image, prediction,
+                        bottomLeftCornerOfText,
+                        font,
+                        fontScale,
+                        fontColor,
+                        lineType)
+            cv2.imshow("Test Images", image)
+            cv2.waitKey(0)
 
         # cv2.destroyAllWindows()
         return y_true, y_score
@@ -684,9 +693,9 @@ class Classifier:
         Return [class, score]
     """
     def __multi_activation(self, dlib_bow):
-        float_value1 = self._decision_function1(dlib_bow)
-        float_value2 = self._decision_function2(dlib_bow)
-        float_value3 = self._decision_function3(dlib_bow)
+        float_value1 = self._decision_function1(dlib_bow) #airplane
+        float_value2 = self._decision_function2(dlib_bow) #Elephant
+        float_value3 = self._decision_function3(dlib_bow) # motorbike
         # here we have 3 classes probability
         classes = [float_value1, float_value2, float_value3]
         idx = np.argmax(classes)
@@ -701,40 +710,41 @@ class Classifier:
         Return [class, score]
     """
     def __pseudo_activation(self, image_name):
-        actual_value = Database.ALLOWED_DIRS[image_name.split("_")[0]]
-        if actual_value != 0:
-            return -1, np.float32(actual_value)
-        return 1, np.float32(actual_value)
+        # Actual_activation
+        return Database.ALLOWED_DIRS[image_name.split("_")[0]]
+
+
+
 
 
     def set_C(self, c):
         self._c = c
 
 
-    """
-        Taking this problem as kind of binary problem and compare them
-        [1] prediction  => [1,-1]
-        [1] actual      => [1,-1]
-    """
-    def __update_confusion_matrix(self, prediction, actual):
-        if self._type == Classifier.LINEAR_SVM:
-            prediction = prediction[0]
-        actual = actual[0]
-        if prediction <= 0:
-            prediction = 1
-        else:
-            prediction = 0
-        if actual <= 0:
-            actual = 1
-        else:
-            actual = 0
-        self._confusion_matrix[prediction, actual] += 1
+    # """
+    #     Taking this problem as kind of binary problem and compare them
+    #     [1] prediction  => [1,-1]
+    #     [1] actual      => [1,-1]
+    # """
+    # def __update_confusion_matrix(self, prediction, actual):
+    #     if self._type == Classifier.LINEAR_SVM:
+    #         prediction = prediction[0]
+    #     actual = actual[0]
+    #     if prediction <= 0:
+    #         prediction = 1
+    #     else:
+    #         prediction = 0
+    #     if actual <= 0:
+    #         actual = 1
+    #     else:
+    #         actual = 0
+    #     self._confusion_matrix[prediction, actual] += 1
 
 
-    def __update_multi_confusion_matrix(self, prediction, actual):
+    def __update_multi_confusion_matrix(self, prediction, actual): # prediction = [0,1,2] , actual = [0,1,2]
         if self._type == Classifier.LINEAR_SVM:
             prediction = prediction[0]
-        actual = actual[0]
+
         self._confusion_matrix[prediction, actual] += 1
 
 
@@ -761,56 +771,63 @@ class Classifier:
         get the accuracy
     """
     def get_test_accuracy(self):
-        TP = self._confusion_matrix[0, 0]
-        TN = self._confusion_matrix[1, 1]
-        return (TP + TN) / self._confusion_matrix.sum()
-
-
-    """
-        print the accuracy
-    """
-    def show_test_accuracy(self):
-        TP = self._confusion_matrix[0, 0]
-        TN = self._confusion_matrix[1, 1]
-        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(TP, TN, self._confusion_matrix.sum(), self.get_test_accuracy()))
-
+        TP = self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1] + self._confusion_matrix[2, 2]
+        result = TP / self._confusion_matrix.sum()
+        print("Accuracy: TP /#all_data = {} / {} = {} ".format(TP, self._confusion_matrix.sum(), result))
+        return result
 
 
     """
         get the precision
     """
-    def get_test_precision(self):
-        TP = self._confusion_matrix[0, 0]
-        FP = self._confusion_matrix[0, 1]
-        return TP / (TP + FP)
+    def get_test_precision_airplane(self):
+        TP_A = self._confusion_matrix[0, 0]
+        FP_A = self._confusion_matrix[0, 1] + self._confusion_matrix[0, 2]
+        result = TP_A / (TP_A + FP_A)
+        print("Precision: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
+        return result
 
+    def get_test_precision_elephant(self):
+        TP_A = self._confusion_matrix[1, 1]
+        FP_A = self._confusion_matrix[1, 0] + self._confusion_matrix[1, 2]
+        result = TP_A / (TP_A + FP_A)
+        print("Precision: TP_B / (TP_B + FN_B) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
+        return result
 
-
-    """
-        print the precision
-    """
-    def show_test_precision(self):
-        TP = self._confusion_matrix[0, 0]
-        FP = self._confusion_matrix[0, 1]   # predicted 1 but it is -1
-        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(TP, TP, FP, self.get_test_precision()))
+    def get_test_precision_motorbike(self):
+        TP_A = self._confusion_matrix[2, 2]
+        FP_A = self._confusion_matrix[2, 0] + self._confusion_matrix[2, 1]
+        result = TP_A / (TP_A + FP_A)
+        print("Precision: TP_C / (TP_C + FN_C) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
+        return result
 
 
     """
         get the recall
     """
-    def get_test_recall(self):
-        TP = self._confusion_matrix[0, 0]
-        FN = self._confusion_matrix[1, 0]
-        return TP / (TP + FN)
+    def get_test_recall_airplane(self):
+        TP_A = self._confusion_matrix[0, 0]
+        FN_A = self._confusion_matrix[1, 0] + self._confusion_matrix[2, 0]
+        result = TP_A / (TP_A + FN_A)
+        print("Recall: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
+        return result
+
+    def get_test_recall_elephant(self):
+        TP_A = self._confusion_matrix[1, 1]
+        FN_A = self._confusion_matrix[0, 1] + self._confusion_matrix[2, 1]
+        result = TP_A / (TP_A + FN_A)
+        print("Recall: TP_B / (TP_B + FN_B) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
+        return result
+
+    def get_test_recall_motorbike(self):
+        TP_A = self._confusion_matrix[2, 2]
+        FN_A = self._confusion_matrix[0, 2] + self._confusion_matrix[1, 2]
+        result = TP_A / (TP_A + FN_A)
+        print("Recall: TP_C / (TP_C + FN_C) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
+        return result
 
 
-    """
-        print the recall
-    """
-    def show_test_recall(self):
-        TP = self._confusion_matrix[0, 0]
-        FN = self._confusion_matrix[1, 0]
-        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(TP, TP, FN, self.get_test_recall()))
+
 
 
     def show_test_c(self):
@@ -839,11 +856,14 @@ class Classifier:
         return var, max_acc
 
 
-    @staticmethod
-    def find_optimum_by_ROC_CURVE(recall, precision, dependent_var, dependent_name):
-        idx = np.argmax(precision)
-        print("An optimal parameter by ROC Curve was found " + dependent_name + ":", dependent_var[idx])
-        return dependent_var[idx], recall[idx], precision[idx]
+    # @staticmethod
+    # def find_optimum_by_ROC_CURVE(recall, precision, dependent_var, dependent_name):
+    #     idx0 = np.argmax(precision[0])
+    #     idx1 = np.argmax(precision[1])
+    #     idx2 = np.argmax(precision[2])
+    #
+    #     print("An optimal parameter by ROC Curve was found " + dependent_name + ":", dependent_var[idx])
+    #     return dependent_var[idx], recall[idx], precision[idx]
 
 
     """
@@ -868,7 +888,7 @@ class Classifier:
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(optimum_var, accuracy, precision, recall, dependent_var, dependent_var_name):
+    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
@@ -883,12 +903,7 @@ class Classifier:
         axs[0].plot(linear_x, linear_y, '-', linewidth=0.5)
 
         info_arr = ['data', 'boundary']
-        if optimum_var is not None:
-            op_var = [optimum_var[0]]
-            info_arr.append(dependent_var_name + str(op_var))
-            op_r = [optimum_var[1]]
-            op_p = [optimum_var[2]]
-            axs[0].plot(op_r, op_p, 'rp', markersize=14)
+
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
         axs[0].set_xlabel('Recall')
@@ -949,12 +964,17 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
     y_true, y_score = classifier_instance.recognizer()
     classifier_instance.save()
     classifier_instance.load()
+
     accuracy = classifier_instance.get_test_accuracy()
-    precision = classifier_instance.get_test_precision()
-    recall = classifier_instance.get_test_recall()
-    classifier_instance.show_test_accuracy()
-    classifier_instance.show_test_precision()
-    classifier_instance.show_test_recall()
+    precision = [classifier_instance.get_test_precision_airplane(),
+                 classifier_instance.get_test_precision_elephant(),
+                 classifier_instance.get_test_precision_motorbike()
+                 ]
+    recall =  [classifier_instance.get_test_recall_airplane(),
+               classifier_instance.get_test_recall_elephant(),
+               classifier_instance.get_test_recall_motorbike()
+               ]
+
     feature_instance.show_current_k()
     classifier_instance.show_test_c()
     classifier_instance.show_test_confusion_matrix()
@@ -992,6 +1012,12 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
     accuracy = list()
     precision = list()
     recall = list()
+    precision_airplane = list()
+    precision_elephant = list()
+    precision_motorbike = list()
+    recall_airplane = list()
+    recall_elephant = list()
+    recall_motorbike = list()
     datasets = list()
     DEP_VAR_NAME = "C"
     DEP_VAR = None
@@ -1015,24 +1041,33 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
             y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
 
             accuracy.append(acc)
-            precision.append(prec)
-            recall.append(rec)
+            precision_airplane.append(prec[0])
+            precision_elephant.append(prec[1])
+            precision_motorbike.append(prec[2])
+            recall_airplane.append(rec[0])
+            recall_elephant.append(rec[1])
+            recall_motorbike.append(rec[2])
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
+        precision = [precision_airplane,precision_elephant,precision_motorbike]
+        recall = [recall_airplane,recall_elephant,recall_motorbike]
 
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = precision.copy()
-    precision_sorted.sort()
-    recall_sorted = recall.copy()
-    recall_sorted.sort(reverse=True)
 
-    optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-    # Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    # precision_sorted = precision.copy()
+    # precision_sorted.sort()
+    # recall_sorted = recall.copy()
+    # recall_sorted.sort(reverse=True)
+    precision_sorted = [precision_airplane.sort(),precision_elephant.sort(),precision_motorbike.sort()]
+    recall_sorted = [recall_airplane.sort(),recall_elephant.sort(),recall_motorbike.sort()]
+
+    # optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
+    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
 
 
 
@@ -1042,6 +1077,12 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
     accuracy = list()
     precision = list()
     recall = list()
+    precision_airplane = list()
+    precision_elephant = list()
+    precision_motorbike = list()
+    recall_airplane = list()
+    recall_elephant = list()
+    recall_motorbike = list()
     datasets = list()
     DEP_VAR_NAME = "K"
     DEP_VAR = None
@@ -1064,25 +1105,36 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
             y_true, y_score, acc, prec, rec = run(ds_amt, classifier, k=dep_var)
 
+
             accuracy.append(acc)
-            precision.append(prec)
-            recall.append(rec)
+            precision_airplane.append(prec[0])
+            precision_elephant.append(prec[1])
+            precision_motorbike.append(prec[2])
+            recall_airplane.append(rec[0])
+            recall_elephant.append(rec[1])
+            recall_motorbike.append(rec[2])
+
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
+        precision = [precision_airplane, precision_elephant, precision_motorbike]
+        recall = [recall_airplane, recall_elephant, recall_motorbike]
+
 
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = precision.copy()
-    precision_sorted.sort()
-    recall_sorted = recall.copy()
-    recall_sorted.sort(reverse=True)
+    # precision_sorted = precision.copy()
+    # precision_sorted.sort()
+    # recall_sorted = recall.copy()
+    # recall_sorted.sort(reverse=True)
+    precision_sorted = [precision_airplane.sort(), precision_elephant.sort(), precision_motorbike.sort()]
+    recall_sorted = [recall_airplane.sort(), recall_elephant.sort(), recall_motorbike.sort()]
 
-    optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-    # Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    # optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
+    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
 
 
 def run_by_multi_datasets(classifier, LOAD=False):
@@ -1142,8 +1194,8 @@ def run_by_multi_datasets(classifier, LOAD=False):
 if __name__ == "__main__":
 
     # run_by_multi_datasets(Classifier.NN, LOAD=False)
-    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
-    # run_by_k(Classifier.NN, 5.0, 500, LOAD=True)
+    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
+    # run_by_k(Classifier.NN, 5.0, 3, LOAD=False)
     # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)
     # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)
     # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False)
