@@ -652,22 +652,22 @@ class Classifier:
             lineType = 2
 
 
-            prediction = 'Error'
-
-            if (prediction_activation[0] == 0):
-                prediction = 'Airplane'
-            if (prediction_activation[0] == 1):
-                prediction = 'Elephant'
-            if (prediction_activation[0] == 2):
-                prediction = 'MotorBike'
-            cv2.putText(image, prediction,
-                        bottomLeftCornerOfText,
-                        font,
-                        fontScale,
-                        fontColor,
-                        lineType)
-            cv2.imshow("Test Images", image)
-            cv2.waitKey(0)
+            # prediction = 'Error'
+            #
+            # if (prediction_activation[0] == 0):
+            #     prediction = 'Airplane'
+            # if (prediction_activation[0] == 1):
+            #     prediction = 'Elephant'
+            # if (prediction_activation[0] == 2):
+            #     prediction = 'MotorBike'
+            # cv2.putText(image, prediction,
+            #             bottomLeftCornerOfText,
+            #             font,
+            #             fontScale,
+            #             fontColor,
+            #             lineType)
+            # cv2.imshow("Test Images", image)
+            # cv2.waitKey(0)
 
         # cv2.destroyAllWindows()
         return y_true, y_score
@@ -894,7 +894,18 @@ class Classifier:
 
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-        axs[0].plot(recall, precision, '--', linewidth=2)
+        print("recall = " + str(recall))
+        print("recall[0] = " + str(recall[0]))
+        print("recall[1] = " + recall[1])
+        print("recall[2] = " + recall[2])
+        print("precision = " + precision)
+        print("precision[0] = " + precision[0])
+        print("precision[1] = " + precision[1])
+        print("precision[2] = " + precision[2])
+
+        axs[0].plot(recall[0], precision[0], '--', linewidth=2)
+        axs[0].plot(recall[1], precision[1], '--', linewidth=2)
+        axs[0].plot(recall[2], precision[2], '--', linewidth=2)
 
         # xi = np.linspace(recall[0], recall[-1])
         # yi = np.interp(recall, xi, precision, None)
@@ -1063,6 +1074,7 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
     # precision_sorted.sort()
     # recall_sorted = recall.copy()
     # recall_sorted.sort(reverse=True)
+    print("dfbdfbdfprecision = " + str(precision))
     precision_sorted = [precision_airplane.sort(),precision_elephant.sort(),precision_motorbike.sort()]
     recall_sorted = [recall_airplane.sort(),recall_elephant.sort(),recall_motorbike.sort()]
 
@@ -1126,12 +1138,14 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
 
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
+    print("dfbdfbdfprecision = " + str(precision))
     # precision_sorted = precision.copy()
     # precision_sorted.sort()
     # recall_sorted = recall.copy()
     # recall_sorted.sort(reverse=True)
-    precision_sorted = [precision_airplane.sort(), precision_elephant.sort(), precision_motorbike.sort()]
-    recall_sorted = [recall_airplane.sort(), recall_elephant.sort(), recall_motorbike.sort()]
+    precision_sorted = [precision_airplane.sort().copy(), precision_elephant.sort().copy(), precision_motorbike.sort().copy()]
+    recall_sorted = [recall_airplane.sort().copy(), recall_elephant.sort().copy(), recall_motorbike.sort().copy()]
+    print("dfbdfbdfprecision = " + str(precision_sorted))
 
     # optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
     Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
@@ -1194,9 +1208,9 @@ def run_by_multi_datasets(classifier, LOAD=False):
 if __name__ == "__main__":
 
     # run_by_multi_datasets(Classifier.NN, LOAD=False)
-    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
-    # run_by_k(Classifier.NN, 5.0, 3, LOAD=False)
-    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)
+    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=True)
+    # run_by_k(Classifier.NN, 5.0, 20, LOAD=False)
+    run_by_k(Classifier.LINEAR_SVM, 5.0, 2, LOAD=False)
     # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)
     # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False)
     pass

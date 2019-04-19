@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Datasets_Run_data.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Datasets_Run_data.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting.sln" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting.sln" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/MainActivity.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting.Android/Properties/AndroidManifest.xml" afterDir="false" />
@@ -43,11 +44,38 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="67">
-              <caret line="655" column="73" selection-start-line="655" selection-start-column="73" selection-end-line="655" selection-end-column="73" />
+            <state relative-caret-position="155">
+              <caret line="1137" lean-forward="true" selection-start-line="1137" selection-end-line="1137" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="392" selection-start-line="392" selection-end-line="392" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_axes.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="1610" selection-start-line="1610" selection-end-line="1610" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="1809" selection-start-line="1809" selection-end-line="1809" />
             </state>
           </provider>
         </entry>
@@ -63,8 +91,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>currentk</find>
-      <find>data</find>
       <find>get_test_FPR</find>
       <find>FPR</find>
       <find>get_test_precision</find>
@@ -74,7 +100,6 @@
       <find>DEF_K</find>
       <find>get_simi</find>
       <find>__update_confusion_matrix</find>
-      <find>Accuracy_Sets</find>
       <find>_decision_function</find>
       <find>train</find>
       <find>train(</find>
@@ -93,6 +118,9 @@
       <find>__update_multi_confusion_matrix</find>
       <find>ALLOWED_DIRS</find>
       <find>__pseudo_activation</find>
+      <find>Accuracy_Sets</find>
+      <find>roc_</find>
+      <find>ROC_Curve</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -117,7 +145,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-7" />
     <option name="width" value="847" />
     <option name="height" value="735" />
@@ -179,13 +207,13 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
-      <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
       <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
+      <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -345,15 +373,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.039434522" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20833333" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.6743044" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.5433715" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3207856" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -375,10 +403,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/china.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
       <provider selected="true" editor-type-id="images" />
@@ -538,15 +562,29 @@
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="230" selection-start-line="230" selection-end-line="230" />
+        <state relative-caret-position="105">
+          <caret line="392" selection-start-line="392" selection-end-line="392" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_axes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="1610" selection-start-line="1610" selection-end-line="1610" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="1809" selection-start-line="1809" selection-end-line="1809" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="67">
-          <caret line="655" column="73" selection-start-line="655" selection-start-column="73" selection-end-line="655" selection-end-column="73" />
+        <state relative-caret-position="155">
+          <caret line="1137" lean-forward="true" selection-start-line="1137" selection-end-line="1137" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
