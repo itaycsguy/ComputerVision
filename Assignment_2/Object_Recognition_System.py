@@ -673,11 +673,11 @@ class Classifier:
             #
             # prediction = 'Error'
             # print(prediction_activation)
-            # if (prediction_activation == 0):
+            # if (prediction_activation[0] == 0):
             #     prediction = 'Airplane'
-            # if (prediction_activation == 1):
+            # if (prediction_activation[0] == 1):
             #     prediction = 'Elephant'
-            # if (prediction_activation == 2):
+            # if (prediction_activation[0] == 2):
             #     prediction = 'MotorBike'
             # cv2.putText(image, prediction,
             #             bottomLeftCornerOfText,
@@ -895,12 +895,12 @@ class Classifier:
 
 
         for i in range(0, confusionRows):
-            axs[0].plot(recall[i], precision[i], '--', linewidth=2)
+            axs[0].plot(recall[i], precision[i], '-', linewidth=1)
 
 
-        axs[0].plot(linear_x, linear_y, '-', linewidth=0.5)
+        axs[0].plot(linear_x, linear_y, '--', linewidth=0.5)
 
-        info_arr = ['data', 'boundary']
+        info_arr = ['airplane', 'elephant' , 'motorbike', 'linear line']
 
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
@@ -1170,9 +1170,16 @@ if __name__ == "__main__":
 
     # run_by_multi_datasets(Classifier.NN, LOAD=False, confusionRows=3) # Working
 
-    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False, confusionRows=3) # BUG in appending more directories
-    # run_by_k(Classifier.NN, 5.0, 405, LOAD=False, confusionRows=3)  # working well -> the most value is 0.73 accuracy
-    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
-    # run_by_c(Classifier.NN, 250.0, 60, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
-    # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False, confusionRows=3) # unstable
+    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False, confusionRows=3) # BUG in appending more directories
+
+    run_by_k(Classifier.LINEAR_SVM, 5.0, 40, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
+
+
+
+    # Done:
+    # run_by_c(Classifier.NN, 400.0, 200, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
+    # run_by_k(Classifier.NN, 405.0, 505, LOAD=False, confusionRows=3)  # working well -> the most value is 0.73 accuracy
+
+    # run_by_c(Classifier.LINEAR_SVM, 90.0, 20, LOAD=False, confusionRows=3)  # unstable
+
 

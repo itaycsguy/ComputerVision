@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Datasets_Run_data.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Datasets_Run_data.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_C.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_C.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,8 +22,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="70">
-              <caret line="1130" column="53" lean-forward="true" selection-start-line="1130" selection-start-column="53" selection-end-line="1130" selection-end-column="53" />
+            <state relative-caret-position="49">
+              <caret line="1174" column="43" selection-start-line="1174" selection-start-column="43" selection-end-line="1174" selection-end-column="43" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -42,11 +42,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_decision_function1</find>
-      <find>__multi_activation</find>
-      <find>ALLOWED_DIRS</find>
-      <find>__pseudo_activation</find>
-      <find>__NN</find>
       <find>Features</find>
       <find>NN</find>
       <find>get_target1_value</find>
@@ -72,6 +67,11 @@
       <find>database</find>
       <find>append_datasets</find>
       <find>print</find>
+      <find>MIN_C</find>
+      <find>DEF_C</find>
+      <find>image</find>
+      <find>םפאןצוצ</find>
+      <find>optimum</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -97,9 +97,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
-    <option name="width" value="847" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="676" />
+    <option name="width" value="697" />
     <option name="height" value="735" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -332,14 +332,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20833333" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.27659574" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.46153846" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -547,8 +546,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
-          <caret line="1130" column="53" lean-forward="true" selection-start-line="1130" selection-start-column="53" selection-end-line="1130" selection-end-column="53" />
+        <state relative-caret-position="49">
+          <caret line="1174" column="43" selection-start-line="1174" selection-start-column="43" selection-end-line="1174" selection-end-column="43" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
