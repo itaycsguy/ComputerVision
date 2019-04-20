@@ -79,7 +79,10 @@ class Database:
     def append_datasets(self, datasets):
         if datasets is not None:
             for dataset in datasets:
-                Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
+                if not (dataset.lower() in Database.ALLOWED_DIRS):
+                    Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
+
+
 
 
     def get_target1_class(self):
@@ -601,6 +604,7 @@ class Classifier:
         Implementation to the multi-class NN classifier
     """
     def __multi_NN_activation(self, bow):
+
         data = self._features.get_bows()
         labels = self._features.get_feature_vectors_labels_by_image()
         best_mse = np.Inf
@@ -641,6 +645,7 @@ class Classifier:
                 dlib_bow = dlib.vector(bow)
 
                 # Classifying a BOW using the classifier we have built in step 4
+
                 prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [0, 1, 2] by the activation function
             else:
                 prediction_activation = self.__multi_NN_activation(bow) # self.__NN_activation(bow)
@@ -778,7 +783,12 @@ class Classifier:
         for i in range(0, self._confusion_matrix.shape[0]):
             if i != num_class:
                 FP_A = FP_A + self._confusion_matrix[num_class, i]
-        result = TP_A / (TP_A + FP_A)
+
+        if (TP_A + FP_A) != 0:
+            result = TP_A / (TP_A + FP_A)
+        else:
+            result = -1
+
         print("Precision: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
         return result
 
@@ -794,7 +804,10 @@ class Classifier:
             if i != num_class:
                 FN_A = FN_A + self._confusion_matrix[i, num_class]
 
-        result = TP_A / (TP_A + FN_A)
+        if (TP_A + FN_A) != 0:
+            result = TP_A / (TP_A + FN_A)
+        else:
+            result = -1
         print("Recall: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
         return result
 
@@ -962,8 +975,6 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
     classifier_instance.show_test_c()
     classifier_instance.show_test_confusion_matrix()
     time.sleep(SLEEP_TIME_OUT)
-    print("accuracy.driver = " + str(accuracy))
-    print("precision.driver = " + str(precision))
     return y_true, y_score, accuracy, precision, recall
 
 
@@ -1157,11 +1168,11 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
 if __name__ == "__main__":
 
-    # run_by_multi_datasets(Classifier.NN, LOAD=False, confusionRows=3)
+    # run_by_multi_datasets(Classifier.NN, LOAD=False, confusionRows=3) # Working
 
-    # run_by_multi_datasets(Classifier, LOAD=False, confusionRows=3) # BUG in appending more directories
+    run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False, confusionRows=3) # BUG in appending more directories
     # run_by_k(Classifier.NN, 5.0, 405, LOAD=False, confusionRows=3)  # working well -> the most value is 0.73 accuracy
     # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
-    run_by_c(Classifier.NN, 250.0, 60, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
+    # run_by_c(Classifier.NN, 250.0, 60, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
     # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False, confusionRows=3) # unstable
 
