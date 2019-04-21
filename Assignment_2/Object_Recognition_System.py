@@ -134,8 +134,8 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_K = 10      # optimum k clusters
-    MIN_K = 1
+    DEF_QUANTIZATION = 10      # optimum k clusters
+    MIN_QUANTIZATION = 1
 
 
     """
@@ -145,7 +145,7 @@ class Features:
         [4] bin_n     - number of bins for the histogram at each cell, default: 9
         [5] win_size  - size the image (expecting to 2^x type of size), default: (64, 128)
     """
-    def __init__(self, database, k=DEF_K, cell_size=8, bin_n=9, win_size=(64, 128)):
+    def __init__(self, database, k=DEF_QUANTIZATION, cell_size=8, bin_n=9, win_size=(64, 128)):
         # Database reference
         self._database = database
         # These are parameters which required from the program to get initially
@@ -456,9 +456,10 @@ class Features:
 
 
 class Classifier:
+    # C = 1
     __PICKLE_FILE = "Classifier.pkl"
-    C = 1           # optimum margin with of SVM
-    MIN_C = 0.01
+    THRESHOLD = 1           # optimum margin with of SVM
+    MIN_THRESHOLD = 0.01
     NN_THRESH = 250     # optimum distance for nearest-neighbor
     LINEAR_SVM = 0
     NN = 1
@@ -471,9 +472,9 @@ class Classifier:
         self._features = features
         self._type = type
         if type == Classifier.LINEAR_SVM:
-            self._c = Classifier.C
+            self._threshold = Classifier.C
             self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
-            self._svm_instance.set_c(self._c)
+            self._svm_instance.set_c(self._threshold)
         else:
             self._nn_thresh = Classifier.NN_THRESH
         self._decision_functions = None
@@ -790,8 +791,8 @@ class Classifier:
     """
         Set the margin width to the SVM classifier
     """
-    def set_C(self, c):
-        self._c = c
+    def set_threshold(self, threshold):
+        self._threshold = threshold
 
 
     """
@@ -877,7 +878,7 @@ class Classifier:
     """
     def show_test_threshold(self):
         if self._type == Classifier.LINEAR_SVM:
-            print("Current C for the SVM margin width:", self._c)
+            print("Current C for the SVM margin width:", self._threshold)
         else:
             print("Current NN threshold:", self._nn_thresh)
 
@@ -907,11 +908,15 @@ class Classifier:
         plt.show()
 
 
-    def compute_optimal_pair_iter(self, precision, recall, var):
-        summation_zip = list()
-        for p, r, v in zip(precision, recall, var):
-            summation_zip.append((p + r, v))
-        return var[max(summation_zip, key=operator.itemgetter(0))]
+    @staticmethod
+    def compute_optimal_pair_iter(precision, recall, var):
+        class_optimum = list()
+        for p_arr, r_arr in zip(precision, recall):
+            summation_class = list()
+            for p, r, v in zip(p_arr, r_arr, var):
+                summation_class.append((p + r, p, r, v))
+            class_optimum.append(max(summation_class, key=operator.itemgetter(0))[1:])  # form of (precision, recall, var)
+        return class_optimum
 
 
 
@@ -926,18 +931,20 @@ class Classifier:
 
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-        print("recall =", str(recall))
-        print("precision =", str(precision))
-        print("accuracy =", str(accuracy))
-        print("dependent_var =", str(dependent_var))
-        print("optimum =", str(optimum))
+        # print("recall =", str(recall))
+        # print("precision =", str(precision))
+        # print("accuracy =", str(accuracy))
+        # print("dependent_var =", str(dependent_var))
+        # print("optimum =", str(optimum))
 
         for i in range(0, confusionRows):
-            axs[0].plot(recall[i], precision[i], '-', linewidth=1)
+            base_line, = axs[0].plot(recall[i], precision[i], '-', linewidth=1)
+            p, r = optimum[i][:2]
+            axs[0].plot(p, r, 'o', color=base_line.get_color())
 
         axs[0].plot(linear_x, linear_y, '--', linewidth=0.5)
 
-        info_arr = ['airplane', 'elephant', 'motorbike', 'linear line']
+        info_arr = ['Airplane', 'Opt.', 'Elephant', 'Opt.', 'Motorbike', 'Opt.', 'Linear line']
 
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
@@ -951,7 +958,7 @@ class Classifier:
         axs[1].plot(dependent_var, accuracy, '-', linewidth=2)
         axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
         axs[1].set_ylabel('Accuracy')
-        axs[1].legend(['data', 'optimum'], loc='best')
+        axs[1].legend(['Data', 'Opt.'], loc='best')
 
         plt.show()
 
@@ -979,7 +986,7 @@ def get_all_rest_datasets(count=0):
 """
     Running the system using determined parameters
 """
-def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
+def driver(classifier_type, additional_datasets, k, threshold, SLEEP_TIME_OUT=3):
     db_instance = Database(trainImageDirName, FINAL_CLASSES=True, datasets=additional_datasets)
     db_instance.show_avaliable_datasets()
     feature_instance = Features(db_instance, k=k)
@@ -990,11 +997,11 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
     classifier_instance = None
     if classifier_type == Classifier.LINEAR_SVM:
         classifier_instance = Classifier(feature_instance, type=Classifier.LINEAR_SVM)
-        classifier_instance.set_C(c)
+        classifier_instance.set_threshold(threshold)
         classifier_instance.train()
     else:
         classifier_instance = Classifier(feature_instance, type=Classifier.NN)
-        classifier_instance.set_nn_thresh(c)
+        classifier_instance.set_nn_thresh(threshold)
     y_true, y_score = classifier_instance.recognizer()
     classifier_instance.save()
     classifier_instance.load()
@@ -1020,21 +1027,21 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
     [3] c=?
 """
 def run(additional_datasets, classifier, **kwargs):
-    k = Features.DEF_K
-    classifier_thresh = Classifier.C
+    quantization = Features.DEF_QUANTIZATION
+    classifier_thresh = Classifier.THRESHOLD
     if classifier == Classifier.NN:
         classifier_thresh = Classifier.NN_THRESH
-    c = classifier_thresh
+    threshold = classifier_thresh
     for key, value in kwargs.items():
         if classifier == Classifier.LINEAR_SVM:
-            if key.lower() == "c" and np.float32(value) > Classifier.MIN_C:
-                c = np.float32(value)
-        elif key.lower() == "c" and np.float32(value) > 0:
-                c = np.float32(value)
-        if key.lower() == "k" and np.uint32(value) > Features.MIN_K:
-            k = np.uint32(value)
+            if key.lower() == "threshold" and np.float32(value) > Classifier.MIN_THRESHOLD:
+                threshold = np.float32(value)
+        elif key.lower() == "threshold" and np.float32(value) > 0:
+            threshold = np.float32(value)
+        if key.lower() == "quantization" and np.uint32(value) > Features.MIN_QUANTIZATION:
+            quantization = np.uint32(value)
 
-    return driver(classifier, additional_datasets, k, c)
+    return driver(classifier, additional_datasets, quantization, threshold)
 
 
 def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3):
@@ -1044,7 +1051,7 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     precision = []
     recall = []
     datasets = list()
-    DEP_VAR_NAME = "C"
+    DEP_VAR_NAME = "THRESHOLD"
     DEP_VAR = None
     if classifier == Classifier.NN:
         DEP_VAR = np.arange(init, init + 10 * loop_length, 100.0)
@@ -1054,7 +1061,7 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     classifier_name = "LINEAR_SVM"
     if classifier == Classifier.NN:
         classifier_name = "NN"
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + "C" + ".pkl"
     for _ in range(loop_length):
         datasets.append(list())
     if LOAD:
@@ -1067,7 +1074,7 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     else:
 
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, threshold=dep_var)
 
             accuracy.append(acc)
             for i in range(0, confusionRows):
@@ -1105,7 +1112,7 @@ def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows
 
 
     datasets = list()
-    DEP_VAR_NAME = "K"
+    DEP_VAR_NAME = "QUANTIZATION"
     DEP_VAR = None
     if classifier == Classifier.NN:
         DEP_VAR = np.arange(init, init + loop_length, 100.0)
@@ -1127,7 +1134,7 @@ def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows
         recall = data[4]
     else:
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, k=dep_var)
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, quantization=dep_var)
 
             accuracy.append(acc)
             for i in range(0, confusionRows):
@@ -1153,7 +1160,7 @@ def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows
     recall_sorted = np.fliplr(np.sort(recall))
 
     optimum = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
-    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier , confusionRows=confusionRows)
+    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
 
@@ -1170,7 +1177,6 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
     if classifier == Classifier.NN:
         classifier_name = "NN"
     run_data_path = Database.PICKLE_DIR + "//Datasets_Run_data_" + classifier_name + ".pkl"
-    DEP_VAR = np.zeros(4)
     if LOAD:
         data = pickle.load(open(run_data_path, "rb"))
         y_true_glob = data[0]
@@ -1179,8 +1185,8 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
         precision = data[3]
         recall = data[4]
     else:
-        for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
+        for ds_amt in datasets:
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier)
 
             accuracy.append(acc)
             for i in range(0, confusionRows):
@@ -1199,11 +1205,7 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
                 y_scores_glob.append(score)
 
             print("")
-        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
-
-
-    precision_sorted = np.sort(precision)
-    recall_sorted = np.fliplr(np.sort(recall))
+        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall], open(run_data_path, "wb+"))
 
     Classifier.Accuracy_Sets(accuracy, list(range(3, 7)))
 
@@ -1212,25 +1214,16 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 def run_by_assignment_steps():
     # find an optimum threshold:
     run_by_threshold(Classifier.NN, init=100.0, loop_length=1000)
-    run_by_quantization(Classifier.NN, init=10, loop_length=90)
-    run_by_multi_datasets(Classifier.NN)
-
-    run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=100)
-    run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=100)
-    run_by_multi_datasets(Classifier.LINEAR_SVM)
+    # run_by_quantization(Classifier.NN, init=10, loop_length=90)
+    # run_by_multi_datasets(Classifier.NN)
+    #
+    # run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=100)
+    # run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=100)
+    # run_by_multi_datasets(Classifier.LINEAR_SVM)
 
 
 if __name__ == "__main__":
 
     run_by_assignment_steps()
-    # run_by_multi_datasets(Classifier.NN, LOAD=False, confusionRows=3) # Working
-    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False, confusionRows=3) # BUG in appending more directories
-
-    # run_by_k(Classifier.LINEAR_SVM, 5, 40, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
-
-    # Done:
-    # run_by_c(Classifier.NN, 400.0, 200, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
-    # run_by_k(Classifier.NN, 405.0, 505, LOAD=False, confusionRows=3)  # working well -> the most value is 0.73 accuracy
-    # run_by_c(Classifier.LINEAR_SVM, 90.0, 20, LOAD=False, confusionRows=3)  # unstable
 
 
