@@ -845,7 +845,7 @@ class Classifier:
         if world_val != 0:
             result = sub_TP / world_val
         else:
-            result = -1
+            result = np.Inf
 
         class_name = self._features.get_database().class2name(num_class)
         print("{} Precision: TP / (TP + FP) = {}/({} + {}) = {} ".format(class_name, sub_TP, sub_TP, sub_FP, result))
@@ -865,7 +865,7 @@ class Classifier:
         if world_val != 0:
             result = sub_TP / world_val
         else:
-            result = -1
+            result = np.Inf
 
         class_name = self._features.get_database().class2name(num_class)
         print("{} Recall: TP / (TP + FN) = {}/({} + {}) = {} ".format(class_name, sub_TP, sub_TP, sub_FN, result))
@@ -887,7 +887,7 @@ class Classifier:
     """
     def show_test_confusion_matrix(self):
         print("Current confusion matrix:\n", np.matrix(self._confusion_matrix))
-        print("Current Structural SVM confusion matrix:\n", self._confusion_matrix_structural_SVM)
+        # print("Current Structural SVM confusion matrix:\n", self._confusion_matrix_structural_SVM)
 
 
     """
@@ -907,12 +907,20 @@ class Classifier:
         plt.show()
 
 
+    def compute_optimal_pair_iter(self, precision, recall, var):
+        summation_zip = list()
+        for p, r, v in zip(precision, recall, var):
+            summation_zip.append((p + r, v))
+        return var[max(summation_zip, key=operator.itemgetter(0))]
+
+
+
     """
         Plot the desired ROC Curve for choosing the optimal parameter
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name, classifier, confusionRows=3):
+    def ROC_Curve(optimum, accuracy, precision, recall, dependent_var, dependent_var_name, classifier, confusionRows=3):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
@@ -922,6 +930,7 @@ class Classifier:
         print("precision =", str(precision))
         print("accuracy =", str(accuracy))
         print("dependent_var =", str(dependent_var))
+        print("optimum =", str(optimum))
 
         for i in range(0, confusionRows):
             axs[0].plot(recall[i], precision[i], '-', linewidth=1)
@@ -1082,7 +1091,8 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     precision_sorted = np.sort(precision)
     recall_sorted = np.fliplr(np.sort(recall))
 
-    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
+    optimum = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
+    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
 
@@ -1142,7 +1152,8 @@ def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows
     precision_sorted = np.sort(precision)
     recall_sorted = np.fliplr(np.sort(recall))
 
-    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier , confusionRows=confusionRows)
+    optimum = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
+    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier , confusionRows=confusionRows)
 
 
 
@@ -1200,12 +1211,12 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
 def run_by_assignment_steps():
     # find an optimum threshold:
-    run_by_threshold(Classifier.NN, init=50.0, loop_length=1000)
+    run_by_threshold(Classifier.NN, init=100.0, loop_length=1000)
     run_by_quantization(Classifier.NN, init=10, loop_length=90)
     run_by_multi_datasets(Classifier.NN)
 
-    run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=50)
-    run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=50)
+    run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=100)
+    run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=100)
     run_by_multi_datasets(Classifier.LINEAR_SVM)
 
 
