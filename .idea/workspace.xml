@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="773" />
+    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="833" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
@@ -27,6 +27,13 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Datasets_Run_data.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_C.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_K.pkl" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,8 +46,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="1175" column="88" selection-start-line="1175" selection-start-column="88" selection-end-line="1175" selection-end-column="88" />
+            <state relative-caret-position="81">
+              <caret line="1213" column="29" selection-start-line="1213" selection-start-column="29" selection-end-line="1213" selection-end-column="29" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -59,21 +66,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Features</find>
-      <find>NN</find>
-      <find>get_target1_value</find>
-      <find>onfusion_matrix</find>
-      <find>current confu</find>
-      <find>self._confusion_matrix.shape[0]</find>
-      <find>_confusion_matrix.shape[0]</find>
-      <find>classifier</find>
-      <find>getRows</find>
-      <find>_confusion_matrix</find>
-      <find>print(&quot;prediction_activation</find>
-      <find>prediction_activation</find>
-      <find>SVM</find>
-      <find>dlib</find>
-      <find>ROC_Curve</find>
       <find>sort</find>
       <find>.sort</find>
       <find>driver</find>
@@ -89,6 +81,21 @@
       <find>image</find>
       <find>םפאןצוצ</find>
       <find>optimum</find>
+      <find>find_optimum_by_accuracy</find>
+      <find>__multi_activation</find>
+      <find>get_target_class</find>
+      <find>get</find>
+      <find>get_target_classes_values</find>
+      <find>show_test_c</find>
+      <find>show_test_co</find>
+      <find>DEF</find>
+      <find>tr</find>
+      <find>get_truth_joint_feature_vector</find>
+      <find>jo</find>
+      <find>train</find>
+      <find>_recognition_results</find>
+      <find>show_tr</find>
+      <find>recognizer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -114,7 +121,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="427" />
     <option name="y" value="219" />
     <option name="width" value="324" />
@@ -126,6 +133,22 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -143,34 +166,6 @@
               <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="src_task1" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="Datasets" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="var" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -349,15 +344,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.37703142" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.46153846" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -502,7 +497,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/sklearn/metrics/ranking.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-24">
@@ -549,13 +543,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/builtins.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="3636" column="8" selection-start-line="3636" selection-start-column="8" selection-end-line="3636" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/builtins.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
@@ -563,10 +551,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2769">
+          <caret line="1980" column="4" selection-start-line="1980" selection-start-column="4" selection-end-line="1980" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="1175" column="88" selection-start-line="1175" selection-start-column="88" selection-end-line="1175" selection-end-column="88" />
+        <state relative-caret-position="81">
+          <caret line="1213" column="29" selection-start-line="1213" selection-start-column="29" selection-end-line="1213" selection-end-column="29" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>

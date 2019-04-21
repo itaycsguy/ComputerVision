@@ -8,6 +8,7 @@ import pickle
 import time
 import matplotlib.pyplot as plt
 import numpy as np
+import operator
 import argparse
 
 trainImageDirName = ".//Datasets"
@@ -21,7 +22,7 @@ class Database:
     PICKLE_DIR = "var"
     MIN_ADD_DB = 0
 
-    # Defined at the published assignment
+    # Defined at the published assignment [initial classes by assignment design]
     ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
 
     """
@@ -42,6 +43,9 @@ class Database:
             self.load_datasets_from_dir()
 
 
+    """
+        Return the specific classes who were just added to the hash
+    """
     def get_added_datasets_names(self):
         return self._added_datasets
 
@@ -83,18 +87,26 @@ class Database:
                     Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
 
 
+    """
+        Return the initial hash with the trained classes names [sorted by key value]
+    """
+    def get_target_names(self):
+        return sorted(Database.ALLOWED_DIRS.items(), key=operator.itemgetter(1))
 
 
-    def get_target1_class(self):
-        return Database.ALLOWED_DIRS["airplane"]
+    """
+        Return the initial hash with the trained classes values [sorted]
+    """
+    def get_target_values(self):
+        return sorted(Database.ALLOWED_DIRS.values())
 
 
-    def get_target2_class(self):
-        return Database.ALLOWED_DIRS["elephant"]
+    def class2name(self, num_class):
+        for name, val in Database.ALLOWED_DIRS.items():
+            if val == num_class:
+                return name
 
-
-    def get_target3_class(self):
-        return Database.ALLOWED_DIRS["motorbike"]
+        return ""
 
 
     """
@@ -114,14 +126,15 @@ class Database:
     """
         Return number of directories who is participate of the process
     """
-    def get_sets_amount(self):
+    @staticmethod
+    def get_sets_amount():
         return len(Database.ALLOWED_DIRS)
 
 
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_K = 10  # optimum k clusters
+    DEF_K = 10      # optimum k clusters
     MIN_K = 1
 
 
@@ -157,34 +170,6 @@ class Features:
     """
     def show_current_k(self):
         print("Current K to the clustering algorithm:", self._K)
-
-
-    """
-        Return 'airplane'
-    """
-    def get_target1_value(self):
-        return self._database.get_target1_class()
-
-
-    """
-        Return 'elephant'
-    """
-    def get_target2_value(self):
-        return self._database.get_target2_class()
-
-
-    """
-        Return 'motorbike'
-    """
-    def get_target3_value(self):
-        return self._database.get_target3_class()
-
-
-    """
-        Return the target class
-    """
-    def get_target_value(self):
-        return self._database.get_target_class()
 
 
     """
@@ -442,20 +427,6 @@ class Features:
 
 
     """
-        Can be used after kmeans execution [as part of the algorithm output]
-    """
-    def get_quantized_center(self):
-        return self._patches_centers
-
-
-    """
-        Can be used after kmeans execution [as part of the algorithm output]
-    """
-    def get_quantized_labels(self):
-        return self._patches_labels
-
-
-    """
         Return the DB reference
     """
     def get_database(self):
@@ -486,9 +457,9 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
-    DEF_C = 10.0    # optimum margin with of SVM
+    C = 1           # optimum margin with of SVM
     MIN_C = 0.01
-    DEF_NN_THRESH = 250     # optimum distance for nearest-neighbor
+    NN_THRESH = 250     # optimum distance for nearest-neighbor
     LINEAR_SVM = 0
     NN = 1
 
@@ -500,18 +471,108 @@ class Classifier:
         self._features = features
         self._type = type
         if type == Classifier.LINEAR_SVM:
-            self._c = Classifier.DEF_C
+            self._c = Classifier.C
             self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
             self._svm_instance.set_c(self._c)
         else:
-            self._nn_thresh = Classifier.DEF_NN_THRESH
-        self._decision_function = None
-        self._decision_function1 = None
-        self._decision_function2 = None
-        self._decision_function3 = None
+            self._nn_thresh = Classifier.NN_THRESH
+        self._decision_functions = None
+
+        # For SVM Structural problem
+        # self.num_samples = 0
+        # self.num_dimensions = 0
+        # self.samples = None
+        # self.labels = None
+        # self.weights = None
+
         classes_num = len(Database.ALLOWED_DIRS.keys())
+        # self._confusion_matrix_structural_SVM = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._recognition_results = None
+
+
+    """
+        Compute PSI(x,label)
+    """
+    # def make_psi(self, x, label):
+    #     psi = dlib.vector()
+    #     psi.resize(self.num_dimensions)
+    #     dims = len(x)
+    #     if label == 0:
+    #         for i in range(0, dims):
+    #             psi[i] = x[i]
+    #     elif label == 1:
+    #         for i in range(dims, 2 * dims):
+    #             psi[i] = x[i - dims]
+    #     elif label == 2:  # the label must be 2
+    #         for i in range(2 * dims, 3 * dims):
+    #             psi[i] = x[i - 2 * dims]
+    #     return psi
+
+
+
+    # def get_truth_joint_feature_vector(self, idx):
+    #     return self.make_psi(self.samples[idx], self.labels[idx])
+
+
+    """
+        Compute the dot product between the two vectors a and b
+    """
+    # def dot(self, a, b):
+    #     return sum(i * j for i, j in zip(a, b))
+
+
+    # def separation_oracle(self, idx, current_solution):
+    #     samp = self.samples[idx]
+    #     dims = len(samp)
+    #     scores = [0, 0, 0]
+    #     # compute scores for each of the three classifiers
+    #     scores[0] = self.dot(current_solution[0:dims], samp)
+    #     scores[1] = self.dot(current_solution[dims:2*dims], samp)
+    #     scores[2] = self.dot(current_solution[2*dims:3*dims], samp)
+    #     # correct label and a loss of 0 if we get the right label.
+    #     if self.labels[idx] != 0:
+    #         scores[0] += 1
+    #     if self.labels[idx] != 1:
+    #         scores[1] += 1
+    #     if self.labels[idx] != 2:
+    #         scores[2] += 1
+    #     # Now figure out which classifier has the largest loss-augmented score.
+    #     max_scoring_label = scores.index(max(scores))
+    #     # And finally record the loss that was associated with that predicted
+    #     # label. Again, the loss is 1 if the label is incorrect and 0 otherwise.
+    #     if max_scoring_label == self.labels[idx]:
+    #         loss = 0
+    #     else:
+    #         loss = 1
+    #     # Finally, return the loss and PSI vector corresponding to the label
+    #     # we just found.
+    #     psi = self.make_psi(samp, max_scoring_label)
+    #     return loss, psi
+
+
+    """
+        Given the 9-dimensional weight vector which defines a 3 class classifier,
+        predict the class of the given 3-dimensional sample vector.   Therefore, the
+        output of this function is either 0, 1, or 2 (i.e. one of the three possible
+        labels)
+    """
+    # def predict_label(self, sample):
+    #     # The individual classifier scores are stored in scores and the highest scoring
+    #     # index is returned as the label.
+    #     w0 = self.weights[0:3]
+    #     w1 = self.weights[3:6]
+    #     w2 = self.weights[6:9]
+    #     scores = [self.dot(w0, sample), self.dot(w1, sample), self.dot(w2, sample)]
+    #     max_scoring_label = scores.index(max(scores))
+    #     return max_scoring_label
+
+
+    # def __update_problem(self, samples, labels):
+    #     self.num_samples = len(samples)
+    #     self.num_dimensions = len(samples)*3
+    #     self.samples = samples
+    #     self.labels = labels
 
 
     """
@@ -566,22 +627,26 @@ class Classifier:
     """
     def train(self):
         if self._type == Classifier.LINEAR_SVM:
-            # prepare the data for being as type of dlib objects
             # -> dlib.vectors
             data = self.__prepare_dlib_data(self._features.get_bows())
-            # -> dlib.array => [-1,1]
-            # labels = self.__prepare_dlib_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
-            actual_labels = self._features.get_feature_vectors_labels_by_image()
-            labels1 = self.__prepare_dlib_labels(actual_labels, self._features.get_target1_value())     # airplane
-            labels2 = self.__prepare_dlib_labels(actual_labels, self._features.get_target2_value())     # elephant
-            labels3 = self.__prepare_dlib_labels(actual_labels, self._features.get_target3_value())     # motorbike
-            # -> dlib._decision_function_radial_basis
-            # self._decision_function = self._svm_instance.train(data, labels)
-            self._decision_function1 = self._svm_instance.train(data, labels1)
-            self._decision_function2 = self._svm_instance.train(data, labels2)
-            self._decision_function3 = self._svm_instance.train(data, labels3)
 
-        return self._decision_function1, self._decision_function2, self._decision_function3
+            # Could be: airplane, elephant, motorbike
+            labels = list()
+            actual_labels = self._features.get_feature_vectors_labels_by_image()
+            targets = self._features.get_database().get_target_values()
+            for target in targets:
+                # -> dlib.array => [-1,1]
+                labels.append(self.__prepare_dlib_labels(actual_labels, target))
+
+            self._decision_functions = list()
+            for label in labels:
+                self._decision_functions.append(self._svm_instance.train(data, label))
+
+            """learning by structural SVM method."""
+            # self.__update_problem(self._features.get_bows(), actual_labels)
+            # self.weights = dlib.solve_structural_svm_problem(self)
+
+        return self._decision_functions
 
 
     """
@@ -645,23 +710,24 @@ class Classifier:
                 dlib_bow = dlib.vector(bow)
 
                 # Classifying a BOW using the classifier we have built in step 4
-
-                prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [0, 1, 2] by the activation function
+                # -> [0, 1, 2] by the activation function
+                prediction_activation = self.__multi_activation(dlib_bow)
             else:
-                prediction_activation = self.__multi_NN_activation(bow) # self.__NN_activation(bow)
+                prediction_activation = self.__multi_NN_activation(bow)
 
-            actual_activation = self.__pseudo_activation(image_name)    # -> [0, 1, 2] by the activation function
+            # -> [0, 1, 2] by the activation function
+            actual_activation = self.__pseudo_activation(image_name)
 
             y_true.append(actual_activation)
             y_score.append(prediction_activation)
 
             # Given 2 classes determination -> need to determine for kind of binary problem
-
             self.__update_multi_confusion_matrix(prediction_activation, actual_activation)
 
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
             self._recognition_results[image_name] = prediction_activation
 
+            # self._confusion_matrix_structural_SVM[self.predict_label(bow), actual_activation] += 1
 
             # image = cv2.imread(image_path)
             # font = cv2.FONT_HERSHEY_SIMPLEX
@@ -698,14 +764,15 @@ class Classifier:
         Return [class, score]
     """
     def __multi_activation(self, dlib_bow):
-        float_value1 = self._decision_function1(dlib_bow) #airplane
-        float_value2 = self._decision_function2(dlib_bow) #Elephant
-        float_value3 = self._decision_function3(dlib_bow) # motorbike
+        float_values = list()
+        # By assignment design there 3 options: airplane, elephant and motorbike
+        for f in self._decision_functions:
+            float_values.append(f(dlib_bow))
+
         # here we have 3 classes probability
-        classes = [float_value1, float_value2, float_value3]
-        idx = np.argmax(classes)
+        idx = np.argmax(float_values)
         # return value of form: (0/1/2, 0.0-1.0)
-        return idx, classes[idx]
+        return idx, float_values[idx]
 
 
 
@@ -730,16 +797,11 @@ class Classifier:
     """
         Updating the confusion matrix to multi-class
     """
-    def __update_multi_confusion_matrix(self, prediction, actual): # prediction = [0,1,2] , actual = [0,1,2]
+    def __update_multi_confusion_matrix(self, prediction, actual):      # prediction = [0,1,2] , actual = [0,1,2]
         if self._type == Classifier.LINEAR_SVM:
             prediction = prediction[0]
         self._confusion_matrix[prediction, actual] += 1
 
-    """
-        get rows of the confusion matrix
-    """
-    def getRows(self):
-        return self._confusion_matrix.shape[0]
 
     """
         Saving: confusion matrix & recognition results hash to a pickle file to var directory
@@ -764,10 +826,7 @@ class Classifier:
         get the accuracy
     """
     def get_test_accuracy(self):
-        TP = 0
-        for i in range(0, self._confusion_matrix.shape[0]):
-            TP = TP + self._confusion_matrix[i, i]
-
+        TP = np.sum(np.diag(self._confusion_matrix))
         result = TP / self._confusion_matrix.sum()
         print("Accuracy: TP /#all_data = {} / {} = {} ".format(TP, self._confusion_matrix.sum(), result))
         return result
@@ -776,46 +835,47 @@ class Classifier:
     """
         Return the precision to the airplane class
     """
-    def get_test_precision(self,num_class): # num_class = [0 ,1 ,2]
-        TP_A = self._confusion_matrix[num_class, num_class]
+    def get_test_precision(self,  num_class):     # num_class = [0 ,1 ,2]
+        sub_TP = self._confusion_matrix[num_class, num_class]
 
-        FP_A = 0
-        for i in range(0, self._confusion_matrix.shape[0]):
-            if i != num_class:
-                FP_A = FP_A + self._confusion_matrix[num_class, i]
+        # sum over rows
+        sub_FP = np.sum(self._confusion_matrix, axis=1)[num_class] - self._confusion_matrix[num_class, num_class]
 
-        if (TP_A + FP_A) != 0:
-            result = TP_A / (TP_A + FP_A)
+        world_val = sub_TP + sub_FP
+        if world_val != 0:
+            result = sub_TP / world_val
         else:
             result = -1
 
-        print("Precision: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
+        class_name = self._features.get_database().class2name(num_class)
+        print("{} Precision: TP / (TP + FP) = {}/({} + {}) = {} ".format(class_name, sub_TP, sub_TP, sub_FP, result))
         return result
 
 
     """
         Return the recall to the airplane class
     """
-    def get_test_recall(self,num_class): # num_class = [0 ,1 ,2]
-        TP_A = self._confusion_matrix[num_class, num_class]
+    def get_test_recall(self, num_class):    # num_class = [0 ,1 ,2]
+        sub_TP = self._confusion_matrix[num_class, num_class]
 
-        FN_A = 0
-        for i in range(0, self._confusion_matrix.shape[0]):
-            if i != num_class:
-                FN_A = FN_A + self._confusion_matrix[i, num_class]
+        # sum over cols
+        sub_FN = np.sum(self._confusion_matrix, axis=0)[num_class] - self._confusion_matrix[num_class, num_class]
 
-        if (TP_A + FN_A) != 0:
-            result = TP_A / (TP_A + FN_A)
+        world_val = sub_TP + sub_FN
+        if world_val != 0:
+            result = sub_TP / world_val
         else:
             result = -1
-        print("Recall: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
+
+        class_name = self._features.get_database().class2name(num_class)
+        print("{} Recall: TP / (TP + FN) = {}/({} + {}) = {} ".format(class_name, sub_TP, sub_TP, sub_FN, result))
         return result
 
 
     """
-        display out c
+        display out the threshold
     """
-    def show_test_c(self):
+    def show_test_threshold(self):
         if self._type == Classifier.LINEAR_SVM:
             print("Current C for the SVM margin width:", self._c)
         else:
@@ -826,37 +886,8 @@ class Classifier:
         display out the confusion matrix
     """
     def show_test_confusion_matrix(self):
-        print("Current confusion matrix:\n", self._confusion_matrix)
-
-
-
-
-    """
-        Return the optimum paramter under accuracy condition
-    """
-    @staticmethod
-    def find_optimum_by_accuracy(accuracy, dependent_var, dependent_name):
-        max_acc = 0
-        var = -1
-        for y, x in zip(accuracy, dependent_var):
-            if max_acc < y:
-                max_acc = y
-                var = x
-
-        if max_acc > 0 and var > -1:
-            print("An optimal parameter by accuracy was found " + dependent_name + ":", var)
-
-        return var, max_acc
-
-
-    # @staticmethod
-    # def find_optimum_by_ROC_CURVE(recall, precision, dependent_var, dependent_name):
-    #     idx0 = np.argmax(precision[0])
-    #     idx1 = np.argmax(precision[1])
-    #     idx2 = np.argmax(precision[2])
-    #
-    #     print("An optimal parameter by ROC Curve was found " + dependent_name + ":", dependent_var[idx])
-    #     return dependent_var[idx], recall[idx], precision[idx]
+        print("Current confusion matrix:\n", np.matrix(self._confusion_matrix))
+        print("Current Structural SVM confusion matrix:\n", self._confusion_matrix_structural_SVM)
 
 
     """
@@ -887,20 +918,17 @@ class Classifier:
 
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-        print("recall = " + str(recall))
-        print("precision = " + str(precision))
-        print("accuracy =  " + str(accuracy))
-        print("dependent_var =  " + str(dependent_var))
-
-
+        print("recall =", str(recall))
+        print("precision =", str(precision))
+        print("accuracy =", str(accuracy))
+        print("dependent_var =", str(dependent_var))
 
         for i in range(0, confusionRows):
             axs[0].plot(recall[i], precision[i], '-', linewidth=1)
 
-
         axs[0].plot(linear_x, linear_y, '--', linewidth=0.5)
 
-        info_arr = ['airplane', 'elephant' , 'motorbike', 'linear line']
+        info_arr = ['airplane', 'elephant', 'motorbike', 'linear line']
 
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
@@ -939,7 +967,6 @@ def get_all_rest_datasets(count=0):
     return new_dir_names
 
 
-
 """
     Running the system using determined parameters
 """
@@ -970,9 +997,8 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
         precision.append(classifier_instance.get_test_precision(i))
         recall.append(classifier_instance.get_test_recall(i))
 
-
     feature_instance.show_current_k()
-    classifier_instance.show_test_c()
+    classifier_instance.show_test_threshold()
     classifier_instance.show_test_confusion_matrix()
     time.sleep(SLEEP_TIME_OUT)
     return y_true, y_score, accuracy, precision, recall
@@ -986,9 +1012,9 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
 """
 def run(additional_datasets, classifier, **kwargs):
     k = Features.DEF_K
-    classifier_thresh = Classifier.DEF_C
+    classifier_thresh = Classifier.C
     if classifier == Classifier.NN:
-        classifier_thresh = Classifier.DEF_NN_THRESH
+        classifier_thresh = Classifier.NN_THRESH
     c = classifier_thresh
     for key, value in kwargs.items():
         if classifier == Classifier.LINEAR_SVM:
@@ -1002,7 +1028,7 @@ def run(additional_datasets, classifier, **kwargs):
     return driver(classifier, additional_datasets, k, c)
 
 
-def run_by_c(classifier, init, loop_length, LOAD=False, confusionRows=3):
+def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
@@ -1016,7 +1042,10 @@ def run_by_c(classifier, init, loop_length, LOAD=False, confusionRows=3):
     else:
         DEP_VAR = np.arange(init, init + loop_length, 1.0)
 
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    classifier_name = "LINEAR_SVM"
+    if classifier == Classifier.NN:
+        classifier_name = "NN"
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
     for _ in range(loop_length):
         datasets.append(list())
     if LOAD:
@@ -1033,12 +1062,12 @@ def run_by_c(classifier, init, loop_length, LOAD=False, confusionRows=3):
 
             accuracy.append(acc)
             for i in range(0, confusionRows):
-                if precision.__len__() == i:
+                if len(precision) == i:
                     precision.append([prec[i]])
                 else:
                     precision[i].append(prec[i])
 
-                if recall.__len__() == i:
+                if len(recall) == i:
                     recall.append([rec[i]])
                 else:
                     recall[i].append(rec[i])
@@ -1053,11 +1082,11 @@ def run_by_c(classifier, init, loop_length, LOAD=False, confusionRows=3):
     precision_sorted = np.sort(precision)
     recall_sorted = np.fliplr(np.sort(recall))
 
-    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier,confusionRows=confusionRows)
+    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
 
-def run_by_k(classifier, init, loop_length, LOAD=False, confusionRows=3):
+def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
@@ -1073,7 +1102,10 @@ def run_by_k(classifier, init, loop_length, LOAD=False, confusionRows=3):
     else:
         DEP_VAR = np.arange(init, init + loop_length, 1.0)
 
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    classifier_name = "LINEAR_SVM"
+    if classifier == Classifier.NN:
+        classifier_name = "NN"
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
     for _ in range(loop_length):
         datasets.append(list())
     if LOAD:
@@ -1089,18 +1121,15 @@ def run_by_k(classifier, init, loop_length, LOAD=False, confusionRows=3):
 
             accuracy.append(acc)
             for i in range(0, confusionRows):
-                if precision.__len__() == i:
+                if len(precision) == i:
                     precision.append([prec[i]])
                 else:
                     precision[i].append(prec[i])
 
-                if recall.__len__() == i:
+                if len(recall) == i:
                     recall.append([rec[i]])
                 else:
                     recall[i].append(rec[i])
-
-
-
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
@@ -1116,6 +1145,7 @@ def run_by_k(classifier, init, loop_length, LOAD=False, confusionRows=3):
     Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier , confusionRows=confusionRows)
 
 
+
 def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
@@ -1125,7 +1155,10 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
     run_data_path = Database.PICKLE_DIR
     datasets = [get_all_rest_datasets(0), get_all_rest_datasets(1), get_all_rest_datasets(2), get_all_rest_datasets(3)]
-    run_data_path = Database.PICKLE_DIR + "//Datasets_Run_data.pkl"
+    classifier_name = "LINEAR_SVM"
+    if classifier == Classifier.NN:
+        classifier_name = "NN"
+    run_data_path = Database.PICKLE_DIR + "//Datasets_Run_data_" + classifier_name + ".pkl"
     DEP_VAR = np.zeros(4)
     if LOAD:
         data = pickle.load(open(run_data_path, "rb"))
@@ -1140,12 +1173,12 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
             accuracy.append(acc)
             for i in range(0, confusionRows):
-                if precision.__len__() == i:
+                if len(precision) == i:
                     precision.append([prec[i]])
                 else:
                     precision[i].append(prec[i])
 
-                if recall.__len__() == i:
+                if len(recall) == i:
                     recall.append([rec[i]])
                 else:
                     recall[i].append(rec[i])
@@ -1165,21 +1198,28 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
 
 
+def run_by_assignment_steps():
+    # find an optimum threshold:
+    run_by_threshold(Classifier.NN, init=50.0, loop_length=1000.0)
+    run_by_quantization(Classifier.NN, init=10, loop_length=90)
+    run_by_multi_datasets(Classifier.NN)
+
+    run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=50.0)
+    run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=50)
+    run_by_multi_datasets(Classifier.LINEAR_SVM)
+
 
 if __name__ == "__main__":
 
+    run_by_assignment_steps()
     # run_by_multi_datasets(Classifier.NN, LOAD=False, confusionRows=3) # Working
-
     # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False, confusionRows=3) # BUG in appending more directories
 
-    run_by_k(Classifier.LINEAR_SVM, 5.0, 40, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
-
-
+    # run_by_k(Classifier.LINEAR_SVM, 5, 40, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
 
     # Done:
     # run_by_c(Classifier.NN, 400.0, 200, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
     # run_by_k(Classifier.NN, 405.0, 505, LOAD=False, confusionRows=3)  # working well -> the most value is 0.73 accuracy
-
     # run_by_c(Classifier.LINEAR_SVM, 90.0, 20, LOAD=False, confusionRows=3)  # unstable
 
 
