@@ -1200,11 +1200,11 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
 def run_by_assignment_steps():
     # find an optimum threshold:
-    run_by_threshold(Classifier.NN, init=50.0, loop_length=1000.0)
+    run_by_threshold(Classifier.NN, init=50.0, loop_length=1000)
     run_by_quantization(Classifier.NN, init=10, loop_length=90)
     run_by_multi_datasets(Classifier.NN)
 
-    run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=50.0)
+    run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=50)
     run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=50)
     run_by_multi_datasets(Classifier.LINEAR_SVM)
 
