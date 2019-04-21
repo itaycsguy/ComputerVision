@@ -79,7 +79,10 @@ class Database:
     def append_datasets(self, datasets):
         if datasets is not None:
             for dataset in datasets:
-                Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
+                if not (dataset.lower() in Database.ALLOWED_DIRS):
+                    Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
+
+
 
 
     def get_target1_class(self):
@@ -601,6 +604,7 @@ class Classifier:
         Implementation to the multi-class NN classifier
     """
     def __multi_NN_activation(self, bow):
+
         data = self._features.get_bows()
         labels = self._features.get_feature_vectors_labels_by_image()
         best_mse = np.Inf
@@ -641,6 +645,7 @@ class Classifier:
                 dlib_bow = dlib.vector(bow)
 
                 # Classifying a BOW using the classifier we have built in step 4
+
                 prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [0, 1, 2] by the activation function
             else:
                 prediction_activation = self.__multi_NN_activation(bow) # self.__NN_activation(bow)
@@ -651,6 +656,7 @@ class Classifier:
             y_score.append(prediction_activation)
 
             # Given 2 classes determination -> need to determine for kind of binary problem
+
             self.__update_multi_confusion_matrix(prediction_activation, actual_activation)
 
             #  A raw data image -> 1:1 [no another image with the same name on that test session]
@@ -673,8 +679,7 @@ class Classifier:
             #     prediction = 'Elephant'
             # if (prediction_activation[0] == 2):
             #     prediction = 'MotorBike'
-            # cv2.putText(image,
-            #             prediction,
+            # cv2.putText(image, prediction,
             #             bottomLeftCornerOfText,
             #             font,
             #             fontScale,
@@ -730,6 +735,11 @@ class Classifier:
             prediction = prediction[0]
         self._confusion_matrix[prediction, actual] += 1
 
+    """
+        get rows of the confusion matrix
+    """
+    def getRows(self):
+        return self._confusion_matrix.shape[0]
 
     """
         Saving: confusion matrix & recognition results hash to a pickle file to var directory
@@ -754,7 +764,10 @@ class Classifier:
         get the accuracy
     """
     def get_test_accuracy(self):
-        TP = self._confusion_matrix[0, 0] + self._confusion_matrix[1, 1] + self._confusion_matrix[2, 2]
+        TP = 0
+        for i in range(0, self._confusion_matrix.shape[0]):
+            TP = TP + self._confusion_matrix[i, i]
+
         result = TP / self._confusion_matrix.sum()
         print("Accuracy: TP /#all_data = {} / {} = {} ".format(TP, self._confusion_matrix.sum(), result))
         return result
@@ -763,66 +776,39 @@ class Classifier:
     """
         Return the precision to the airplane class
     """
-    def get_test_precision_airplane(self):
-        TP_A = self._confusion_matrix[0, 0]
-        FP_A = self._confusion_matrix[0, 1] + self._confusion_matrix[0, 2]
-        result = TP_A / (TP_A + FP_A)
+    def get_test_precision(self,num_class): # num_class = [0 ,1 ,2]
+        TP_A = self._confusion_matrix[num_class, num_class]
+
+        FP_A = 0
+        for i in range(0, self._confusion_matrix.shape[0]):
+            if i != num_class:
+                FP_A = FP_A + self._confusion_matrix[num_class, i]
+
+        if (TP_A + FP_A) != 0:
+            result = TP_A / (TP_A + FP_A)
+        else:
+            result = -1
+
         print("Precision: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
-        return result
-
-
-    """
-        Return the precision to the elephant class
-    """
-    def get_test_precision_elephant(self):
-        TP_A = self._confusion_matrix[1, 1]
-        FP_A = self._confusion_matrix[1, 0] + self._confusion_matrix[1, 2]
-        result = TP_A / (TP_A + FP_A)
-        print("Precision: TP_B / (TP_B + FN_B) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
-        return result
-
-
-    """
-        Return the precision to the motorbike class
-    """
-    def get_test_precision_motorbike(self):
-        TP_A = self._confusion_matrix[2, 2]
-        FP_A = self._confusion_matrix[2, 0] + self._confusion_matrix[2, 1]
-        result = TP_A / (TP_A + FP_A)
-        print("Precision: TP_C / (TP_C + FN_C) = {}/({} + {}) = {} ".format(TP_A, TP_A, FP_A, result))
         return result
 
 
     """
         Return the recall to the airplane class
     """
-    def get_test_recall_airplane(self):
-        TP_A = self._confusion_matrix[0, 0]
-        FN_A = self._confusion_matrix[1, 0] + self._confusion_matrix[2, 0]
-        result = TP_A / (TP_A + FN_A)
+    def get_test_recall(self,num_class): # num_class = [0 ,1 ,2]
+        TP_A = self._confusion_matrix[num_class, num_class]
+
+        FN_A = 0
+        for i in range(0, self._confusion_matrix.shape[0]):
+            if i != num_class:
+                FN_A = FN_A + self._confusion_matrix[i, num_class]
+
+        if (TP_A + FN_A) != 0:
+            result = TP_A / (TP_A + FN_A)
+        else:
+            result = -1
         print("Recall: TP_A / (TP_A + FN_A) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
-        return result
-
-
-    """
-        Return the recall to the elephant class
-    """
-    def get_test_recall_elephant(self):
-        TP_A = self._confusion_matrix[1, 1]
-        FN_A = self._confusion_matrix[0, 1] + self._confusion_matrix[2, 1]
-        result = TP_A / (TP_A + FN_A)
-        print("Recall: TP_B / (TP_B + FN_B) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
-        return result
-
-
-    """
-        Return the recall to the motorbike class
-    """
-    def get_test_recall_motorbike(self):
-        TP_A = self._confusion_matrix[2, 2]
-        FN_A = self._confusion_matrix[0, 2] + self._confusion_matrix[1, 2]
-        result = TP_A / (TP_A + FN_A)
-        print("Recall: TP_C / (TP_C + FN_C) = {}/({} + {}) = {} ".format(TP_A, TP_A, FN_A, result))
         return result
 
 
@@ -841,6 +827,7 @@ class Classifier:
     """
     def show_test_confusion_matrix(self):
         print("Current confusion matrix:\n", self._confusion_matrix)
+
 
 
 
@@ -894,17 +881,26 @@ class Classifier:
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name):
+    def ROC_Curve(accuracy, precision, recall, dependent_var, dependent_var_name, classifier, confusionRows=3):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-        axs[0].plot(recall, precision, '--', linewidth=2)
+        print("recall = " + str(recall))
+        print("precision = " + str(precision))
+        print("accuracy =  " + str(accuracy))
+        print("dependent_var =  " + str(dependent_var))
 
-        axs[0].plot(linear_x, linear_y, '-', linewidth=0.5)
 
-        info_arr = ['data', 'boundary']
+
+        for i in range(0, confusionRows):
+            axs[0].plot(recall[i], precision[i], '-', linewidth=1)
+
+
+        axs[0].plot(linear_x, linear_y, '--', linewidth=0.5)
+
+        info_arr = ['airplane', 'elephant' , 'motorbike', 'linear line']
 
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
@@ -968,14 +964,12 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
     classifier_instance.load()
 
     accuracy = classifier_instance.get_test_accuracy()
-    precision = [classifier_instance.get_test_precision_airplane(),
-                 classifier_instance.get_test_precision_elephant(),
-                 classifier_instance.get_test_precision_motorbike()
-                 ]
-    recall = [classifier_instance.get_test_recall_airplane(),
-              classifier_instance.get_test_recall_elephant(),
-              classifier_instance.get_test_recall_motorbike()
-              ]
+    precision = []
+    recall = []
+    for i in range(0 , classifier_instance._confusion_matrix.shape[0]):
+        precision.append(classifier_instance.get_test_precision(i))
+        recall.append(classifier_instance.get_test_recall(i))
+
 
     feature_instance.show_current_k()
     classifier_instance.show_test_c()
@@ -1008,18 +1002,12 @@ def run(additional_datasets, classifier, **kwargs):
     return driver(classifier, additional_datasets, k, c)
 
 
-def run_by_c(classifier, init, loop_length, LOAD=False):
+def run_by_c(classifier, init, loop_length, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
-    precision = list()
-    recall = list()
-    precision_airplane = list()
-    precision_elephant = list()
-    precision_motorbike = list()
-    recall_airplane = list()
-    recall_elephant = list()
-    recall_motorbike = list()
+    precision = []
+    recall = []
     datasets = list()
     DEP_VAR_NAME = "C"
     DEP_VAR = None
@@ -1039,46 +1027,44 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
         precision = data[3]
         recall = data[4]
     else:
+
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
             y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
 
             accuracy.append(acc)
-            precision_airplane.append(prec[0])
-            precision_elephant.append(prec[1])
-            precision_motorbike.append(prec[2])
-            recall_airplane.append(rec[0])
-            recall_elephant.append(rec[1])
-            recall_motorbike.append(rec[2])
+            for i in range(0, confusionRows):
+                if precision.__len__() == i:
+                    precision.append([prec[i]])
+                else:
+                    precision[i].append(prec[i])
+
+                if recall.__len__() == i:
+                    recall.append([rec[i]])
+                else:
+                    recall[i].append(rec[i])
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
-        precision = [precision_airplane,precision_elephant,precision_motorbike]
-        recall = [recall_airplane,recall_elephant,recall_motorbike]
-
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = [precision_airplane.sort(),precision_elephant.sort(),precision_motorbike.sort()]
-    recall_sorted = [recall_airplane.sort(),recall_elephant.sort(),recall_motorbike.sort()]
+    precision_sorted = np.sort(precision)
+    recall_sorted = np.fliplr(np.sort(recall))
 
-    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier,confusionRows=confusionRows)
 
 
 
-def run_by_k(classifier, init, loop_length, LOAD=False):
+def run_by_k(classifier, init, loop_length, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
-    precision = list()
-    recall = list()
-    precision_airplane = list()
-    precision_elephant = list()
-    precision_motorbike = list()
-    recall_airplane = list()
-    recall_elephant = list()
-    recall_motorbike = list()
+    precision = []
+    recall = []
+
+
     datasets = list()
     DEP_VAR_NAME = "K"
     DEP_VAR = None
@@ -1102,12 +1088,18 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
             y_true, y_score, acc, prec, rec = run(ds_amt, classifier, k=dep_var)
 
             accuracy.append(acc)
-            precision_airplane.append(prec[0])
-            precision_elephant.append(prec[1])
-            precision_motorbike.append(prec[2])
-            recall_airplane.append(rec[0])
-            recall_elephant.append(rec[1])
-            recall_motorbike.append(rec[2])
+            for i in range(0, confusionRows):
+                if precision.__len__() == i:
+                    precision.append([prec[i]])
+                else:
+                    precision[i].append(prec[i])
+
+                if recall.__len__() == i:
+                    recall.append([rec[i]])
+                else:
+                    recall[i].append(rec[i])
+
+
 
 
             for true, score in zip(y_true, y_score):
@@ -1115,24 +1107,21 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
                 y_scores_glob.append(score)
 
             print("")
-        precision = [precision_airplane, precision_elephant, precision_motorbike]
-        recall = [recall_airplane, recall_elephant, recall_motorbike]
-
-
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = [precision_airplane.sort(), precision_elephant.sort(), precision_motorbike.sort()]
-    recall_sorted = [recall_airplane.sort(), recall_elephant.sort(), recall_motorbike.sort()]
 
-    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    precision_sorted = np.sort(precision)
+    recall_sorted = np.fliplr(np.sort(recall))
+
+    Classifier.ROC_Curve(accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier , confusionRows=confusionRows)
 
 
-def run_by_multi_datasets(classifier, LOAD=False):
+def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
-    precision = list()
-    recall = list()
+    precision = []
+    recall = []
 
     run_data_path = Database.PICKLE_DIR
     datasets = [get_all_rest_datasets(0), get_all_rest_datasets(1), get_all_rest_datasets(2), get_all_rest_datasets(3)]
@@ -1150,31 +1139,47 @@ def run_by_multi_datasets(classifier, LOAD=False):
             y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
 
             accuracy.append(acc)
-            precision.append(prec)
-            recall.append(rec)
+            for i in range(0, confusionRows):
+                if precision.__len__() == i:
+                    precision.append([prec[i]])
+                else:
+                    precision[i].append(prec[i])
+
+                if recall.__len__() == i:
+                    recall.append([rec[i]])
+                else:
+                    recall[i].append(rec[i])
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
-
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = precision.copy()
-    precision_sorted.sort()
-    recall_sorted = recall.copy()
-    recall_sorted.sort(reverse=True)
+
+    precision_sorted = np.sort(precision)
+    recall_sorted = np.fliplr(np.sort(recall))
 
     Classifier.Accuracy_Sets(accuracy, list(range(3, 7)))
 
 
 
+
 if __name__ == "__main__":
 
-    # run_by_multi_datasets(Classifier.NN, LOAD=False)
-    run_by_multi_datasets(Classifier.NN, LOAD=False) # BUG in appending more directories
-    # run_by_k(Classifier.NN, 5.0, 1000, LOAD=False)  # working well -> the most value is 0.73 accuracy
-    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)  # unstable -> running between 0.5 to 0.9
-    # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
-    # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False) # unstable
+    # run_by_multi_datasets(Classifier.NN, LOAD=False, confusionRows=3) # Working
+
+    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False, confusionRows=3) # BUG in appending more directories
+
+    run_by_k(Classifier.LINEAR_SVM, 5.0, 40, LOAD=False, confusionRows=3)  # unstable -> running between 0.5 to 0.9
+
+
+
+    # Done:
+    # run_by_c(Classifier.NN, 400.0, 200, LOAD=False, confusionRows=3)    # still unstable for some values -> slow function of c -> need to try more values to reach the optimum
+    # run_by_k(Classifier.NN, 405.0, 505, LOAD=False, confusionRows=3)  # working well -> the most value is 0.73 accuracy
+
+    # run_by_c(Classifier.LINEAR_SVM, 90.0, 20, LOAD=False, confusionRows=3)  # unstable
+
+

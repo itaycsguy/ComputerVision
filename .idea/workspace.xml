@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="759" />
+    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="773" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
@@ -59,36 +59,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>recogniz</find>
-      <find>load</find>
-      <find>DEF_C</find>
-      <find>DEF_K</find>
-      <find>get_simi</find>
-      <find>__update_confusion_matrix</find>
-      <find>Accuracy_Sets</find>
-      <find>_decision_function</find>
-      <find>train</find>
-      <find>train(</find>
-      <find>confusion</find>
-      <find>confusion_matrix</find>
-      <find>show_test_confusion_matrix</find>
-      <find>get_test_accuracy</find>
-      <find>driver</find>
-      <find>run</find>
-      <find>run(</find>
-      <find>find_optimum_by_ROC_CURVE</find>
-      <find>_confusion_matrix</find>
-      <find>_decision_function1</find>
-      <find>__multi_activation</find>
-      <find>__multi_NN_activation</find>
-      <find>__update_multi_confusion_matrix</find>
-      <find>ALLOWED_DIRS</find>
-      <find>__pseudo_activation</find>
-      <find>__NN</find>
       <find>Features</find>
       <find>NN</find>
       <find>get_target1_value</find>
+      <find>onfusion_matrix</find>
+      <find>current confu</find>
+      <find>self._confusion_matrix.shape[0]</find>
+      <find>_confusion_matrix.shape[0]</find>
+      <find>classifier</find>
+      <find>getRows</find>
+      <find>_confusion_matrix</find>
+      <find>print(&quot;prediction_activation</find>
+      <find>prediction_activation</find>
+      <find>SVM</find>
+      <find>dlib</find>
+      <find>ROC_Curve</find>
+      <find>sort</find>
+      <find>.sort</find>
+      <find>driver</find>
+      <find>run</find>
+      <find>run(</find>
+      <find>__update_multi_confusion_matrix</find>
+      <find>__multi_NN_activation</find>
+      <find>database</find>
+      <find>append_datasets</find>
       <find>print</find>
+      <find>MIN_C</find>
+      <find>DEF_C</find>
+      <find>image</find>
+      <find>םפאןצוצ</find>
+      <find>optimum</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -109,6 +109,7 @@
         <option value="$PROJECT_DIR$/Assignment_1/Interactive_Drawing.py" />
         <option value="$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
         <option value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
+        <option value="$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py" />
         <option value="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" />
       </list>
     </option>
@@ -125,22 +126,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -163,6 +148,34 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="Datasets" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="var" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -170,13 +183,13 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
-      <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
       <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
+      <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -366,11 +379,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/china.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -527,10 +535,31 @@
     </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/builtins.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_axes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="1610" selection-start-line="1610" selection-end-line="1610" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="1809" selection-start-line="1809" selection-end-line="1809" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="3636" column="8" selection-start-line="3636" selection-start-column="8" selection-end-line="3636" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="230" selection-start-line="230" selection-end-line="230" />
+        <state relative-caret-position="100">
+          <caret line="2601" column="22" selection-start-line="2601" selection-start-column="18" selection-end-line="2601" selection-end-column="22" />
         </state>
       </provider>
     </entry>
