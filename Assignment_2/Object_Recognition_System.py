@@ -44,6 +44,14 @@ class Database:
 
 
     """
+        Make the dataset as at the initial state should be
+    """
+    @staticmethod
+    def reset_dataset():
+        Database.ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
+
+
+    """
         Return the specific classes who were just added to the hash
     """
     def get_added_datasets_names(self):
@@ -134,7 +142,7 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_SVM_QUANTIZATION = 40
+    DEF_SVM_QUANTIZATION = 25
     DEF_NN_QUANTIZATION = 370      # optimum k clusters
     MIN_QUANTIZATION = 1
 
@@ -143,10 +151,10 @@ class Features:
         [1] database  - a Database object
         [2] k         - clusters amount, default: 10
         [3] cell_size - size of block to divide the image, default: 8 -> (8, 8)
-        [4] bin_n     - number of bins for the histogram at each cell, default: 9
-        [5] win_size  - size the image (expecting to 2^x type of size), default: (64, 128)
+        [4] bin_n     - number of bins for the histogram at each cell, default: 16
+        [5] win_size  - size the image (expecting to 2^x type of size), default: (128, 64)
     """
-    def __init__(self, database, k=DEF_SVM_QUANTIZATION, cell_size=8, bin_n=9, win_size=(64, 128)):
+    def __init__(self, database, k=DEF_SVM_QUANTIZATION, cell_size=8, bin_n=16, win_size=(128, 64)):
         # Database reference
         self._database = database
         # These are parameters which required from the program to get initially
@@ -244,46 +252,6 @@ class Features:
         locations = []
         hist = hog_instance.compute(image, winStride, padding, locations)
         return self.__reshape(hist)
-
-
-    """
-        Return by HOG method an HOG descriptor for each cell_size sub-image of the input image
-        [1] image_instance - an opened openCV image
-    """
-    def __get_HOG_desctiptor(self, image_instance):
-        # Gradients computations
-        gx = cv2.Sobel(image_instance, cv2.CV_32F, 1, 0)
-        gy = cv2.Sobel(image_instance, cv2.CV_32F, 0, 1)
-
-        # Degrees computations [0 - 180]
-        mag, ang = cv2.cartToPolar(gx, gy)
-
-        # bin separation by _bin_n steps
-        bin = np.int32(self._bin_n * ang / (2 * np.pi))
-
-        hists = []
-        # The cell_size can be separated to cell_x, cell_y which at this case they are the same for always
-        for i in range(0, int(image_instance.shape[0] / self._cell_size)):
-            # Run along cols
-            for j in range(0, int(image_instance.shape[1] / self._cell_size)):
-                # Run along rows
-                bin_cells = bin[(i * self._cell_size): (i * self._cell_size + self._cell_size), (j * self._cell_size): (j * self._cell_size + self._cell_size)]
-                mag_cells = mag[(i * self._cell_size): (i * self._cell_size + self._cell_size), (j * self._cell_size): (j * self._cell_size + self._cell_size)]
-
-                # Generate the an histogram by quantized degrees
-                cell_hists = np.asarray([np.bincount(b.ravel(), m.ravel(), self._bin_n) for b, m in zip(bin_cells, mag_cells)])
-
-                # Transform to Hellinger kernel [Normalization issue]
-                eps = 1e-7
-                cell_hists /= cell_hists.sum() + eps
-                cell_hists = np.sqrt(cell_hists)
-                cell_hists /= cv2.norm(cell_hists) + eps
-
-                for hist in cell_hists.tolist():
-                    hists.append(hist)
-
-        # return the descriptor which is fully describe the image features
-        return hists
 
 
     """
@@ -457,124 +425,31 @@ class Features:
 
 
 class Classifier:
-    # C = 1
     __PICKLE_FILE = "Classifier.pkl"
-    THRESHOLD = 39              # optimum margin with of SVM
+    THRESHOLD = 24              # optimum margin with of SVM
     MIN_THRESHOLD = 0.01
     NN_THRESH = 4700            # optimum distance for nearest-neighbor
-    LINEAR_SVM = 0
+    SVM = 0
     NN = 1
 
     """
         [1] features -  a Feature class object
         [2] c        - margin flexible variable (the actual width)
     """
-    def __init__(self, features, type=LINEAR_SVM):
+    def __init__(self, features, type=SVM):
         self._features = features
         self._type = type
-        if type == Classifier.LINEAR_SVM:
+        if type == Classifier.SVM:
             self._threshold = Classifier.THRESHOLD
-            self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
+            self._svm_instance = dlib.svm_c_trainer_linear()    # -> from a linear case to a kernel case
             self._svm_instance.set_c(self._threshold)
         else:
             self._nn_thresh = Classifier.NN_THRESH
         self._decision_functions = None
 
-        # For SVM Structural problem
-        # self.num_samples = 0
-        # self.num_dimensions = 0
-        # self.samples = None
-        # self.labels = None
-        # self.weights = None
-
         classes_num = len(Database.ALLOWED_DIRS.keys())
-        # self._confusion_matrix_structural_SVM = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._recognition_results = None
-
-
-    """
-        Compute PSI(x,label)
-    """
-    # def make_psi(self, x, label):
-    #     psi = dlib.vector()
-    #     psi.resize(self.num_dimensions)
-    #     dims = len(x)
-    #     if label == 0:
-    #         for i in range(0, dims):
-    #             psi[i] = x[i]
-    #     elif label == 1:
-    #         for i in range(dims, 2 * dims):
-    #             psi[i] = x[i - dims]
-    #     elif label == 2:  # the label must be 2
-    #         for i in range(2 * dims, 3 * dims):
-    #             psi[i] = x[i - 2 * dims]
-    #     return psi
-
-
-
-    # def get_truth_joint_feature_vector(self, idx):
-    #     return self.make_psi(self.samples[idx], self.labels[idx])
-
-
-    """
-        Compute the dot product between the two vectors a and b
-    """
-    # def dot(self, a, b):
-    #     return sum(i * j for i, j in zip(a, b))
-
-
-    # def separation_oracle(self, idx, current_solution):
-    #     samp = self.samples[idx]
-    #     dims = len(samp)
-    #     scores = [0, 0, 0]
-    #     # compute scores for each of the three classifiers
-    #     scores[0] = self.dot(current_solution[0:dims], samp)
-    #     scores[1] = self.dot(current_solution[dims:2*dims], samp)
-    #     scores[2] = self.dot(current_solution[2*dims:3*dims], samp)
-    #     # correct label and a loss of 0 if we get the right label.
-    #     if self.labels[idx] != 0:
-    #         scores[0] += 1
-    #     if self.labels[idx] != 1:
-    #         scores[1] += 1
-    #     if self.labels[idx] != 2:
-    #         scores[2] += 1
-    #     # Now figure out which classifier has the largest loss-augmented score.
-    #     max_scoring_label = scores.index(max(scores))
-    #     # And finally record the loss that was associated with that predicted
-    #     # label. Again, the loss is 1 if the label is incorrect and 0 otherwise.
-    #     if max_scoring_label == self.labels[idx]:
-    #         loss = 0
-    #     else:
-    #         loss = 1
-    #     # Finally, return the loss and PSI vector corresponding to the label
-    #     # we just found.
-    #     psi = self.make_psi(samp, max_scoring_label)
-    #     return loss, psi
-
-
-    """
-        Given the 9-dimensional weight vector which defines a 3 class classifier,
-        predict the class of the given 3-dimensional sample vector.   Therefore, the
-        output of this function is either 0, 1, or 2 (i.e. one of the three possible
-        labels)
-    """
-    # def predict_label(self, sample):
-    #     # The individual classifier scores are stored in scores and the highest scoring
-    #     # index is returned as the label.
-    #     w0 = self.weights[0:3]
-    #     w1 = self.weights[3:6]
-    #     w2 = self.weights[6:9]
-    #     scores = [self.dot(w0, sample), self.dot(w1, sample), self.dot(w2, sample)]
-    #     max_scoring_label = scores.index(max(scores))
-    #     return max_scoring_label
-
-
-    # def __update_problem(self, samples, labels):
-    #     self.num_samples = len(samples)
-    #     self.num_dimensions = len(samples)*3
-    #     self.samples = samples
-    #     self.labels = labels
 
 
     """
@@ -585,10 +460,18 @@ class Classifier:
 
 
     """
+        Set the margin width to the SVM classifier
+    """
+    def set_threshold(self, threshold):
+        self._threshold = threshold
+        self._svm_instance.set_c(threshold)
+
+
+    """
         Return dlib vectors array of dlib vector list
         [1] data - list[list[number]] to dlib.vectors[dlib.vector[number]]
     """
-    def __prepare_dlib_data(self, data):
+    def __prepare_dlib_data_by_labels(self, data):
         vecs = dlib.vectors()
         for item in data:
             vecs.append(dlib.vector(item))
@@ -616,6 +499,7 @@ class Classifier:
     def __prepare_labels(self, labels, target_value):
         vals = list()
         for label in labels:
+            print(label)
             if label == target_value:
                 vals.append(+1)
             else:
@@ -628,13 +512,14 @@ class Classifier:
         Training the classifier
     """
     def train(self):
-        if self._type == Classifier.LINEAR_SVM:
+        if self._type == Classifier.SVM:
             # -> dlib.vectors
-            data = self.__prepare_dlib_data(self._features.get_bows())
+            data = self.__prepare_dlib_data_by_labels(self._features.get_bows())
 
             # Could be: airplane, elephant, motorbike
             labels = list()
             actual_labels = self._features.get_feature_vectors_labels_by_image()
+
             targets = self._features.get_database().get_target_values()
             for target in targets:
                 # -> dlib.array => [-1,1]
@@ -643,10 +528,6 @@ class Classifier:
             self._decision_functions = list()
             for label in labels:
                 self._decision_functions.append(self._svm_instance.train(data, label))
-
-            """learning by structural SVM method."""
-            # self.__update_problem(self._features.get_bows(), actual_labels)
-            # self.weights = dlib.solve_structural_svm_problem(self)
 
         return self._decision_functions
 
@@ -707,7 +588,7 @@ class Classifier:
 
                 bow = self._features.generate_bows(feature_vectors, False)
                 prediction_activation = 0
-                if self._type == Classifier.LINEAR_SVM:
+                if self._type == Classifier.SVM:
                     # Build single BOW of dlib type
                     dlib_bow = dlib.vector(bow)
 
@@ -729,34 +610,34 @@ class Classifier:
                 #  A raw data image -> 1:1 [no another image with the same name on that test session]
                 self._recognition_results[image_name] = prediction_activation
 
-                # self._confusion_matrix_structural_SVM[self.predict_label(bow), actual_activation] += 1
+                # display the images out
+                image = cv2.imread(image_path)
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                bottomLeftCornerOfText = (50, 70)
+                fontScale = 1
+                fontColor = (255, 0, 0)
+                lineType = 2
 
-                # image = cv2.imread(image_path)
-                # font = cv2.FONT_HERSHEY_SIMPLEX
-                # bottomLeftCornerOfText = (50, 70)
-                # fontScale = 1
-                # fontColor = (255, 255, 255)
-                # lineType = 2
-                #
-                #
-                # prediction = 'Error'
+                prediction = 'Error'
                 # print(prediction_activation)
-                # if (prediction_activation[0] == 0):
-                #     prediction = 'Airplane'
-                # if (prediction_activation[0] == 1):
-                #     prediction = 'Elephant'
-                # if (prediction_activation[0] == 2):
-                #     prediction = 'MotorBike'
-                # cv2.putText(image, prediction,
-                #             bottomLeftCornerOfText,
-                #             font,
-                #             fontScale,
-                #             fontColor,
-                #             lineType)
-                # cv2.imshow("Test Images", image)
-                # cv2.waitKey(0)
+                if self._type == Classifier.SVM:
+                    prediction_activation = prediction_activation[0]
+                if prediction_activation == 0:
+                    prediction = 'Airplane'
+                if prediction_activation == 1:
+                    prediction = 'Elephant'
+                if prediction_activation == 2:
+                    prediction = 'MotorBike'
+                cv2.putText(image, prediction,
+                            bottomLeftCornerOfText,
+                            font,
+                            fontScale,
+                            fontColor,
+                            lineType)
+                cv2.imshow("Test Image", image)
+                cv2.waitKey(0)
 
-        # cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
         return y_true, y_score
 
 
@@ -790,18 +671,10 @@ class Classifier:
 
 
     """
-        Set the margin width to the SVM classifier
-    """
-    def set_threshold(self, threshold):
-        self._threshold = threshold
-        self._svm_instance.set_c(threshold)
-
-
-    """
         Updating the confusion matrix to multi-class
     """
     def __update_multi_confusion_matrix(self, prediction, actual):      # prediction = [0,1,2] , actual = [0,1,2]
-        if self._type == Classifier.LINEAR_SVM:
+        if self._type == Classifier.SVM:
             prediction = prediction[0]
         self._confusion_matrix[prediction, actual] += 1
 
@@ -879,8 +752,8 @@ class Classifier:
         display out the threshold
     """
     def show_test_threshold(self):
-        if self._type == Classifier.LINEAR_SVM:
-            print("Current C for the SVM margin width:", self._threshold)
+        if self._type == Classifier.SVM:
+            print("Current SVM margin width threshold:", self._threshold)
         else:
             print("Current NN threshold:", self._nn_thresh)
 
@@ -995,14 +868,16 @@ def get_all_rest_datasets(count=0):
 def driver(classifier_type, additional_datasets, k, threshold, testset_filter=None, SLEEP_TIME_OUT=3):
     db_instance = Database(trainImageDirName, FINAL_CLASSES=True, datasets=additional_datasets)
     db_instance.show_avaliable_datasets()
+    if testset_filter:
+        print("Classification is filtered to", testset_filter)
     feature_instance = Features(db_instance, k=k)
     feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
     feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
     feature_instance.save()
     feature_instance.load()
     classifier_instance = None
-    if classifier_type == Classifier.LINEAR_SVM:
-        classifier_instance = Classifier(feature_instance, type=Classifier.LINEAR_SVM)
+    if classifier_type == Classifier.SVM:
+        classifier_instance = Classifier(feature_instance, type=Classifier.SVM)
         classifier_instance.set_threshold(threshold)
         classifier_instance.train()
     else:
@@ -1015,7 +890,7 @@ def driver(classifier_type, additional_datasets, k, threshold, testset_filter=No
     accuracy = classifier_instance.get_test_accuracy()
     precision = []
     recall = []
-    for i in range(0 , classifier_instance._confusion_matrix.shape[0]):
+    for i in range(0, classifier_instance._confusion_matrix.shape[0]):
         precision.append(classifier_instance.get_test_precision(i))
         recall.append(classifier_instance.get_test_recall(i))
 
@@ -1039,7 +914,7 @@ def run(additional_datasets, classifier, testset_filter=None, **kwargs):
         quantization = Features.DEF_NN_QUANTIZATION
         threshold = Classifier.NN_THRESH
     for key, value in kwargs.items():
-        if classifier == Classifier.LINEAR_SVM:
+        if classifier == Classifier.SVM:
             if key.lower() == "threshold" and np.float32(value) > Classifier.MIN_THRESHOLD:
                 threshold = np.float32(value)
         elif key.lower() == "threshold" and np.float32(value) > 0:
@@ -1064,7 +939,7 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     else:
         DEP_VAR = np.arange(init, init + loop_length, 1.0)
 
-    classifier_name = "LINEAR_SVM"
+    classifier_name = "SVM"
     if classifier == Classifier.NN:
         classifier_name = "NN"
     run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
@@ -1220,6 +1095,7 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 def run_assignment_requirements():
     # find an optimum threshold: => Found: airplane: 4700.0, elephant: 100, motorbike:100.0
     # run_by_threshold(Classifier.NN, init=100.0, loop_length=1000, LOAD=True)
+    # find an optimum quantization: => Found: airplane: 310, elephant: 10, motorbike: 10
     # run_by_quantization(Classifier.NN, init=10, loop_length=1000, LOAD=True)
     # run_by_multi_datasets(Classifier.NN, LOAD=True)
 
@@ -1228,25 +1104,65 @@ def run_assignment_requirements():
     # run(list(), Classifier.NN, testset_filter='motorbike')
     # run(list(), Classifier.NN)
 
-    # run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=40, LOAD=True)
-    # run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=40, LOAD=True)
-    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=True)
+    # run([['chair']], Classifier.NN, testset_filter='airplane')
+    # run([['chair'], ['ferry']], Classifier.NN, testset_filter='airplane')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.NN, testset_filter='airplane')
 
-    # run(list(), Classifier.LINEAR_SVM, testset_filter='airplane')
-    # run(list(), Classifier.LINEAR_SVM, testset_filter='elephant')
-    # run(list(), Classifier.LINEAR_SVM, testset_filter='motorbike')
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.NN, testset_filter='elephant')
+    # run([['chair'], ['ferry']], Classifier.NN, testset_filter='elephant')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.NN, testset_filter='elephant')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.NN, testset_filter='motorbike')
+    # run([['chair'], ['ferry']], Classifier.NN, testset_filter='motorbike')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.NN, testset_filter='motorbike')
+
+    # NN status: Done!
+
+    # find an optimum threshold: => Found: airplane: 24.0, elephant: 11.0, motorbike: 16.0
+    # run_by_threshold(Classifier.SVM, init=10.0, loop_length=20, LOAD=True)
+    # find an optimum quantization: => Found: airplane: 25, elephant: 27, motorbike: 19
+    # run_by_quantization(Classifier.SVM, init=10, loop_length=20, LOAD=True)
+    # run_by_multi_datasets(Classifier.SVM, LOAD=True)
+
+    # run(list(), Classifier.SVM, testset_filter='airplane')
+    # run(list(), Classifier.SVM, testset_filter='elephant')
+    # run(list(), Classifier.SVM, testset_filter='motorbike')
+
+    # run([['chair']], Classifier.SVM, testset_filter='airplane')
+    # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='airplane')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='airplane')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.SVM, testset_filter='elephant')
+    # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='elephant')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='elephant')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.SVM, testset_filter='motorbike')
+    # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='motorbike')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='motorbike')
+
+    # AVM status: Done!
     pass
 
 
 
-def run_optimum():
-    run(list(), Classifier.NN)
-    # run(list(), Classifier.LINEAR_SVM)
+def run_optimum(classifier):
+    if classifier == Classifier.NN or classifier == Classifier.SVM:
+        run(list(), classifier)
+    else:
+        print("A classifier name should be provided.")
 
 
 if __name__ == "__main__":
 
     # run_assignment_requirements()
-    run_optimum()
+    run_optimum(Classifier.SVM)
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="836" />
+    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="709" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
@@ -30,7 +30,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Datasets_Run_data_LINEAR_SVM.pkl" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_LINEAR_SVM_QUANTIZATION.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_LINEAR_SVM_THRESHOLD.pkl" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,8 +46,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="142" column="41" lean-forward="true" selection-start-line="142" selection-start-column="41" selection-end-line="142" selection-end-column="41" />
+            <state relative-caret-position="246">
+              <caret line="1125" column="76" lean-forward="true" selection-start-line="1125" selection-start-column="76" selection-end-line="1125" selection-end-column="76" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -63,16 +66,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>append_datasets</find>
-      <find>print</find>
-      <find>MIN_C</find>
-      <find>DEF_C</find>
-      <find>image</find>
-      <find>םפאןצוצ</find>
-      <find>optimum</find>
-      <find>find_optimum_by_accuracy</find>
-      <find>__multi_activation</find>
-      <find>get_target_class</find>
       <find>get</find>
       <find>get_target_classes_values</find>
       <find>show_test_c</find>
@@ -81,7 +74,6 @@
       <find>tr</find>
       <find>get_truth_joint_feature_vector</find>
       <find>jo</find>
-      <find>train</find>
       <find>_recognition_results</find>
       <find>show_tr</find>
       <find>recognizer</find>
@@ -93,6 +85,17 @@
       <find>run</find>
       <find>set_th</find>
       <find>Features</find>
+      <find>set_nn</find>
+      <find>_threshold</find>
+      <find>get_HOG_descriptor</find>
+      <find>get_HOG</find>
+      <find>generat</find>
+      <find>recognize</find>
+      <find>inters</find>
+      <find>train</find>
+      <find>recogniz</find>
+      <find>set_c</find>
+      <find>Accuracy</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -119,8 +122,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="427" />
-    <option name="y" value="219" />
+    <option name="x" value="-954" />
+    <option name="y" value="271" />
     <option name="width" value="324" />
     <option name="height" value="88" />
   </component>
@@ -141,6 +144,12 @@
               <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_2" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="var" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -341,16 +350,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-1928" y="-8" width="1936" height="1176" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20969442" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3629469" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.56279963" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3988495" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -371,16 +379,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/manMask.tif" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
       <provider selected="true" editor-type-id="images" />
@@ -555,10 +553,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/rvm_trainer_radial_basis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_rank_trainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="109">
+          <caret line="37" column="8" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_sparse_radial_basis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="93">
+          <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__/ml_StatModel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-518">
+          <caret line="110" column="8" selection-start-line="110" selection-start-column="8" selection-end-line="110" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="142" column="41" lean-forward="true" selection-start-line="142" selection-start-column="41" selection-end-line="142" selection-end-column="41" />
+        <state relative-caret-position="246">
+          <caret line="1125" column="76" lean-forward="true" selection-start-line="1125" selection-start-column="76" selection-end-line="1125" selection-end-column="76" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
