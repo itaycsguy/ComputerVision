@@ -143,7 +143,7 @@ class Database:
 class Features:
     __PICKLE_FILE = "Features.pkl"
     DEF_SVM_QUANTIZATION = 25
-    DEF_NN_QUANTIZATION = 370      # optimum k clusters
+    DEF_NN_QUANTIZATION = 10      # optimum k clusters
     MIN_QUANTIZATION = 1
 
 
@@ -611,33 +611,33 @@ class Classifier:
                 self._recognition_results[image_name] = prediction_activation
 
                 # display the images out
-                image = cv2.imread(image_path)
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                bottomLeftCornerOfText = (50, 70)
-                fontScale = 1
-                fontColor = (255, 0, 0)
-                lineType = 2
+                # image = cv2.imread(image_path)
+                # font = cv2.FONT_HERSHEY_SIMPLEX
+                # bottomLeftCornerOfText = (50, 70)
+                # fontScale = 1
+                # fontColor = (255, 0, 0)
+                # lineType = 2
+                #
+                # prediction = 'Error'
+                # # print(prediction_activation)
+                # if self._type == Classifier.SVM:
+                #     prediction_activation = prediction_activation[0]
+                # if prediction_activation == 0:
+                #     prediction = 'Airplane'
+                # if prediction_activation == 1:
+                #     prediction = 'Elephant'
+                # if prediction_activation == 2:
+                #     prediction = 'MotorBike'
+                # cv2.putText(image, prediction,
+                #             bottomLeftCornerOfText,
+                #             font,
+                #             fontScale,
+                #             fontColor,
+                #             lineType)
+                # cv2.imshow("Test Image", image)
+                # cv2.waitKey(0)
 
-                prediction = 'Error'
-                # print(prediction_activation)
-                if self._type == Classifier.SVM:
-                    prediction_activation = prediction_activation[0]
-                if prediction_activation == 0:
-                    prediction = 'Airplane'
-                if prediction_activation == 1:
-                    prediction = 'Elephant'
-                if prediction_activation == 2:
-                    prediction = 'MotorBike'
-                cv2.putText(image, prediction,
-                            bottomLeftCornerOfText,
-                            font,
-                            fontScale,
-                            fontColor,
-                            lineType)
-                cv2.imshow("Test Image", image)
-                cv2.waitKey(0)
-
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
         return y_true, y_score
 
 
@@ -785,13 +785,28 @@ class Classifier:
 
     @staticmethod
     def compute_optimal_pair_iter(precision, recall, var):
+        max_dis_var = 0
         class_optimum = list()
         for p_arr, r_arr in zip(precision, recall):
             summation_class = list()
             for p, r, v in zip(p_arr, r_arr, var):
                 summation_class.append((p + r, p, r, v))
+                if v > max_dis_var:
+                    max_dis_var = v
             class_optimum.append(max(summation_class, key=operator.itemgetter(0))[1:])  # form of (precision, recall, var)
-        return class_optimum
+        sol = [1.0, 1.0]
+        for item in class_optimum:
+            x = np.asarray(item)
+            if np.inf not in x:
+                sol *= (x[:2] * x[2]/max_dis_var)
+        total_mse = np.inf
+        opt_var = 0
+        for p_arr, r_arr in zip(precision, recall):
+            for p, r, v in zip(p_arr, r_arr, var):
+                mse = np.square(np.array([p, r]) - sol).mean()
+                if mse < total_mse:
+                    opt_var = v
+        return class_optimum, opt_var
 
 
 
@@ -979,7 +994,8 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     precision_sorted = np.sort(precision)
     recall_sorted = np.fliplr(np.sort(recall))
 
-    optimum = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
+    optimum, interp = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
+    print("Approximate joint optimum var:", interp)
     Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
@@ -1040,7 +1056,6 @@ def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows
     precision_sorted = np.sort(precision)
     recall_sorted = np.fliplr(np.sort(recall))
 
-    print(Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR))
     Classifier.ROC_Curve(None, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
@@ -1094,9 +1109,9 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
 def run_assignment_requirements():
     # find an optimum threshold: => Found: airplane: 4700.0, elephant: 100, motorbike:100.0
-    # run_by_threshold(Classifier.NN, init=100.0, loop_length=1000, LOAD=True)
+    # run_by_threshold(Classifier.NN, init=250.0, loop_length=1050, LOAD=False)
     # find an optimum quantization: => Found: airplane: 310, elephant: 10, motorbike: 10
-    # run_by_quantization(Classifier.NN, init=10, loop_length=1000, LOAD=True)
+    # run_by_quantization(Classifier.NN, init=10, loop_length=1000, LOAD=False)
     # run_by_multi_datasets(Classifier.NN, LOAD=True)
 
     # run(list(), Classifier.NN, testset_filter='airplane')
@@ -1148,7 +1163,7 @@ def run_assignment_requirements():
     # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='motorbike')
     # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='motorbike')
 
-    # AVM status: Done!
+    # SVM status: Done!
     pass
 
 
