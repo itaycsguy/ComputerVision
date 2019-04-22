@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="834" />
+    <bookmark url="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" line="835" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
@@ -30,6 +30,7 @@
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_NN_C.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_NN_C.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,8 +43,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="1076" column="79" selection-start-line="1076" selection-start-column="79" selection-end-line="1076" selection-end-column="79" />
+            <state relative-caret-position="336">
+              <caret line="1066" column="35" lean-forward="true" selection-start-line="1066" selection-start-column="35" selection-end-line="1066" selection-end-column="35" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -62,8 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>__multi_NN_activation</find>
-      <find>database</find>
       <find>append_datasets</find>
       <find>print</find>
       <find>MIN_C</find>
@@ -92,6 +91,8 @@
       <find>MIN_K</find>
       <find>C</find>
       <find>run</find>
+      <find>set_th</find>
+      <find>Features</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -343,12 +344,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17860906" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.068255685" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.30552545" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -556,8 +557,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="1076" column="79" selection-start-line="1076" selection-start-column="79" selection-end-line="1076" selection-end-column="79" />
+        <state relative-caret-position="336">
+          <caret line="1066" column="35" lean-forward="true" selection-start-line="1066" selection-start-column="35" selection-end-line="1066" selection-end-column="35" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>

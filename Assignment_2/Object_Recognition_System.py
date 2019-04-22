@@ -134,7 +134,7 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_QUANTIZATION = 10      # optimum k clusters
+    DEF_QUANTIZATION = 370      # optimum k clusters
     MIN_QUANTIZATION = 1
 
 
@@ -460,7 +460,7 @@ class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
     THRESHOLD = 1           # optimum margin with of SVM
     MIN_THRESHOLD = 0.01
-    NN_THRESH = 250     # optimum distance for nearest-neighbor
+    NN_THRESH = 4700     # optimum distance for nearest-neighbor
     LINEAR_SVM = 0
     NN = 1
 
@@ -472,7 +472,7 @@ class Classifier:
         self._features = features
         self._type = type
         if type == Classifier.LINEAR_SVM:
-            self._threshold = Classifier.C
+            self._threshold = Classifier.THRESHOLD
             self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
             self._svm_instance.set_c(self._threshold)
         else:
@@ -793,6 +793,7 @@ class Classifier:
     """
     def set_threshold(self, threshold):
         self._threshold = threshold
+        self._svm_instance.set_c(threshold)
 
 
     """
@@ -939,12 +940,16 @@ class Classifier:
 
         for i in range(0, confusionRows):
             base_line, = axs[0].plot(recall[i], precision[i], '-', linewidth=1)
-            p, r = optimum[i][:2]
-            axs[0].plot(p, r, 'o', color=base_line.get_color())
+            # if optimum:
+                # p, r = optimum[i][:2]
+                # axs[0].plot(p, r, 'o', color=base_line.get_color())
 
         axs[0].plot(linear_x, linear_y, '--', linewidth=0.5)
 
-        info_arr = ['Airplane', 'Opt.', 'Elephant', 'Opt.', 'Motorbike', 'Opt.', 'Linear line']
+        # info_arr = ['Airplane', 'Opt.', 'Elephant', 'Opt.', 'Motorbike', 'Opt.', 'Linear line']
+        info_arr = ['Airplane', 'Elephant', 'Motorbike', 'Linear line']
+        if optimum:
+            plt.text(0.03, 0.5, 'Airplane Optimum Threshold: ' + str(optimum[0][2]) + '\nElephant Optimum Threshold: ' + str(optimum[1][2]) + '\nMotorbike Optimum Threshold: ' + str(optimum[2][2]), fontsize=14, transform=plt.gcf().transFigure)
 
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
@@ -956,7 +961,7 @@ class Classifier:
 
         axs[1].set_ylim(0.0, 1.0)
         axs[1].plot(dependent_var, accuracy, '-', linewidth=2)
-        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
+        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name.lower())
         axs[1].set_ylabel('Accuracy')
         axs[1].legend(['Data', 'Opt.'], loc='best')
 
@@ -1061,7 +1066,7 @@ def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3)
     classifier_name = "LINEAR_SVM"
     if classifier == Classifier.NN:
         classifier_name = "NN"
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + "C" + ".pkl"
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
     for _ in range(loop_length):
         datasets.append(list())
     if LOAD:
@@ -1159,8 +1164,7 @@ def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows
     precision_sorted = np.sort(precision)
     recall_sorted = np.fliplr(np.sort(recall))
 
-    optimum = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
-    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
+    Classifier.ROC_Curve(None, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
 
@@ -1211,19 +1215,26 @@ def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
 
 
 
-def run_by_assignment_steps():
-    # find an optimum threshold:
-    run_by_threshold(Classifier.NN, init=100.0, loop_length=1000)
-    # run_by_quantization(Classifier.NN, init=10, loop_length=90)
-    # run_by_multi_datasets(Classifier.NN)
-    #
-    # run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=100)
-    # run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=100)
+def run_assignment_requirements():
+    # find an optimum threshold: => Found: airplane: 4700.0, elephant: 100, motorbike:100.0
+    # run_by_threshold(Classifier.NN, init=100.0, loop_length=1000, LOAD=True)
+    # run_by_quantization(Classifier.NN, init=10, loop_length=1000, LOAD=True)
+    run_by_multi_datasets(Classifier.NN)
+
+    # run_by_threshold(Classifier.LINEAR_SVM, init=10.0, loop_length=20)
+    # run_by_quantization(Classifier.LINEAR_SVM, init=10, loop_length=20)
     # run_by_multi_datasets(Classifier.LINEAR_SVM)
+
+
+
+def run_optimum():
+    run(list(), Classifier.NN)
+    run(list(), Classifier.LINEAR_SVM)
 
 
 if __name__ == "__main__":
 
-    run_by_assignment_steps()
+    run_assignment_requirements()
+    # run_optimum()
 
 
