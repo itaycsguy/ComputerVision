@@ -1170,6 +1170,10 @@ def run_assignment_requirements():
 
 def run_optimum(classifier):
     if classifier == Classifier.NN or classifier == Classifier.SVM:
+        if classifier == Classifier.NN:
+            print("Running NN Classifier..")
+        else:
+            print("Running SVM Classifier..")
         run(list(), classifier)
     else:
         print("A classifier name should be provided.")

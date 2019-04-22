@@ -28,9 +28,6 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Classifier.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Features.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_2/var/Run_data_NN_THRESHOLD.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_2/var/Run_data_NN_THRESHOLD.pkl" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="1168" lean-forward="true" selection-start-line="1168" selection-end-line="1168" />
+            <state relative-caret-position="261">
+              <caret line="1173" column="43" selection-start-line="1173" selection-start-column="43" selection-end-line="1173" selection-end-column="43" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -118,7 +115,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
@@ -573,8 +570,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="1168" lean-forward="true" selection-start-line="1168" selection-end-line="1168" />
+        <state relative-caret-position="261">
+          <caret line="1173" column="43" selection-start-line="1173" selection-start-column="43" selection-end-line="1173" selection-end-column="43" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
