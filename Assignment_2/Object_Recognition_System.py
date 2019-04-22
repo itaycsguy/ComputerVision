@@ -8,6 +8,7 @@ import pickle
 import time
 import matplotlib.pyplot as plt
 import numpy as np
+import operator
 import argparse
 
 trainImageDirName = ".//Datasets"
@@ -19,10 +20,9 @@ testImageDirName = ".//Datasets//Testset"
 """
 class Database:
     PICKLE_DIR = "var"
-    TARGET_CLASS = "airplane"
     MIN_ADD_DB = 0
 
-    # Defined at the published assignment
+    # Defined at the published assignment [initial classes by assignment design]
     ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
 
     """
@@ -43,6 +43,17 @@ class Database:
             self.load_datasets_from_dir()
 
 
+    """
+        Make the dataset as at the initial state should be
+    """
+    @staticmethod
+    def reset_dataset():
+        Database.ALLOWED_DIRS = {"airplane": 0, "elephant": 1, "motorbike": 2}
+
+
+    """
+        Return the specific classes who were just added to the hash
+    """
     def get_added_datasets_names(self):
         return self._added_datasets
 
@@ -80,26 +91,30 @@ class Database:
     def append_datasets(self, datasets):
         if datasets is not None:
             for dataset in datasets:
-                Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
+                if not (dataset.lower() in Database.ALLOWED_DIRS):
+                    Database.ALLOWED_DIRS[dataset.lower()] = max(Database.ALLOWED_DIRS.values()) + 1
 
 
     """
-        Return the defined target class number by its name
+        Return the initial hash with the trained classes names [sorted by key value]
     """
-    def get_target_class(self):
-        return Database.ALLOWED_DIRS[Database.TARGET_CLASS]
+    def get_target_names(self):
+        return sorted(Database.ALLOWED_DIRS.items(), key=operator.itemgetter(1))
 
 
-    def get_target1_class(self):
-        return Database.ALLOWED_DIRS["airplane"]
+    """
+        Return the initial hash with the trained classes values [sorted]
+    """
+    def get_target_values(self):
+        return sorted(Database.ALLOWED_DIRS.values())
 
 
-    def get_target2_class(self):
-        return Database.ALLOWED_DIRS["elephant"]
+    def class2name(self, num_class):
+        for name, val in Database.ALLOWED_DIRS.items():
+            if val == num_class:
+                return name
 
-
-    def get_target3_class(self):
-        return Database.ALLOWED_DIRS["motorbike"]
+        return ""
 
 
     """
@@ -119,24 +134,27 @@ class Database:
     """
         Return number of directories who is participate of the process
     """
-    def get_sets_amount(self):
+    @staticmethod
+    def get_sets_amount():
         return len(Database.ALLOWED_DIRS)
 
 
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_K = 10  # optimum k clusters
-    MIN_K = 1
+    DEF_SVM_QUANTIZATION = 25
+    DEF_NN_QUANTIZATION = 370      # optimum k clusters
+    MIN_QUANTIZATION = 1
+
 
     """
         [1] database  - a Database object
         [2] k         - clusters amount, default: 10
         [3] cell_size - size of block to divide the image, default: 8 -> (8, 8)
-        [4] bin_n     - number of bins for the histogram at each cell, default: 9
-        [5] win_size  - size the image (expecting to 2^x type of size), default: (64, 128)
+        [4] bin_n     - number of bins for the histogram at each cell, default: 16
+        [5] win_size  - size the image (expecting to 2^x type of size), default: (128, 64)
     """
-    def __init__(self, database, k=DEF_K, cell_size=8, bin_n=9, win_size=(64, 128)):
+    def __init__(self, database, k=DEF_SVM_QUANTIZATION, cell_size=8, bin_n=16, win_size=(128, 64)):
         # Database reference
         self._database = database
         # These are parameters which required from the program to get initially
@@ -161,25 +179,6 @@ class Features:
     """
     def show_current_k(self):
         print("Current K to the clustering algorithm:", self._K)
-
-
-    def get_target1_value(self):
-        return self._database.get_target1_class()
-
-
-    def get_target2_value(self):
-        return self._database.get_target2_class()
-
-
-    def get_target3_value(self):
-        return self._database.get_target3_class()
-
-
-    """
-        Return the target class
-    """
-    def get_target_value(self):
-        return self._database.get_target_class()
 
 
     """
@@ -253,46 +252,6 @@ class Features:
         locations = []
         hist = hog_instance.compute(image, winStride, padding, locations)
         return self.__reshape(hist)
-
-
-    """
-        Return by HOG method an HOG descriptor for each cell_size sub-image of the input image
-        [1] image_instance - an opened openCV image
-    """
-    def __get_HOG_desctiptor(self, image_instance):
-        # Gradients computations
-        gx = cv2.Sobel(image_instance, cv2.CV_32F, 1, 0)
-        gy = cv2.Sobel(image_instance, cv2.CV_32F, 0, 1)
-
-        # Degrees computations [0 - 180]
-        mag, ang = cv2.cartToPolar(gx, gy)
-
-        # bin separation by _bin_n steps
-        bin = np.int32(self._bin_n * ang / (2 * np.pi))
-
-        hists = []
-        # The cell_size can be separated to cell_x, cell_y which at this case they are the same for always
-        for i in range(0, int(image_instance.shape[0] / self._cell_size)):
-            # Run along cols
-            for j in range(0, int(image_instance.shape[1] / self._cell_size)):
-                # Run along rows
-                bin_cells = bin[(i * self._cell_size): (i * self._cell_size + self._cell_size), (j * self._cell_size): (j * self._cell_size + self._cell_size)]
-                mag_cells = mag[(i * self._cell_size): (i * self._cell_size + self._cell_size), (j * self._cell_size): (j * self._cell_size + self._cell_size)]
-
-                # Generate the an histogram by quantized degrees
-                cell_hists = np.asarray([np.bincount(b.ravel(), m.ravel(), self._bin_n) for b, m in zip(bin_cells, mag_cells)])
-
-                # Transform to Hellinger kernel [Normalization issue]
-                eps = 1e-7
-                cell_hists /= cell_hists.sum() + eps
-                cell_hists = np.sqrt(cell_hists)
-                cell_hists /= cv2.norm(cell_hists) + eps
-
-                for hist in cell_hists.tolist():
-                    hists.append(hist)
-
-        # return the descriptor which is fully describe the image features
-        return hists
 
 
     """
@@ -437,17 +396,10 @@ class Features:
 
 
     """
-        Can be used after kmeans execution [as part of the algorithm output]
+        Return the DB reference
     """
-    def get_quantized_center(self):
-        return self._patches_centers
-
-
-    """
-        Can be used after kmeans execution [as part of the algorithm output]
-    """
-    def get_quantized_labels(self):
-        return self._patches_labels
+    def get_database(self):
+        return self._database
 
 
     """
@@ -474,44 +426,52 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
-    DEF_C = 10.0    # optimum margin with of SVM
-    MIN_C = 0.01
-    DEF_NN_THRESH = 250     # optimum distance for nearest-neighbor
-    LINEAR_SVM = 0
+    THRESHOLD = 24              # optimum margin with of SVM
+    MIN_THRESHOLD = 0.01
+    NN_THRESH = 4700            # optimum distance for nearest-neighbor
+    SVM = 0
     NN = 1
 
     """
         [1] features -  a Feature class object
         [2] c        - margin flexible variable (the actual width)
     """
-    def __init__(self, features, type=LINEAR_SVM):
+    def __init__(self, features, type=SVM):
         self._features = features
         self._type = type
-        if type == Classifier.LINEAR_SVM:
-            self._c = Classifier.DEF_C
-            self._svm_instance = dlib.svm_c_trainer_linear()    # -> the linear case
-            self._svm_instance.set_c(self._c)
+        if type == Classifier.SVM:
+            self._threshold = Classifier.THRESHOLD
+            self._svm_instance = dlib.svm_c_trainer_linear()    # -> from a linear case to a kernel case
+            self._svm_instance.set_c(self._threshold)
         else:
-            self._nn_thresh = Classifier.DEF_NN_THRESH
-        self._decision_function = None
-        self._decision_function1 = None
-        self._decision_function2 = None
-        self._decision_function3 = None
-        # Make it kind of binary problem => for multi-class confusion matrix, use: len(Database.ALLOWED_DIRS.values())
-        classes_num = 2
+            self._nn_thresh = Classifier.NN_THRESH
+        self._decision_functions = None
+
+        classes_num = len(Database.ALLOWED_DIRS.keys())
         self._confusion_matrix = np.zeros((classes_num, classes_num, ), dtype=np.uint32)
         self._recognition_results = None
 
 
+    """
+        Set a new threshold to the NN distance
+    """
     def set_nn_thresh(self, thresh):
         self._nn_thresh = thresh
+
+
+    """
+        Set the margin width to the SVM classifier
+    """
+    def set_threshold(self, threshold):
+        self._threshold = threshold
+        self._svm_instance.set_c(threshold)
 
 
     """
         Return dlib vectors array of dlib vector list
         [1] data - list[list[number]] to dlib.vectors[dlib.vector[number]]
     """
-    def __prepare_dlib_data(self, data):
+    def __prepare_dlib_data_by_labels(self, data):
         vecs = dlib.vectors()
         for item in data:
             vecs.append(dlib.vector(item))
@@ -539,6 +499,7 @@ class Classifier:
     def __prepare_labels(self, labels, target_value):
         vals = list()
         for label in labels:
+            print(label)
             if label == target_value:
                 vals.append(+1)
             else:
@@ -551,26 +512,29 @@ class Classifier:
         Training the classifier
     """
     def train(self):
-        if self._type == Classifier.LINEAR_SVM:
-            # prepare the data for being as type of dlib objects
+        if self._type == Classifier.SVM:
             # -> dlib.vectors
-            data = self.__prepare_dlib_data(self._features.get_bows())
-            # -> dlib.array => [-1,1]
-            # labels = self.__prepare_dlib_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
+            data = self.__prepare_dlib_data_by_labels(self._features.get_bows())
+
+            # Could be: airplane, elephant, motorbike
+            labels = list()
             actual_labels = self._features.get_feature_vectors_labels_by_image()
-            labels1 = self.__prepare_dlib_labels(actual_labels, self._features.get_target1_value())     # airplane
-            labels2 = self.__prepare_dlib_labels(actual_labels, self._features.get_target2_value())     # elephant
-            labels3 = self.__prepare_dlib_labels(actual_labels, self._features.get_target3_value())     # motorbike
-            # -> dlib._decision_function_radial_basis
-            # self._decision_function = self._svm_instance.train(data, labels)
-            self._decision_function1 = self._svm_instance.train(data, labels1)
-            self._decision_function2 = self._svm_instance.train(data, labels2)
-            self._decision_function3 = self._svm_instance.train(data, labels3)
-            # print(self._decision_function(data[0]))
-        return self._decision_function
+
+            targets = self._features.get_database().get_target_values()
+            for target in targets:
+                # -> dlib.array => [-1,1]
+                labels.append(self.__prepare_dlib_labels(actual_labels, target))
+
+            self._decision_functions = list()
+            for label in labels:
+                self._decision_functions.append(self._svm_instance.train(data, label))
+
+        return self._decision_functions
 
 
-
+    """
+        Implementation to the NN classifier
+    """
     def __NN_activation(self, bow):
         data = self._features.get_bows()
         labels = self.__prepare_labels(self._features.get_feature_vectors_labels_by_image(), self._features.get_target_value())
@@ -584,8 +548,11 @@ class Classifier:
         return closest_class
 
 
-
+    """
+        Implementation to the multi-class NN classifier
+    """
     def __multi_NN_activation(self, bow):
+
         data = self._features.get_bows()
         labels = self._features.get_feature_vectors_labels_by_image()
         best_mse = np.Inf
@@ -602,7 +569,7 @@ class Classifier:
         Executing the whole recognition process as same as we did to at the training step
         *** At this process we use the linear classifier which it looks better then radial basis 
     """
-    def recognizer(self):
+    def recognizer(self, testset_filter=None):
         if not os.path.exists(testImageDirName):
             print(testImageDirName, "directory does not exist.")
             return
@@ -611,71 +578,67 @@ class Classifier:
         y_score = list()
         self._recognition_results = {}
         for image_name in os.listdir(testImageDirName):
-            # if "airplane" not in image_name.lower() and "elephant" not in image_name.lower():
-            image_path = testImageDirName + "//" + image_name
-            image = cv2.imread(image_path)
-            image = cv2.resize(image, self._features.get_win_size(), interpolation=cv2.INTER_CUBIC)
+            if testset_filter is None or testset_filter in image_name.lower():
+                image_path = testImageDirName + "//" + image_name
+                image = cv2.imread(image_path)
+                image = cv2.resize(image, self._features.get_win_size(), interpolation=cv2.INTER_CUBIC)
 
-            # Extracting features from an input new test image & computing the visual words
-            feature_vectors = self._features.get_native_hog(image)
+                # Extracting features from an input new test image & computing the visual words
+                feature_vectors = self._features.get_native_hog(image)
 
-            bow = self._features.generate_bows(feature_vectors, False)
-            prediction_activation = 0
-            if self._type == Classifier.LINEAR_SVM:
-                # Build single BOW of dlib type
-                dlib_bow = dlib.vector(bow)
+                bow = self._features.generate_bows(feature_vectors, False)
+                prediction_activation = 0
+                if self._type == Classifier.SVM:
+                    # Build single BOW of dlib type
+                    dlib_bow = dlib.vector(bow)
 
-                # Classifying a BOW using the classifier we have built in step 4
-                prediction_activation = self.__multi_activation(dlib_bow)    # self.__activation(dlib_bow)         # -> [1, -1] by the activation function
-            else:
-                prediction_activation = self.__multi_NN_activation(bow) # self.__NN_activation(bow)
+                    # Classifying a BOW using the classifier we have built in step 4
+                    # -> [0, 1, 2] by the activation function
+                    prediction_activation = self.__multi_activation(dlib_bow)
+                else:
+                    prediction_activation = self.__multi_NN_activation(bow)
 
-            actual_activation = self.__pseudo_activation(image_name)    # -> [1, -1] by the activation function
+                # -> [0, 1, 2] by the activation function
+                actual_activation = self.__pseudo_activation(image_name)
 
-            y_true.append(actual_activation)
-            y_score.append(prediction_activation)
+                y_true.append(actual_activation)
+                y_score.append(prediction_activation)
 
-            # Given 2 classes determination -> need to determine for kind of binary problem
-            self.__update_confusion_matrix(prediction_activation, actual_activation)
+                # Given 2 classes determination -> need to determine for kind of binary problem
+                self.__update_multi_confusion_matrix(prediction_activation, actual_activation)
 
-            #  A raw data image -> 1:1 [no another image with the same name on that test session]
-            self._recognition_results[image_name] = prediction_activation
+                #  A raw data image -> 1:1 [no another image with the same name on that test session]
+                self._recognition_results[image_name] = prediction_activation
 
-            # image = cv2.imread(image_path)
-            # font = cv2.FONT_HERSHEY_SIMPLEX
-            # bottomLeftCornerOfText = (50, 70)
-            # fontScale = 1
-            # fontColor = (255, 255, 255)
-            # lineType = 2
-            #
-            # prediction = 'Airplane'
-            # if (prediction_activation[0] == -1):
-            #     prediction = 'Not Airplane'
-            # cv2.putText(image, prediction,
-            #             bottomLeftCornerOfText,
-            #             font,
-            #             fontScale,
-            #             fontColor,
-            #             lineType)
-            # cv2.imshow("Test Images", image)
-            # cv2.waitKey(0)
+                # display the images out
+                image = cv2.imread(image_path)
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                bottomLeftCornerOfText = (50, 70)
+                fontScale = 1
+                fontColor = (255, 0, 0)
+                lineType = 2
 
-        # cv2.destroyAllWindows()
+                prediction = 'Error'
+                # print(prediction_activation)
+                if self._type == Classifier.SVM:
+                    prediction_activation = prediction_activation[0]
+                if prediction_activation == 0:
+                    prediction = 'Airplane'
+                if prediction_activation == 1:
+                    prediction = 'Elephant'
+                if prediction_activation == 2:
+                    prediction = 'MotorBike'
+                cv2.putText(image, prediction,
+                            bottomLeftCornerOfText,
+                            font,
+                            fontScale,
+                            fontColor,
+                            lineType)
+                cv2.imshow("Test Image", image)
+                cv2.waitKey(0)
+
+        cv2.destroyAllWindows()
         return y_true, y_score
-
-
-
-    """
-        Operating an activation function to determine the classification of dlib_bow
-        [1] dlib_bow - bow conversion to dlib type
-        Return [class, score]
-    """
-    def __activation(self, dlib_bow):
-        float_value = self._decision_function(dlib_bow)
-        if float_value > 0.0:
-            return 1, float_value
-        else:
-            return -1, float_value
 
 
     """
@@ -684,14 +647,15 @@ class Classifier:
         Return [class, score]
     """
     def __multi_activation(self, dlib_bow):
-        float_value1 = self._decision_function1(dlib_bow)
-        float_value2 = self._decision_function2(dlib_bow)
-        float_value3 = self._decision_function3(dlib_bow)
+        float_values = list()
+        # By assignment design there 3 options: airplane, elephant and motorbike
+        for f in self._decision_functions:
+            float_values.append(f(dlib_bow))
+
         # here we have 3 classes probability
-        classes = [float_value1, float_value2, float_value3]
-        idx = np.argmax(classes)
+        idx = np.argmax(float_values)
         # return value of form: (0/1/2, 0.0-1.0)
-        return idx, classes[idx]
+        return idx, float_values[idx]
 
 
 
@@ -701,40 +665,17 @@ class Classifier:
         Return [class, score]
     """
     def __pseudo_activation(self, image_name):
-        actual_value = Database.ALLOWED_DIRS[image_name.split("_")[0]]
-        if actual_value != 0:
-            return -1, np.float32(actual_value)
-        return 1, np.float32(actual_value)
-
-
-    def set_C(self, c):
-        self._c = c
+        # Actual_activation
+        target_class = Database.ALLOWED_DIRS[image_name.split("_")[0]]
+        return target_class
 
 
     """
-        Taking this problem as kind of binary problem and compare them
-        [1] prediction  => [1,-1]
-        [1] actual      => [1,-1]
+        Updating the confusion matrix to multi-class
     """
-    def __update_confusion_matrix(self, prediction, actual):
-        if self._type == Classifier.LINEAR_SVM:
+    def __update_multi_confusion_matrix(self, prediction, actual):      # prediction = [0,1,2] , actual = [0,1,2]
+        if self._type == Classifier.SVM:
             prediction = prediction[0]
-        actual = actual[0]
-        if prediction <= 0:
-            prediction = 1
-        else:
-            prediction = 0
-        if actual <= 0:
-            actual = 1
-        else:
-            actual = 0
-        self._confusion_matrix[prediction, actual] += 1
-
-
-    def __update_multi_confusion_matrix(self, prediction, actual):
-        if self._type == Classifier.LINEAR_SVM:
-            prediction = prediction[0]
-        actual = actual[0]
         self._confusion_matrix[prediction, actual] += 1
 
 
@@ -761,89 +702,68 @@ class Classifier:
         get the accuracy
     """
     def get_test_accuracy(self):
-        TP = self._confusion_matrix[0, 0]
-        TN = self._confusion_matrix[1, 1]
-        return (TP + TN) / self._confusion_matrix.sum()
+        TP = np.sum(np.diag(self._confusion_matrix))
+        result = TP / self._confusion_matrix.sum()
+        print("Accuracy: TP /#all_data = {} / {} = {} ".format(TP, self._confusion_matrix.sum(), result))
+        return result
 
 
     """
-        print the accuracy
+        Return the precision to the airplane class
     """
-    def show_test_accuracy(self):
-        TP = self._confusion_matrix[0, 0]
-        TN = self._confusion_matrix[1, 1]
-        print("Accuracy: (TP + TN)/#all_data = ({} + {})/{} = {} ".format(TP, TN, self._confusion_matrix.sum(), self.get_test_accuracy()))
+    def get_test_precision(self,  num_class):     # num_class = [0 ,1 ,2]
+        sub_TP = self._confusion_matrix[num_class, num_class]
 
+        # sum over rows
+        sub_FP = np.sum(self._confusion_matrix, axis=1)[num_class] - self._confusion_matrix[num_class, num_class]
 
+        world_val = sub_TP + sub_FP
+        if world_val != 0:
+            result = sub_TP / world_val
+        else:
+            result = np.Inf
 
-    """
-        get the precision
-    """
-    def get_test_precision(self):
-        TP = self._confusion_matrix[0, 0]
-        FP = self._confusion_matrix[0, 1]
-        return TP / (TP + FP)
-
-
-
-    """
-        print the precision
-    """
-    def show_test_precision(self):
-        TP = self._confusion_matrix[0, 0]
-        FP = self._confusion_matrix[0, 1]   # predicted 1 but it is -1
-        print("Precision: TP/(TP + FP) = {}/({} + {}) = {} ".format(TP, TP, FP, self.get_test_precision()))
+        class_name = self._features.get_database().class2name(num_class)
+        print("{} Precision: TP / (TP + FP) = {}/({} + {}) = {} ".format(class_name, sub_TP, sub_TP, sub_FP, result))
+        return result
 
 
     """
-        get the recall
+        Return the recall to the airplane class
     """
-    def get_test_recall(self):
-        TP = self._confusion_matrix[0, 0]
-        FN = self._confusion_matrix[1, 0]
-        return TP / (TP + FN)
+    def get_test_recall(self, num_class):    # num_class = [0 ,1 ,2]
+        sub_TP = self._confusion_matrix[num_class, num_class]
+
+        # sum over cols
+        sub_FN = np.sum(self._confusion_matrix, axis=0)[num_class] - self._confusion_matrix[num_class, num_class]
+
+        world_val = sub_TP + sub_FN
+        if world_val != 0:
+            result = sub_TP / world_val
+        else:
+            result = np.Inf
+
+        class_name = self._features.get_database().class2name(num_class)
+        print("{} Recall: TP / (TP + FN) = {}/({} + {}) = {} ".format(class_name, sub_TP, sub_TP, sub_FN, result))
+        return result
 
 
     """
-        print the recall
+        display out the threshold
     """
-    def show_test_recall(self):
-        TP = self._confusion_matrix[0, 0]
-        FN = self._confusion_matrix[1, 0]
-        print("Recall: TP/(TP + FN) = {}/({} + {}) = {} ".format(TP, TP, FN, self.get_test_recall()))
-
-
-    def show_test_c(self):
-        if self._type == Classifier.LINEAR_SVM:
-            print("Current C for the SVM margin width:", self._c)
+    def show_test_threshold(self):
+        if self._type == Classifier.SVM:
+            print("Current SVM margin width threshold:", self._threshold)
         else:
             print("Current NN threshold:", self._nn_thresh)
 
 
+    """
+        display out the confusion matrix
+    """
     def show_test_confusion_matrix(self):
-        print("Current confusion matrix:\n", self._confusion_matrix)
-
-
-    @staticmethod
-    def find_optimum_by_accuracy(accuracy, dependent_var, dependent_name):
-        max_acc = 0
-        var = -1
-        for y, x in zip(accuracy, dependent_var):
-            if max_acc < y:
-                max_acc = y
-                var = x
-
-        if max_acc > 0 and var > -1:
-            print("An optimal parameter by accuracy was found " + dependent_name + ":", var)
-
-        return var, max_acc
-
-
-    @staticmethod
-    def find_optimum_by_ROC_CURVE(recall, precision, dependent_var, dependent_name):
-        idx = np.argmax(precision)
-        print("An optimal parameter by ROC Curve was found " + dependent_name + ":", dependent_var[idx])
-        return dependent_var[idx], recall[idx], precision[idx]
+        print("Current confusion matrix:\n", np.matrix(self._confusion_matrix))
+        # print("Current Structural SVM confusion matrix:\n", self._confusion_matrix_structural_SVM)
 
 
     """
@@ -863,32 +783,48 @@ class Classifier:
         plt.show()
 
 
+    @staticmethod
+    def compute_optimal_pair_iter(precision, recall, var):
+        class_optimum = list()
+        for p_arr, r_arr in zip(precision, recall):
+            summation_class = list()
+            for p, r, v in zip(p_arr, r_arr, var):
+                summation_class.append((p + r, p, r, v))
+            class_optimum.append(max(summation_class, key=operator.itemgetter(0))[1:])  # form of (precision, recall, var)
+        return class_optimum
+
+
+
     """
         Plot the desired ROC Curve for choosing the optimal parameter
         - accuracy, precision, recall
     """
     @staticmethod
-    def ROC_Curve(optimum_var, accuracy, precision, recall, dependent_var, dependent_var_name):
+    def ROC_Curve(optimum, accuracy, precision, recall, dependent_var, dependent_var_name, classifier, confusionRows=3):
         linear_x = [0.0, 0.5, 1.0]
         linear_y = [1.0, 0.5, 0.0]
 
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
 
-        axs[0].plot(recall, precision, '--', linewidth=2)
+        # print("recall =", str(recall))
+        # print("precision =", str(precision))
+        # print("accuracy =", str(accuracy))
+        # print("dependent_var =", str(dependent_var))
+        # print("optimum =", str(optimum))
 
-        # xi = np.linspace(recall[0], recall[-1])
-        # yi = np.interp(recall, xi, precision, None)
-        # axs[0].plot(recall, precision, '--', xi, yi, '-', linewidth=2)
+        for i in range(0, confusionRows):
+            base_line, = axs[0].plot(recall[i], precision[i], '-', linewidth=1)
+            # if optimum:
+                # p, r = optimum[i][:2]
+                # axs[0].plot(p, r, 'o', color=base_line.get_color())
 
-        axs[0].plot(linear_x, linear_y, '-', linewidth=0.5)
+        axs[0].plot(linear_x, linear_y, '--', linewidth=0.5)
 
-        info_arr = ['data', 'boundary']
-        if optimum_var is not None:
-            op_var = [optimum_var[0]]
-            info_arr.append(dependent_var_name + str(op_var))
-            op_r = [optimum_var[1]]
-            op_p = [optimum_var[2]]
-            axs[0].plot(op_r, op_p, 'rp', markersize=14)
+        # info_arr = ['Airplane', 'Opt.', 'Elephant', 'Opt.', 'Motorbike', 'Opt.', 'Linear line']
+        info_arr = ['Airplane', 'Elephant', 'Motorbike', 'Linear line']
+        if optimum:
+            plt.text(0.03, 0.5, 'Airplane Optimum Threshold: ' + str(optimum[0][2]) + '\nElephant Optimum Threshold: ' + str(optimum[1][2]) + '\nMotorbike Optimum Threshold: ' + str(optimum[2][2]), fontsize=14, transform=plt.gcf().transFigure)
+
         axs[0].set_xlim(0.0, 1.0)
         axs[0].set_ylim(0.0, 1.0)
         axs[0].set_xlabel('Recall')
@@ -899,9 +835,9 @@ class Classifier:
 
         axs[1].set_ylim(0.0, 1.0)
         axs[1].plot(dependent_var, accuracy, '-', linewidth=2)
-        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name)
+        axs[1].set_xlabel('Dependent-Variable: ' + dependent_var_name.lower())
         axs[1].set_ylabel('Accuracy')
-        axs[1].legend(['data', 'optimum'], loc='best')
+        axs[1].legend(['Data', 'Opt.'], loc='best')
 
         plt.show()
 
@@ -926,37 +862,40 @@ def get_all_rest_datasets(count=0):
     return new_dir_names
 
 
-
 """
     Running the system using determined parameters
 """
-def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
+def driver(classifier_type, additional_datasets, k, threshold, testset_filter=None, SLEEP_TIME_OUT=3):
     db_instance = Database(trainImageDirName, FINAL_CLASSES=True, datasets=additional_datasets)
     db_instance.show_avaliable_datasets()
+    if testset_filter:
+        print("Classification is filtered to", testset_filter)
     feature_instance = Features(db_instance, k=k)
     feature_instance.generate_visual_word_dict(NEED_CLUSTERING=True)
     feature_instance.generate_bows(feature_instance.get_feature_vectors_by_image())
     feature_instance.save()
     feature_instance.load()
     classifier_instance = None
-    if classifier_type == Classifier.LINEAR_SVM:
-        classifier_instance = Classifier(feature_instance, type=Classifier.LINEAR_SVM)
-        classifier_instance.set_C(c)
+    if classifier_type == Classifier.SVM:
+        classifier_instance = Classifier(feature_instance, type=Classifier.SVM)
+        classifier_instance.set_threshold(threshold)
         classifier_instance.train()
     else:
         classifier_instance = Classifier(feature_instance, type=Classifier.NN)
-        classifier_instance.set_nn_thresh(c)
-    y_true, y_score = classifier_instance.recognizer()
+        classifier_instance.set_nn_thresh(threshold)
+    y_true, y_score = classifier_instance.recognizer(testset_filter)
     classifier_instance.save()
     classifier_instance.load()
+
     accuracy = classifier_instance.get_test_accuracy()
-    precision = classifier_instance.get_test_precision()
-    recall = classifier_instance.get_test_recall()
-    classifier_instance.show_test_accuracy()
-    classifier_instance.show_test_precision()
-    classifier_instance.show_test_recall()
+    precision = []
+    recall = []
+    for i in range(0, classifier_instance._confusion_matrix.shape[0]):
+        precision.append(classifier_instance.get_test_precision(i))
+        recall.append(classifier_instance.get_test_recall(i))
+
     feature_instance.show_current_k()
-    classifier_instance.show_test_c()
+    classifier_instance.show_test_threshold()
     classifier_instance.show_test_confusion_matrix()
     time.sleep(SLEEP_TIME_OUT)
     return y_true, y_score, accuracy, precision, recall
@@ -968,39 +907,42 @@ def driver(classifier_type, additional_datasets, k, c, SLEEP_TIME_OUT=3):
     [2] k=?
     [3] c=?
 """
-def run(additional_datasets, classifier, **kwargs):
-    k = Features.DEF_K
-    classifier_thresh = Classifier.DEF_C
+def run(additional_datasets, classifier, testset_filter=None, **kwargs):
+    threshold = Classifier.THRESHOLD
+    quantization = Features.DEF_SVM_QUANTIZATION
     if classifier == Classifier.NN:
-        classifier_thresh = Classifier.DEF_NN_THRESH
-    c = classifier_thresh
+        quantization = Features.DEF_NN_QUANTIZATION
+        threshold = Classifier.NN_THRESH
     for key, value in kwargs.items():
-        if classifier == Classifier.LINEAR_SVM:
-            if key.lower() == "c" and np.float32(value) > Classifier.MIN_C:
-                c = np.float32(value)
-        elif key.lower() == "c" and np.float32(value) > 0:
-                c = np.float32(value)
-        if key.lower() == "k" and np.uint32(value) > Features.MIN_K:
-            k = np.uint32(value)
+        if classifier == Classifier.SVM:
+            if key.lower() == "threshold" and np.float32(value) > Classifier.MIN_THRESHOLD:
+                threshold = np.float32(value)
+        elif key.lower() == "threshold" and np.float32(value) > 0:
+            threshold = np.float32(value)
+        if key.lower() == "quantization" and np.uint32(value) > Features.MIN_QUANTIZATION:
+            quantization = np.uint32(value)
 
-    return driver(classifier, additional_datasets, k, c)
+    return driver(classifier, additional_datasets, quantization, threshold, testset_filter)
 
 
-def run_by_c(classifier, init, loop_length, LOAD=False):
+def run_by_threshold(classifier, init, loop_length, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
-    precision = list()
-    recall = list()
+    precision = []
+    recall = []
     datasets = list()
-    DEP_VAR_NAME = "C"
+    DEP_VAR_NAME = "THRESHOLD"
     DEP_VAR = None
     if classifier == Classifier.NN:
         DEP_VAR = np.arange(init, init + 10 * loop_length, 100.0)
     else:
         DEP_VAR = np.arange(init, init + loop_length, 1.0)
 
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    classifier_name = "SVM"
+    if classifier == Classifier.NN:
+        classifier_name = "NN"
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
     for _ in range(loop_length):
         datasets.append(list())
     if LOAD:
@@ -1011,46 +953,57 @@ def run_by_c(classifier, init, loop_length, LOAD=False):
         precision = data[3]
         recall = data[4]
     else:
+
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, testset_filter=None, threshold=dep_var)
 
             accuracy.append(acc)
-            precision.append(prec)
-            recall.append(rec)
+            for i in range(0, confusionRows):
+                if len(precision) == i:
+                    precision.append([prec[i]])
+                else:
+                    precision[i].append(prec[i])
+
+                if len(recall) == i:
+                    recall.append([rec[i]])
+                else:
+                    recall[i].append(rec[i])
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
-
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = precision.copy()
-    precision_sorted.sort()
-    recall_sorted = recall.copy()
-    recall_sorted.sort(reverse=True)
+    precision_sorted = np.sort(precision)
+    recall_sorted = np.fliplr(np.sort(recall))
 
-    optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-    # Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    optimum = Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR)
+    Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
 
-def run_by_k(classifier, init, loop_length, LOAD=False):
+def run_by_quantization(classifier, init, loop_length, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
-    precision = list()
-    recall = list()
+    precision = []
+    recall = []
+
+
     datasets = list()
-    DEP_VAR_NAME = "K"
+    DEP_VAR_NAME = "QUANTIZATION"
     DEP_VAR = None
     if classifier == Classifier.NN:
         DEP_VAR = np.arange(init, init + loop_length, 100.0)
     else:
         DEP_VAR = np.arange(init, init + loop_length, 1.0)
 
-    run_data_path = Database.PICKLE_DIR + "//Run_data_" + DEP_VAR_NAME + ".pkl"
+    classifier_name = "LINEAR_SVM"
+    if classifier == Classifier.NN:
+        classifier_name = "NN"
+    run_data_path = Database.PICKLE_DIR + "//Run_data_" + classifier_name + "_" + DEP_VAR_NAME + ".pkl"
     for _ in range(loop_length):
         datasets.append(list())
     if LOAD:
@@ -1062,40 +1015,49 @@ def run_by_k(classifier, init, loop_length, LOAD=False):
         recall = data[4]
     else:
         for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, k=dep_var)
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, testset_filter=None, quantization=dep_var)
 
             accuracy.append(acc)
-            precision.append(prec)
-            recall.append(rec)
+            for i in range(0, confusionRows):
+                if len(precision) == i:
+                    precision.append([prec[i]])
+                else:
+                    precision[i].append(prec[i])
+
+                if len(recall) == i:
+                    recall.append([rec[i]])
+                else:
+                    recall[i].append(rec[i])
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
-
         pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
 
-    precision_sorted = precision.copy()
-    precision_sorted.sort()
-    recall_sorted = recall.copy()
-    recall_sorted.sort(reverse=True)
 
-    optimum = Classifier.find_optimum_by_ROC_CURVE(recall, precision, DEP_VAR, DEP_VAR_NAME)
-    # Classifier.ROC_Curve(optimum, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME)
+    precision_sorted = np.sort(precision)
+    recall_sorted = np.fliplr(np.sort(recall))
+
+    print(Classifier.compute_optimal_pair_iter(precision, recall, DEP_VAR))
+    Classifier.ROC_Curve(None, accuracy, precision_sorted, recall_sorted, DEP_VAR, DEP_VAR_NAME, classifier, confusionRows=confusionRows)
 
 
-def run_by_multi_datasets(classifier, LOAD=False):
+
+def run_by_multi_datasets(classifier, LOAD=False, confusionRows=3):
     y_true_glob = list()
     y_scores_glob = list()
     accuracy = list()
-    precision = list()
-    recall = list()
+    precision = []
+    recall = []
 
     run_data_path = Database.PICKLE_DIR
     datasets = [get_all_rest_datasets(0), get_all_rest_datasets(1), get_all_rest_datasets(2), get_all_rest_datasets(3)]
-    run_data_path = Database.PICKLE_DIR + "//Datasets_Run_data.pkl"
-    DEP_VAR = np.zeros(4)
+    classifier_name = "LINEAR_SVM"
+    if classifier == Classifier.NN:
+        classifier_name = "NN"
+    run_data_path = Database.PICKLE_DIR + "//Datasets_Run_data_" + classifier_name + ".pkl"
     if LOAD:
         data = pickle.load(open(run_data_path, "rb"))
         y_true_glob = data[0]
@@ -1104,47 +1066,103 @@ def run_by_multi_datasets(classifier, LOAD=False):
         precision = data[3]
         recall = data[4]
     else:
-        for ds_amt, dep_var in zip(datasets, DEP_VAR):
-            y_true, y_score, acc, prec, rec = run(ds_amt, classifier, c=dep_var)
+        for ds_amt in datasets:
+            y_true, y_score, acc, prec, rec = run(ds_amt, classifier)
 
             accuracy.append(acc)
-            precision.append(prec)
-            recall.append(rec)
+            for i in range(0, confusionRows):
+                if len(precision) == i:
+                    precision.append([prec[i]])
+                else:
+                    precision[i].append(prec[i])
+
+                if len(recall) == i:
+                    recall.append([rec[i]])
+                else:
+                    recall[i].append(rec[i])
 
             for true, score in zip(y_true, y_score):
                 y_true_glob.append(true)
                 y_scores_glob.append(score)
 
             print("")
-
-        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall, DEP_VAR], open(run_data_path, "wb+"))
-
-    precision_sorted = precision.copy()
-    precision_sorted.sort()
-    recall_sorted = recall.copy()
-    recall_sorted.sort(reverse=True)
-
-    # for idx, y in enumerate(y_true_glob):
-    #     y_true_glob[idx] = y[0]
-    #
-    # for idx, y in enumerate(y_scores_glob):
-    #     y_scores_glob[idx] = y[1]
-
-    # from sklearn.metrics import precision_recall_curve
-    # precision, recall, _ = precision_recall_curve(y_true_glob, y_scores_glob)
-    # print(precision)
-    # print(recall)
+        pickle.dump([y_true_glob, y_scores_glob, accuracy, precision, recall], open(run_data_path, "wb+"))
 
     Classifier.Accuracy_Sets(accuracy, list(range(3, 7)))
 
 
 
+def run_assignment_requirements():
+    # find an optimum threshold: => Found: airplane: 4700.0, elephant: 100, motorbike:100.0
+    # run_by_threshold(Classifier.NN, init=100.0, loop_length=1000, LOAD=True)
+    # find an optimum quantization: => Found: airplane: 310, elephant: 10, motorbike: 10
+    # run_by_quantization(Classifier.NN, init=10, loop_length=1000, LOAD=True)
+    # run_by_multi_datasets(Classifier.NN, LOAD=True)
+
+    # run(list(), Classifier.NN, testset_filter='airplane')
+    # run(list(), Classifier.NN, testset_filter='elephant')
+    # run(list(), Classifier.NN, testset_filter='motorbike')
+    # run(list(), Classifier.NN)
+
+    # run([['chair']], Classifier.NN, testset_filter='airplane')
+    # run([['chair'], ['ferry']], Classifier.NN, testset_filter='airplane')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.NN, testset_filter='airplane')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.NN, testset_filter='elephant')
+    # run([['chair'], ['ferry']], Classifier.NN, testset_filter='elephant')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.NN, testset_filter='elephant')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.NN, testset_filter='motorbike')
+    # run([['chair'], ['ferry']], Classifier.NN, testset_filter='motorbike')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.NN, testset_filter='motorbike')
+
+    # NN status: Done!
+
+    # find an optimum threshold: => Found: airplane: 24.0, elephant: 11.0, motorbike: 16.0
+    # run_by_threshold(Classifier.SVM, init=10.0, loop_length=20, LOAD=True)
+    # find an optimum quantization: => Found: airplane: 25, elephant: 27, motorbike: 19
+    # run_by_quantization(Classifier.SVM, init=10, loop_length=20, LOAD=True)
+    # run_by_multi_datasets(Classifier.SVM, LOAD=True)
+
+    # run(list(), Classifier.SVM, testset_filter='airplane')
+    # run(list(), Classifier.SVM, testset_filter='elephant')
+    # run(list(), Classifier.SVM, testset_filter='motorbike')
+
+    # run([['chair']], Classifier.SVM, testset_filter='airplane')
+    # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='airplane')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='airplane')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.SVM, testset_filter='elephant')
+    # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='elephant')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='elephant')
+
+    # Database.reset_dataset()
+
+    # run([['chair']], Classifier.SVM, testset_filter='motorbike')
+    # run([['chair'], ['ferry']], Classifier.SVM, testset_filter='motorbike')
+    # run([['chair'], ['ferry'], ['wheelchair']], Classifier.SVM, testset_filter='motorbike')
+
+    # AVM status: Done!
+    pass
+
+
+
+def run_optimum(classifier):
+    if classifier == Classifier.NN or classifier == Classifier.SVM:
+        run(list(), classifier)
+    else:
+        print("A classifier name should be provided.")
+
+
 if __name__ == "__main__":
 
-    # run_by_multi_datasets(Classifier.NN, LOAD=False)
-    # run_by_multi_datasets(Classifier.LINEAR_SVM, LOAD=False)
-    # run_by_k(Classifier.NN, 5.0, 500, LOAD=True)
-    # run_by_k(Classifier.LINEAR_SVM, 5.0, 20, LOAD=False)
-    # run_by_c(Classifier.NN, 250.0, 1000, LOAD=False)
-    # run_by_c(Classifier.LINEAR_SVM, 100.0, 5, LOAD=False)
-    pass
+    # run_assignment_requirements()
+    run_optimum(Classifier.SVM)
+
+
