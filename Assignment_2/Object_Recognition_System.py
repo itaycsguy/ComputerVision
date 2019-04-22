@@ -142,8 +142,8 @@ class Database:
 
 class Features:
     __PICKLE_FILE = "Features.pkl"
-    DEF_SVM_QUANTIZATION = 25
-    DEF_NN_QUANTIZATION = 10      # optimum k clusters
+    DEF_SVM_QUANTIZATION = 40
+    DEF_NN_QUANTIZATION = 310      # optimum k clusters
     MIN_QUANTIZATION = 1
 
 
@@ -426,7 +426,7 @@ class Features:
 
 class Classifier:
     __PICKLE_FILE = "Classifier.pkl"
-    THRESHOLD = 24              # optimum margin with of SVM
+    THRESHOLD = 39              # optimum margin with of SVM
     MIN_THRESHOLD = 0.01
     NN_THRESH = 4700            # optimum distance for nearest-neighbor
     SVM = 0
