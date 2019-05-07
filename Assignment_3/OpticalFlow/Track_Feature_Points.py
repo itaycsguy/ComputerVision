@@ -130,6 +130,8 @@ if __name__ == "__main__":
         #We need to choose a number of them (like the parameter we have)
         print("TODO: Choose points from HOG")
 
+
+
     velocity = [(50,0)] * numberOfPoints
     velocity[0] = (0,100)
 
