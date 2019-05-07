@@ -14,28 +14,28 @@ import argparse
 
 #Input Variables
 inputVideoName = "ballet.mp4"
-inputByVideo = True
+inputByVideo = False
 im1 = "image001.jpg"
 im2 = "image001.jpg"
 frameNumber1 = 10   #range from zero to total_frames
-frameNumber2 = 20   #range from zero to total_frames
+frameNumber2 = 599   #range from zero to total_frames
 
 
 def get_images():
-    if(inputByVideo):
+    if inputByVideo:
         # Create a VideoCapture object and read from input file
         # If the input is the camera, pass 0 instead of the video file name
         cap = cv2.VideoCapture(".//Datasets//" + inputVideoName)
         # Check if camera opened successfully
-        if (cap.isOpened() == False):
+        if not cap.isOpened():
             print("Error opening video stream or file")
             exit()
 
         total_frame = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        if(frameNumber1 < 0) | (frameNumber1 >= total_frame):
+        if(frameNumber1 < 0) or (frameNumber1 >= total_frame):
             print("Error! 'frameNumber1' is out of range")
             exit()
-        if (frameNumber2 < 0) | (frameNumber2 >= total_frame):
+        if (frameNumber2 < 0) or (frameNumber2 >= total_frame):
             print("Error! 'frameNumber2' is out of range")
             exit()
 
@@ -51,7 +51,7 @@ def get_images():
         image2 = cv2.imread(".//Datasets//" + im2)
         height1, width1, channels1 = image1.shape
         height2, width2, channels2 = image2.shape
-        if (height1 != height2) | (width1 != width2) | (channels1 != channels2):
+        if (height1 != height2) or (width1 != width2) or (channels1 != channels2):
             print("Error! the size of the two images is not equal!")
             exit()
     return image1,image2
