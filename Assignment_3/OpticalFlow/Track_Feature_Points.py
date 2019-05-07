@@ -17,10 +17,11 @@ Point_size = 7
 Line_color = (0, 255, 0)
 Line_size = 2
 
+
 #Input Variables
 inputVideoName = "ballet.mp4"
 selectPoints = True
-numberOfPoints = 7
+numberOfPoints = 10
 
 
 
@@ -88,12 +89,12 @@ def paint_velocity(velocity_vector , point_vector , image):
 def GetFirstImage():
     cap = cv2.VideoCapture(".//Datasets//" + inputVideoName)
     # Check if camera opened successfully
-    if (cap.isOpened() == False):
+    if not cap.isOpened():
         print("Error opening video stream or file")
         exit()
     cap.set(1, 0) #zero is the index of the frame & one is a flag
     res, image = cap.read()
-    if res == False:
+    if not res:
         print("Error! Could not read image.")
         exit()
     cap.release()
@@ -115,14 +116,14 @@ def GetPointsFromUser():
         cv2.imshow("Select Points", point_img)
         k = cv2.waitKey(20)
 
-        if (k == 27) | (Points.__len__() == numberOfPoints):  # escape
+        if (k == 27) or (len(Points) == numberOfPoints):  # escape
             break
     cv2.destroyAllWindows()
     return orig_img, point_img, Points
 
 
 if __name__ == "__main__":
-    if(selectPoints):
+    if selectPoints:
         orig_img, point_img, Points = GetPointsFromUser()
     else:
         #Find interested points by HOG
@@ -132,6 +133,8 @@ if __name__ == "__main__":
 
 
 
+    #This is not Important
+    #for each frame in the video
     velocity = [(50,0)] * numberOfPoints
     velocity[0] = (0,100)
 
@@ -143,8 +146,7 @@ if __name__ == "__main__":
     cv2.imshow("added points", point_img)
     cv2.waitKey(0)
 
-
-
+    functionvsd()
 
 
 
