@@ -36,7 +36,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
@@ -44,6 +44,15 @@
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Segment_Image.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="44" column="32" selection-start-line="44" selection-start-column="32" selection-end-line="44" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -111,6 +120,7 @@
         <option value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py" />
         <option value="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" />
+        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" />
       </list>
     </option>
   </component>
@@ -126,6 +136,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -209,7 +241,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Object_Recognition_System">
+  <component name="RunManager" selected="Python.Segment_Image">
     <configuration name="Interactive_Drawing" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ComputerVision" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -294,7 +326,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Segmentation" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Segment_Image" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ComputerVision" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -302,11 +334,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Assignment_1" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Assignment_3/OpticalFlow" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="D:\PycharmProjects\ComputerVision\Assignment_1\Segmentation_Example.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Segment_Image.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -317,11 +349,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Segment_Image" />
         <item itemvalue="Python.Object_Recognition_System" />
         <item itemvalue="Python.Multi_Segmentation" />
         <item itemvalue="Python.MultiSegmentation" />
         <item itemvalue="Python.Interactive_Drawing" />
-        <item itemvalue="Python.Segmentation" />
       </list>
     </recent_temporary>
   </component>
@@ -362,7 +394,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" weight="0.3629469" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3629469" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.3988495" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -384,18 +416,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSeg.jpg" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/results/balloonsSegMask.jpg" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/corn.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/guard.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/manMask.tif" />
-    <entry file="file://$PROJECT_DIR$/Assignment_1/images/man.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_1/MultiSegmentation.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_1/images/flowersPink.png">
       <provider selected="true" editor-type-id="images" />
@@ -561,6 +581,13 @@
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Segment_Image.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="44" column="32" selection-start-line="44" selection-start-column="32" selection-end-line="44" selection-end-column="32" />
         </state>
       </provider>
     </entry>
