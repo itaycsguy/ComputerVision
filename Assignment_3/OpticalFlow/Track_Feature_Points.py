@@ -16,10 +16,10 @@ Point_color = (0, 0, 255)
 Point_size = 7
 Line_color = (0, 255, 0)
 Line_size = 3
-Window_Size = 2
+Window_Size = 1
 
 #Input Variables
-inputVideoName = "bugs11.mp4"
+inputVideoName = "bugs11.mp4"  #"highway.avi" #""bugs11.mp4"
 selectPoints = True
 numberOfPoints = 5
 
@@ -75,9 +75,14 @@ def paint_point(points , im):
     return im
 
 
-def paint_velocity(velocity , point , image):
-    to = (int(point[0] + velocity[0]),int(point[1] + velocity[1]))
-    cv2.line(image, p, to, Line_color, Line_size)
+def paint_velocity(point , velocity , image):
+    for i in range(len(point)):
+        p = point[i]
+        v = velocity[i]
+        from_ = (p[0] , p[1])
+        to_ = (int(p[0] + v[0]),int(p[1] + v[1]))
+        cv2.line(image, from_, to_, Line_color, Line_size)
+        #print("from = " + str(from_) + " - to = " + to_)
     return image
 
 
@@ -163,6 +168,7 @@ if __name__ == "__main__":
         print("Error opening video stream or file")
         exit()
 
+
     for indexFrame in range(0,int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1):
         print(">> " + str(indexFrame))
         fr1 = GetFrameByIndex(indexFrame).astype(float)
@@ -173,7 +179,8 @@ if __name__ == "__main__":
 
         i=0
         print(Points)
-        for (y, x) in Points:
+        velocity = []
+        for (y, x) in Points: #Pay attention: the coordinates is reversed!
             p = (x,y)
 
             print("x = " + str(x))
@@ -201,10 +208,12 @@ if __name__ == "__main__":
                 UpdateY = 1+Window_Size
 
             Points[i] = (UpdateY , UpdateX)
-            draw_im = paint_velocity(solution, [UpdateX,UpdateY], draw_im)
-            cv2.imshow("added points", draw_im)
-            cv2.waitKey(1)
+            velocity.append((solution[0] , solution[1]))
             i=i+1
 
         print(Points)
+        draw_im = paint_velocity(Points, velocity, draw_im)
+        cv2.imshow("added points", draw_im)
+        cv2.waitKey(1)
+
 
