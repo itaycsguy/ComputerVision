@@ -1,3 +1,5 @@
+## Students And Developers: Itay Guy, 305104184 & Elias Jadon, 207755737
+
 import cv2
 import numpy as np
 
@@ -160,7 +162,7 @@ class KeyPointsFinder:
     """
     def get_key_points(self, n):
         self.generate_key_points()
-        return finder.get_strongest(n)
+        return self.get_strongest(n)
 
 
     """
