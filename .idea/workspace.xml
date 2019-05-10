@@ -46,6 +46,7 @@
       <change beforePath="D:/GitHub/RealMeeting/gradlew.bat" beforeDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/settings.gradle" beforeDir="false" />
       <change beforePath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" beforeDir="false" afterPath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -71,11 +72,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="178" column="40" selection-start-line="178" selection-start-column="40" selection-end-line="178" selection-end-column="40" />
+            <state relative-caret-position="115">
+              <caret line="183" column="42" lean-forward="true" selection-start-line="183" selection-start-column="42" selection-end-line="183" selection-end-column="42" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/lib/arraysetops.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-487">
+              <caret line="155" lean-forward="true" selection-start-line="155" selection-end-line="155" />
             </state>
           </provider>
         </entry>
@@ -375,7 +385,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.28060672" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.51137596" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39745402" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -397,7 +407,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/fhog_object_detector.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_2/Datasets/Airplane/image_0005.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -608,10 +617,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/lib/arraysetops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-487">
+          <caret line="155" lean-forward="true" selection-start-line="155" selection-end-line="155" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="178" column="40" selection-start-line="178" selection-start-column="40" selection-end-line="178" selection-end-column="40" />
+        <state relative-caret-position="115">
+          <caret line="183" column="42" lean-forward="true" selection-start-line="183" selection-start-column="42" selection-end-line="183" selection-end-column="42" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

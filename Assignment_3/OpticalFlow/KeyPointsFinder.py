@@ -97,7 +97,7 @@ class KeyPointsFinder:
         grad = np.zeros(winStride, dtype=np.float32)
         angleOfs = np.zeros(winStride, dtype=np.float32)
         grad, angleOfs = hog_instance.computeGradient(image, grad, angleOfs)
-        return self.__reshape(hist), self.__reshape(grad), self.__reshape(angleOfs)
+        return self.__reshape(hist), grad, angleOfs
 
 
     """
@@ -125,27 +125,32 @@ class KeyPointsFinder:
         for i in range(0, descriptor_size, descriptor_size_per_block):
             descriptors_strength.append(np.sum(self._hog_descriptor[i:(i + descriptor_size_per_block)]))
 
-        # sorted by the maximum
+        # sorted blocks by the maximum
         sorted_blocks_idx = np.flip(np.argsort(descriptors_strength))
         int_blocks = np.asarray(sorted_blocks_idx / col_blocks, dtype=np.uint32)
         rows = int_blocks * self._cell_size
-        rows = rows[:n]
         cols = np.asarray(np.asarray((sorted_blocks_idx / col_blocks) - int_blocks, dtype=np.float32) * col_blocks * self._cell_size, dtype=np.uint32)
-        cols = cols[:n]
 
-        # TODO:
-        """
-        need to pick up stronger locations 
-        at the maximum block if it exists 
-        until the first less then the next maximum block will arrived
-        """
+        gx = self._grad[:, :, 0]
+        gy = self._grad[:, :, 1]
+        g = np.square(gx**2 + gy**2)
 
         locations = list()
+        values = list()
         for x, y in zip(rows, cols):
-            point = (x, y)
-            locations.append(point)
+            if (x, y) not in locations:
+                for i, j in zip(range(0, self._cell_size), range(0, self._cell_size)):
+                    locations.append((x + i, y + j))
+                    values.append(g[y + j, x + i])
 
-        return locations
+        points = list()
+        # sorted point values by the maximum
+        all_peaks = np.flip(np.argsort(values))
+        # considering the number of point the user asked for
+        for i in all_peaks[:n]:
+            points.append(locations[i])
+
+        return points
 
 
     """
@@ -176,6 +181,6 @@ if __name__ == "__main__":
     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
     image = sys_path + "image001.jpg"
     finder = KeyPointsFinder(image)
-    key_points = finder.get_key_points(5)
+    key_points = finder.get_key_points(10)
     finder.plot_key_points(key_points)
 
