@@ -183,6 +183,6 @@ if __name__ == "__main__":
     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
     image = sys_path + "image001.jpg"
     finder = KeyPointsFinder(image)
-    key_points = finder.get_key_points(10)
+    key_points = finder.get_key_points(5)
     finder.plot_key_points(key_points)
 
