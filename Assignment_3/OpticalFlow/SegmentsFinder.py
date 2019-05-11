@@ -18,11 +18,13 @@ SEG_TWO_COLOR = (255, 0, 0)
 SEG_THREE_COLOR = (0, 255, 255)
 
 INIT_REQUIRED_COUNTER = 2
+INIT_CLUSTERS = 4
 
 
 class SegmentFinder:
-    def __init__(self, image, seg_counter):
+    def __init__(self, image, image_name, seg_counter=INIT_CLUSTERS):
         self.img = image
+        self.img_name = image_name
         self.segments_counter = seg_counter
 
 
@@ -36,10 +38,12 @@ class SegmentFinder:
     def calc_bin_grabcut(self, f_seg_indices, b_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
         for (x, y) in f_seg_indices:
+            print((x, y), "!!")
             # (x, y) -> (y, x) due to image input and numpy conversion
             mask[y][x] = cv2.GC_FGD
 
         for (x, y) in b_seg_indices:
+            print((x, y))
             mask[y][x] = cv2.GC_BGD
 
         # algorithm MUST parameters:
@@ -135,7 +139,7 @@ class SegmentFinder:
     .   @brief Calculating the final mask
     """
     def calc_multivoting_grabcut(self):
-        print("\nProcessing", self.image_name, "..")
+        print("\nProcessing", self.img_name, "..")
         f0 = f0_complement = f1 = f1_complement = f2 = f2_complement = f3 = f3_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
         if self.segments_counter == 2:
             f0 = self.calc_bin_grabcut(seg0, seg1)
@@ -172,10 +176,27 @@ class SegmentFinder:
 class SegmentSplitter:
 
     """
+    prepare_seg(seg[, curr_label[, key_points_float[, labels]]]) -> seg array with numpy pair to tuple pairs into
+    .   @brief Converting point from numpy array to tuple
+    .   @param seg A segment of points from the image.
+    .   @param curr_label The current cluster where the segment is belonging to.
+    .   @param key_points_float All key-points array.
+    .   @param labels All labels.
+    """
+    @staticmethod
+    def prepare_seg(seg, curr_label, key_points_float, labels):
+        seg_t = np.asarray(key_points_float[labels.ravel() == curr_label], dtype=np.uint32)
+        for i, _ in enumerate(seg_t):
+            seg.append(tuple(seg_t[i]))
+
+        return seg
+
+
+    """
     segmentation(inputImage, key_points) -> a segmented image
     .   @brief Calculating the segmentation image
-    .   @param inputImage - an image to make the segmentation
-    .   @param key_points - key points from HOG peak points
+    .   @param inputImage An image to make the segmentation
+    .   @param key_points Key-points from HOG peak points
     """
     @staticmethod
     def segmentation(inputImage, key_points):
@@ -184,25 +205,18 @@ class SegmentSplitter:
         orig_img = cv2.imread(inputImage)
         seg_img = cv2.imread(inputImage)
 
+        # auto separating to clusters without the ordinary way - user's picking
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        key_points_float = np.asarray(key_points, dtype=np.float32)
+        compactness, labels, centers = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+
         # lists to hold pixels in each segment
-        seg0 = []
-        seg1 = []
-        seg2 = []
-        seg3 = []
+        seg0 = SegmentSplitter.prepare_seg(list(), 0, key_points_float, labels)
+        seg1 = SegmentSplitter.prepare_seg(list(), 1, key_points_float, labels)
+        seg2 = SegmentSplitter.prepare_seg(list(), 2, key_points_float, labels)
+        seg3 = SegmentSplitter.prepare_seg(list(), 3, key_points_float, labels)
 
-        ## key_points should be used as segments - need to extract this array to 4 arrays
-
-        if not (seg0 and seg1):
-            print("At least 2 segments are required.")
-            exit(-1)
-
-        seg_counter = INIT_REQUIRED_COUNTER
-        if seg2:
-            seg_counter += 1
-        if seg3:
-            seg_counter += 1
-
-        ig = SegmentFinder(orig_img, seg_counter)
+        ig = SegmentFinder(orig_img, inputImage)
         return ig.calc_multivoting_grabcut()
 
 

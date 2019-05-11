@@ -20,10 +20,23 @@ class KeyPointsFinder:
         self._win_size = win_size
         self._real_image = cv2.imread(image_path)
         self._scaled_image = cv2.resize(self._real_image, self._win_size, interpolation=cv2.INTER_CUBIC)
+        self._scale_mat = self.get_scale_matrix(self._real_image, self._scaled_image)
         self._hog_descriptor = None
         self._grad = None
         self._angleOfs = None
 
+
+    """
+    get_scale_matrix(real_image[, scaled_image]) -> scaling matrix between the original matrix to the scaled hog
+    .   @brief Computing scaling matrix
+    .   @param real_image
+    .   @param scaled_image
+    """
+    def get_scale_matrix(self, real_image, scaled_image):
+        scale_mat = np.zeros((2, 2), dtype=np.float32)
+        scale_mat[0, 0] = real_image.shape[0] / scaled_image.shape[0]
+        scale_mat[1, 1] = real_image.shape[1] / scaled_image.shape[1]
+        return scale_mat
 
     """
     get_real_image() -> original image
@@ -42,11 +55,11 @@ class KeyPointsFinder:
 
 
     """
-    __reshape(raw_hist) -> reshaped hog descriptor
+    reshape(raw_hist) -> reshaped hog descriptor
     .   @brief Reshaping the hog descriptor.
     .   @param raw_hist A raw data normalized histogram.
     """
-    def __reshape(self, raw_hist):
+    def reshape(self, raw_hist):
         hists = list()
         for i in range(0, len(raw_hist), self._bin_n):
             hists.append(raw_hist[i:(i + self._bin_n)].ravel())
@@ -55,11 +68,11 @@ class KeyPointsFinder:
 
 
     """
-    __reduce_dimension(multi_feature_vectors) -> reduced dimension array
+    reduce_dimension(multi_feature_vectors) -> reduced dimension array
     .   @brief Reduces a dimension.
     .   @param multi_feature_vectors A multi-dimensional array of features.
     """
-    def __reduce_dimension(self, multi_feature_vectors):
+    def reduce_dimension(self, multi_feature_vectors):
         reduced = []
         for single_hog in multi_feature_vectors:
             for hist in single_hog:
@@ -99,7 +112,7 @@ class KeyPointsFinder:
         grad = np.zeros(winStride, dtype=np.float32)
         angleOfs = np.zeros(winStride, dtype=np.float32)
         grad, angleOfs = hog_instance.computeGradient(image, grad, angleOfs)
-        return self.__reshape(hist), grad, angleOfs
+        return self.reshape(hist), grad, angleOfs
 
 
     """
@@ -108,7 +121,7 @@ class KeyPointsFinder:
     """
     def generate_key_points(self):
         self._hog_descriptor, self._grad, self._angleOfs = self.get_native_hog(self._scaled_image)
-        self._hog_descriptor = np.asarray(self.__reduce_dimension(self._hog_descriptor), dtype=np.float32)
+        self._hog_descriptor = np.asarray(self.reduce_dimension(self._hog_descriptor), dtype=np.float32)
 
 
     """
@@ -159,10 +172,16 @@ class KeyPointsFinder:
     get_key_points(n) -> key_points
     .   @brief Computes n key-points as a wrapper function.
     .   @param n Number of key points to find.
+    .   @param ret_scaled return the scaled points [default=False]
     """
-    def get_key_points(self, n):
+    def get_key_points(self, n, ret_scaled=False):
         self.generate_key_points()
-        return self.get_strongest(n)
+        key_points = self.get_strongest(n)
+        if not ret_scaled:
+            for i, _ in enumerate(key_points):
+                key_points[i] = tuple(np.diag(self._scale_mat * key_points[i]).astype(np.uint32))
+        return key_points
+
 
 
     """
@@ -172,8 +191,8 @@ class KeyPointsFinder:
     """
     def plot_key_points(self, key_points):
         for point in key_points:
-            cv2.circle(self._scaled_image, point, 5, (0, 255, 0), -1)
-        cv2.imshow('HOG Image Strongest Key Points', self._scaled_image)
+            cv2.circle(self._real_image, point, 3, (0, 255, 0), -1)
+        cv2.imshow('HOG Image Strongest Key Points', self._real_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
@@ -183,6 +202,6 @@ if __name__ == "__main__":
     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
     image = sys_path + "image001.jpg"
     finder = KeyPointsFinder(image)
-    key_points = finder.get_key_points(5)
+    key_points = finder.get_key_points(100)
     finder.plot_key_points(key_points)
 
