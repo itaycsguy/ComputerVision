@@ -20,7 +20,7 @@ Window_Size = 15
 First_frame = 0
 
 #Input Variables
-inputVideoName = "ballet.mp4"  #"highway.avi" #""bugs11.mp4"
+inputVideoName = "highway.avi"  #"highway.avi" #""bugs11.mp4"
 selectPoints = True
 numberOfPoints = 5
 
@@ -158,14 +158,15 @@ def GetNextFrame(cap_image):
 
 
 if __name__ == "__main__":
+    cap = cv2.VideoCapture(".//Datasets//" + inputVideoName)
     cap1 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
     cap2 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
 
     global orig_img, point_img
     global Points
-    orig_img = GetFrameByIndex(First_frame, cap1)
+    orig_img = GetFrameByIndex(First_frame, cap)
     height, width, channels = orig_img.shape
-    point_img = GetFrameByIndex(First_frame, cap1)
+    point_img = GetFrameByIndex(First_frame, cap)
     Points = []
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     out = cv2.VideoWriter(".//Results//Video" + inputVideoName[0:-4] +".avi", fourcc, 20.0, (width, height))
@@ -174,10 +175,10 @@ if __name__ == "__main__":
 
 
     # Check if camera opened successfully
-    if (not cap1.isOpened()) or (not cap2.isOpened()):
+    if (not cap.isOpened()) or (not cap1.isOpened()) or (not cap2.isOpened()):
         print("Error opening video stream or file")
         exit()
-    NumberOfFrames = int(cap1.get(cv2.CAP_PROP_FRAME_COUNT))
+    NumberOfFrames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     print("NumberOfFrames = " + str(NumberOfFrames))
 
 
@@ -194,8 +195,9 @@ if __name__ == "__main__":
         print("TODO: Choose points from HOG")
 
 
-    LastFrame = GetFrameByIndex(NumberOfFrames - 1 , cap1)
-    # LastFrame = orig_img
+    # LastFrame = GetFrameByIndex(NumberOfFrames - 1 , cap)
+    LastFrame = orig_img
+
     cap1.set(1, First_frame)
     cap2.set(1,First_frame+1)
 
@@ -244,6 +246,7 @@ if __name__ == "__main__":
 
     cv2.imwrite(".//Results//Velocity" + inputVideoName[0:-4] +".jpg", LastFrame)
     # Release everything if job is finished
+    cap.release()
     cap1.release()
     cap2.release()
     out.release()
