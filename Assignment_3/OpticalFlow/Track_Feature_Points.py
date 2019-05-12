@@ -24,7 +24,7 @@ Window_Size = 20
 First_frame = 0
 
 #Input Variables
-inputVideoName = "highway.avi"  #"highway.avi" #""bugs11.mp4"
+inputVideoName = "bugs11.mp4"  #"highway.avi" #""bugs11.mp4"
 selectPoints = False
 numberOfPoints = 200
 
@@ -34,7 +34,8 @@ numberOfPoints = 200
 def show_video():
     # Create a VideoCapture object and read from input file
     # If the input is the camera, pass 0 instead of the video file name
-    cap = cv2.VideoCapture(".//Datasets//" + inputVideoName)
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    cap = cv2.VideoCapture(".//Datasets//" + inputVideoName, fourcc)
 
     # Check if camera opened successfully
     if (cap.isOpened() == False):
