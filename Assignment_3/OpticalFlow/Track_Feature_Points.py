@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import operator
 import argparse
+import os
+import sys
+sys.path.append(os.path.abspath('.'))
+from KeyPointsFinder import *
 
 
 Point_color = (0, 0, 255)
@@ -21,8 +25,8 @@ First_frame = 0
 
 #Input Variables
 inputVideoName = "highway.avi"  #"highway.avi" #""bugs11.mp4"
-selectPoints = True
-numberOfPoints = 10
+selectPoints = False
+numberOfPoints = 200
 
 
 
@@ -175,10 +179,12 @@ if __name__ == "__main__":
     if selectPoints:
         orig_img, point_img, Points = GetPointsFromUser()
     else:
-        
+        orig_img = GetFrameByIndex(First_frame)
+        point_img = GetFrameByIndex(First_frame)
         #Find interested points by HOG
         #Hog will give us many points
         #We need to choose a number of them (like the parameter we have)
+        Points = KeyPointsFinder(orig_img).get_key_points(numberOfPoints)
         print("TODO: Choose points from HOG")
 
     height, width, channels = orig_img.shape

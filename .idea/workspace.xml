@@ -27,8 +27,11 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Videobugs11.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Videobugs11.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Videohighway.avi" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Videohighway.avi" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,13 +41,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="225" column="51" selection-start-line="225" selection-start-column="51" selection-end-line="225" selection-end-column="51" />
+            <state relative-caret-position="81">
+              <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
               <folding>
-                <element signature="e#74#84#0" expanded="true" />
+                <marker date="1557622195330" expanded="true" signature="9324:9657" ph="..." />
               </folding>
             </state>
           </provider>
@@ -53,8 +56,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="195" column="44" lean-forward="true" selection-start-line="195" selection-start-column="44" selection-end-line="195" selection-end-column="44" />
+            <state relative-caret-position="162">
+              <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="36" column="26" selection-start-line="36" selection-start-column="14" selection-end-line="36" selection-end-column="26" />
+              <folding>
+                <element signature="e#74#83#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -70,7 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>trainImageDirName</find>
       <find>testImageDirName</find>
       <find>resize</find>
       <find>generate_bows</find>
@@ -100,6 +114,7 @@
       <find>SEG_ZERO_COLOR</find>
       <find>calc_bin_grabcut</find>
       <find>img</find>
+      <find>imread</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -123,10 +138,10 @@
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py" />
         <option value="$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py" />
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Segment_Image.py" />
-        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" />
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointFinder.py" />
-        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" />
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" />
+        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" />
+        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" />
       </list>
     </option>
   </component>
@@ -215,7 +230,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.SegmentsFinder">
+  <component name="RunManager" selected="Python.Track_Feature_Points">
     <configuration name="KeyPointsFinder" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="ComputerVision" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -229,27 +244,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Multi_Segmentation" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="ComputerVision" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Assignment_1" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_1/Multi_Segmentation.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -321,13 +315,34 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Track_Feature_Points" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ComputerVision" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Assignment_3/OpticalFlow" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Track_Feature_Points" />
         <item itemvalue="Python.SegmentsFinder" />
         <item itemvalue="Python.KeyPointsFinder" />
         <item itemvalue="Python.Segment_Image" />
         <item itemvalue="Python.Object_Recognition_System" />
-        <item itemvalue="Python.Multi_Segmentation" />
       </list>
     </recent_temporary>
   </component>
@@ -528,16 +543,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="177" column="8" lean-forward="true" selection-start-line="177" selection-start-column="8" selection-end-line="177" selection-end-column="8" />
-          <folding>
-            <element signature="e#74#83#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/numpy/core/_multiarray_umath.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="177">
@@ -559,13 +564,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="195" column="44" lean-forward="true" selection-start-line="195" selection-start-column="44" selection-end-line="195" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-306">
@@ -575,10 +573,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="225" column="51" selection-start-line="225" selection-start-column="51" selection-end-line="225" selection-end-column="51" />
+        <state relative-caret-position="81">
+          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
-            <element signature="e#74#84#0" expanded="true" />
+            <marker date="1557622195330" expanded="true" signature="9324:9657" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="36" column="26" selection-start-line="36" selection-start-column="14" selection-end-line="36" selection-end-column="26" />
+          <folding>
+            <element signature="e#74#83#0" expanded="true" />
           </folding>
         </state>
       </provider>
