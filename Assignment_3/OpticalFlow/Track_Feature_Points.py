@@ -16,12 +16,12 @@ Point_color = (0, 0, 255)
 Point_size = 7
 Line_color = (0, 255, 0)
 Line_size = 3
-Window_Size = 60
+Window_Size = 15
 First_frame = 0
 RoundsOfLucasKanade = 9
 
 #Input Variables
-inputVideoName = "we1.mp4"  #"highway.avi" #""bugs11.mp4"
+inputVideoName = "ballet.mp4"  #"highway.avi" #""bugs11.mp4"
 selectPoints = True
 numberOfPoints = 10
 
