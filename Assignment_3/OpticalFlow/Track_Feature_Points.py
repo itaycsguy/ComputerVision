@@ -16,13 +16,14 @@ Point_color = (0, 0, 255)
 Point_size = 7
 Line_color = (0, 255, 0)
 Line_size = 3
-Window_Size = 15
+Window_Size = 60
 First_frame = 0
+RoundsOfLucasKanade = 9
 
 #Input Variables
-inputVideoName = "highway.avi"  #"highway.avi" #""bugs11.mp4"
+inputVideoName = "we1.mp4"  #"highway.avi" #""bugs11.mp4"
 selectPoints = True
-numberOfPoints = 5
+numberOfPoints = 10
 
 
 
@@ -38,7 +39,10 @@ def show_video():
         exit()
 
     # Read until video is completed
+    count = 0
     while (cap.isOpened()):
+        print(">> " + str(count))
+        count = count + 1
         # Capture frame-by-frame
         ret, frame = cap.read()
         if ret == True:
@@ -53,14 +57,10 @@ def show_video():
         # Break the loop
         else:
             break
-
     # When everything done, release the video capture object
     cap.release()
-
     # Closes all the frames
     cv2.destroyAllWindows()
-
-
 
 # mouse callback function
 def mouse_click(event, x, y, flags, params):
@@ -107,9 +107,6 @@ def GetFrameByIndex(index , cap_video):
 
 #let the user choose the points on the image
 def GetPointsFromUser():
-
-
-
     cv2.namedWindow("Select Points")
     # mouse event listener
     cv2.setMouseCallback("Select Points", mouse_click)
@@ -156,55 +153,61 @@ def GetNextFrame(cap_image):
         exit()
     return im
 
-
-if __name__ == "__main__":
-    cap = cv2.VideoCapture(".//Datasets//" + inputVideoName)
-    cap1 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
-    cap2 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
-
-    global orig_img, point_img
-    global Points
-    orig_img = GetFrameByIndex(First_frame, cap)
-    height, width, channels = orig_img.shape
-    point_img = GetFrameByIndex(First_frame, cap)
-    Points = []
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(".//Results//Video" + inputVideoName[0:-4] +".avi", fourcc, 20.0, (width, height))
-
-
-
-
-    # Check if camera opened successfully
-    if (not cap.isOpened()) or (not cap1.isOpened()) or (not cap2.isOpened()):
-        print("Error opening video stream or file")
-        exit()
-    NumberOfFrames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    print("NumberOfFrames = " + str(NumberOfFrames))
-
-
-
-
-
+def GetPoints():
     if selectPoints:
         GetPointsFromUser()
     else:
-
         #Find interested points by HOG
         #Hog will give us many points
         #We need to choose a number of them (like the parameter we have)
         print("TODO: Choose points from HOG")
 
 
-    # LastFrame = GetFrameByIndex(NumberOfFrames - 1 , cap)
-    LastFrame = orig_img
+def optical():
+    cap1 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
+    cap2 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
+
+    global orig_img, point_img
+    global Points
+
+    # Check if camera opened successfully
+    if (not cap1.isOpened()) or (not cap2.isOpened()):
+        print("Error opening video stream or file")
+        exit()
+    NumberOfFrames = int(cap1.get(cv2.CAP_PROP_FRAME_COUNT))
+    print("NumberOfFrames = " + str(NumberOfFrames))
 
     cap1.set(1, First_frame)
     cap2.set(1,First_frame+1)
 
     for indexFrame in range(First_frame,NumberOfFrames - 1):
         print(">> " + str(indexFrame))
-        draw_im = fr1 = GetNextFrame(cap1)
-        fr2 = GetNextFrame(cap2)
+        res1, fr1 = cap1.read()
+        res2, fr2 = cap2.read()
+        draw_im = fr1
+        if (not res1) or (not res2):
+            print("hi")
+            # cv2.imwrite(".//Results//Velocity" + inputVideoName[0:-4] +".jpg", LastFrame)
+            # Release everything if job is finished
+            cap1.release()
+            cap2.release()
+            out.release()
+            cv2.destroyAllWindows()
+            print("hi")
+            return 1
+
+        if indexFrame == First_frame:
+            orig_img = fr1
+            height, width, channels = orig_img.shape
+            point_img = fr1
+            Points = []
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            out = cv2.VideoWriter(".//Results//Video" + inputVideoName[0:-4] + ".avi", fourcc, 20.0, (width, height))
+            GetPoints()
+        if indexFrame == (NumberOfFrames - 2):
+            LastFrame = fr2
+
+
         fr1 = fr1.astype(float)
         fr2 = fr2.astype(float)
 
@@ -217,7 +220,7 @@ if __name__ == "__main__":
             print("y = " + str(y))
             UpdateX = x
             UpdateY = y
-            for _ in range(0,9):
+            for _ in range(0,RoundsOfLucasKanade):
                 It, Ix, Iy = Getderivatives(fr1 , fr2 , x , y , UpdateX , UpdateY, Window_Size)
                 solution = Lucas_Kanade_system(Ix,Iy,It)
                 print("solution = " + str(solution))
@@ -231,7 +234,7 @@ if __name__ == "__main__":
                     Points.remove((y,x))
                     break
 
-            LastFrame = paint_velocity([[x,y]], [[UpdateX - x , UpdateY - y]], LastFrame , True , i)
+            # LastFrame = paint_velocity([[x,y]], [[UpdateX - x , UpdateY - y]], LastFrame , True , i)
             if not skip:
                 Points[i] = (UpdateY , UpdateX)
             velocity.append((UpdateX - x , UpdateY - y))
@@ -244,12 +247,15 @@ if __name__ == "__main__":
         cv2.waitKey(1)
 
 
-    cv2.imwrite(".//Results//Velocity" + inputVideoName[0:-4] +".jpg", LastFrame)
+    # cv2.imwrite(".//Results//Velocity" + inputVideoName[0:-4] +".jpg", LastFrame)
     # Release everything if job is finished
-    cap.release()
     cap1.release()
     cap2.release()
     out.release()
     cv2.destroyAllWindows()
+    return 1
+
+if __name__ == "__main__":
+    optical()
 
 
