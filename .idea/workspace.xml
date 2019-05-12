@@ -28,7 +28,6 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -42,8 +41,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="605">
-              <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+            <state relative-caret-position="316">
+              <caret line="225" column="51" selection-start-line="225" selection-start-column="51" selection-end-line="225" selection-end-column="51" />
               <folding>
                 <element signature="e#74#84#0" expanded="true" />
               </folding>
@@ -126,8 +125,8 @@
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Segment_Image.py" />
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" />
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointFinder.py" />
-        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" />
         <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" />
+        <option value="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" />
       </list>
     </option>
   </component>
@@ -576,8 +575,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="605">
-          <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+        <state relative-caret-position="316">
+          <caret line="225" column="51" selection-start-line="225" selection-start-column="51" selection-end-line="225" selection-end-column="51" />
           <folding>
             <element signature="e#74#84#0" expanded="true" />
           </folding>

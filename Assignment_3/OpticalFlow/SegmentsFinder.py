@@ -203,7 +203,6 @@ class SegmentSplitter:
         orig_img = cv2.imread(inputImage)
         seg_img = cv2.imread(inputImage)
 
-        print(orig_img.shape)
         # auto separating to clusters without the ordinary way - user's picking
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         key_points_float = np.asarray(key_points, dtype=np.float32)
@@ -224,5 +223,8 @@ if __name__ == "__main__":
     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
     image = sys_path + "image001.jpg"
     keyPointsFinder = KeyPointsFinder(image)
-    key_points = keyPointsFinder.get_key_points(10)
+    key_points = keyPointsFinder.get_key_points(500)
     segmentFinder0 = SegmentSplitter.segmentation(image, key_points)
+    cv2.imshow('seg image', segmentFinder0.astype(np.uint8))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
