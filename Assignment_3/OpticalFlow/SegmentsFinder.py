@@ -219,9 +219,14 @@ class SegmentSplitter:
         return ig.calc_multivoting_grabcut()
 
 
-# if __name__ == "__main__":
-#     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
-#     image = sys_path + "image001.jpg"
-#     keyPointsFinder = KeyPointsFinder(image)
-#     key_points = keyPointsFinder.get_key_points(500)
-#     segmentFinder0 = SegmentSplitter.segmentation(image, key_points)
+if __name__ == "__main__":
+    sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
+    image = sys_path + "image001.jpg"
+    keyPointsFinder0 = KeyPointsFinder(image)
+    key_points0 = keyPointsFinder0.get_key_points(150)
+
+    keyPointsFinder1 = KeyPointsFinder(image)
+    key_points1 = keyPointsFinder1.get_key_points(150)
+
+    segmentFinder0 = SegmentSplitter.segmentation(image, key_points0)
+    segmentFinder1 = SegmentSplitter.segmentation(image, key_points1)

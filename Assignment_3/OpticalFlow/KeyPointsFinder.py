@@ -18,7 +18,7 @@ class KeyPointsFinder:
         self._cell_size = cell_size     # Descriptor cell computation on the image after resizing
         self._bin_n = bin_n             # Number of bins
         self._win_size = win_size
-        self._real_image = image_path #cv2.imread(image_path)
+        self._real_image = cv2.imread(image_path)
         self._scaled_image = cv2.resize(self._real_image, self._win_size, interpolation=cv2.INTER_CUBIC)
         self._hog_descriptor = None
         self._grad = None
@@ -121,7 +121,7 @@ class KeyPointsFinder:
     .   @param n Number of key points to find.
     .   @param fast If to use with a smarter algorithm [default=True]
     """
-    def get_strongest(self, n, fast=True):
+    def get_strongest(self, n, fast=False):
         rows_size = self._scaled_image.shape[0]
         row_blocks = rows_size / self._cell_size
         cols_size = self._scaled_image.shape[1]
@@ -144,7 +144,7 @@ class KeyPointsFinder:
         else:
             descriptors_strength = list()
             for i in range(0, descriptor_size, descriptor_size_per_block):
-                descriptors_strength.append(np.sum(np.square(self._hog_descriptor[i:(i + descriptor_size_per_block)])))
+                descriptors_strength.append(np.mean(np.square(self._hog_descriptor[i:(i + descriptor_size_per_block)])))
 
             # sorted blocks by the maximum
             block_entries = np.flip(np.argsort(descriptors_strength))
@@ -202,9 +202,10 @@ class KeyPointsFinder:
 
 
 
-# if __name__ == "__main__":
-#     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
-#     image = sys_path + "vehicle_test.jpg"
-#     finder = KeyPointsFinder(image)
-#     key_points = finder.get_key_points(10)
-#     finder.plot_key_points(key_points)
+if __name__ == "__main__":
+    sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
+    # image = sys_path + "vehicle_test.jpg"
+    image = sys_path + "highway.jpg"
+    finder = KeyPointsFinder(image)
+    key_points = finder.get_key_points(1500)
+    finder.plot_key_points(key_points)
