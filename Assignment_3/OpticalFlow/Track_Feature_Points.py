@@ -157,6 +157,7 @@ def GetPoints():
     if selectPoints:
         GetPointsFromUser()
     else:
+        
         #Find interested points by HOG
         #Hog will give us many points
         #We need to choose a number of them (like the parameter we have)

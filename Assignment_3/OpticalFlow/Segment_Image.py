@@ -58,7 +58,7 @@ def get_images():
 
 
 if __name__ == "__main__":
-    image1,image2 = get_images()
+    image1, image2 = get_images()
 
     cv2.imshow("first image",image1)
     cv2.imshow("second image",image2)
