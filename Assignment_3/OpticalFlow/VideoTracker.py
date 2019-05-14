@@ -4,7 +4,7 @@ import numpy as np
 inputDirectoryPath = ".//Datasets//"
 inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4"
 selectPoints = False
-numberOfPoints = 100
+numberOfPoints = 150
 
 class VideoTracker:
 
@@ -49,9 +49,19 @@ class VideoTracker:
     .   @param image The original RGB image
     .   @param n_points Number of points that's wanted to be returned
     """
-    def fetch_key_points(self, image, blockSize=2, ksize=3, k=0.04):
+    def fetch_key_points(self, image, blockSize=10, ksize=3, k=0.2):
         gray_image = np.float32(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY))
-        return cv2.cornerHarris(gray_image, blockSize, ksize, k)
+        init_dst = cv2.cornerHarris(gray_image, blockSize, ksize, k)
+        dst = np.zeros_like(init_dst)
+        sums = list()
+        for row in init_dst:
+            sums.append(row.sum())
+
+        max_idx = np.flip(np.argsort(sums))[:numberOfPoints]
+        for idx in max_idx:
+            dst[idx] = init_dst[idx].copy()
+
+        return dst
 
 
 
@@ -104,7 +114,7 @@ class VideoTracker:
                     break
 
                 # updating the next iteration
-                mask = np.zeros_like(prev_img)
+                mask = np.zeros_like(mask)
                 prev_pts = next_pts.copy()
                 prev_img = next_img.copy()
 
@@ -122,7 +132,7 @@ class VideoTracker:
         #result is dilated for marking the corners, not important
         key_points = cv2.dilate(key_points, None)
         # Threshold for an optimal value, it may vary depending on the image.
-        image[key_points > (0.01*key_points.max())] = [0, 0, 255]
+        image[key_points > 0.0] = [0, 0, 255]
 
         cv2.imshow('key_points', image)
         if cv2.waitKey(0) & 0xff == 27:
@@ -132,9 +142,9 @@ class VideoTracker:
 
 if __name__ == "__main__":
     tracker = VideoTracker()
-    # frame = tracker.get_frame_from_video_at(0)
-    # dst = tracker.fetch_key_points(frame)
-    # print(frame.shape)
-    # print(dst.shape)
+    frame = tracker.get_frame_from_video_at(0)
+    dst = tracker.fetch_key_points(frame)
+    print(frame.shape)
+    print(dst.shape)
     # tracker.plot_peaks_of(frame, dst)
     tracker.video_processing()
