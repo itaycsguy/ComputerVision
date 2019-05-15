@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="" />
+    <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Track_Feature_Points.py" beforeDir="false" afterPath="$PROJECT_DIR$/Track_Feature_Points.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+            <state relative-caret-position="73">
+              <caret line="303" selection-start-line="303" selection-end-line="303" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -45,7 +48,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>int</find>
       <find>paint_point</find>
       <find>lin</find>
       <find>lina</find>
@@ -75,6 +77,7 @@
       <find>exit</find>
       <find>waitkey</find>
       <find>wait</find>
+      <find>deri</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -232,7 +235,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.19312602" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.46317512" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -313,8 +316,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+        <state relative-caret-position="73">
+          <caret line="303" selection-start-line="303" selection-end-line="303" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>

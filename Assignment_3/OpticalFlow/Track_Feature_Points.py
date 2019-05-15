@@ -257,6 +257,69 @@ def optical():
     return 1
 
 if __name__ == "__main__":
-    optical()
+    cap1 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
+    cap2 = cv2.VideoCapture(".//Datasets//" + inputVideoName)
+
+    global orig_img, point_img
+    global Points
+
+    # Check if camera opened successfully
+    if (not cap1.isOpened()) or (not cap2.isOpened()):
+        print("Error opening video stream or file")
+        exit()
+    NumberOfFrames = int(cap1.get(cv2.CAP_PROP_FRAME_COUNT))
+    print("NumberOfFrames = " + str(NumberOfFrames))
+
+    cap1.set(1, First_frame)
+    cap2.set(1, First_frame + 1)
+
+    for indexFrame in range(First_frame, NumberOfFrames - 1):
+        print(">> " + str(indexFrame))
+        res1, fr1 = cap1.read()
+        res2, fr2 = cap2.read()
+        draw_im = fr1
+        if (not res1) or (not res2):
+            print("hi")
+            # cv2.imwrite(".//Results//Velocity" + inputVideoName[0:-4] +".jpg", LastFrame)
+            # Release everything if job is finished
+            cap1.release()
+            cap2.release()
+            out.release()
+            cv2.destroyAllWindows()
+            print("hi")
+
+
+        if indexFrame == First_frame:
+            orig_img = fr1
+            height, width, channels = orig_img.shape
+            point_img = fr1
+            Points = []
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            out = cv2.VideoWriter(".//Results//Video" + inputVideoName[0:-4] + ".avi", fourcc, 20.0, (width, height))
+            GetPoints()
+        if indexFrame == (NumberOfFrames - 2):
+            LastFrame = fr2
+        newpoints = np.array([])
+
+        cv2.calcOpticalFlowPyrLK(fr1,fr2,np.array(Points),newpoints)
+
+        print(newpoints)
+
+        Points = newpoints
+
+
+        draw_im = paint_point(Points, draw_im)
+        # draw_im = paint_velocity(Points, velocity, draw_im)
+        cv2.imshow("added points", draw_im)
+        out.write(draw_im)
+        cv2.waitKey(1)
+
+    # cv2.imwrite(".//Results//Velocity" + inputVideoName[0:-4] +".jpg", LastFrame)
+    # Release everything if job is finished
+    cap1.release()
+    cap2.release()
+    out.release()
+    cv2.destroyAllWindows()
+
 
 
