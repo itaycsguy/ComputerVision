@@ -38,12 +38,10 @@ class SegmentFinder:
     def calc_bin_grabcut(self, f_seg_indices, b_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
         for (x, y) in f_seg_indices:
-            print((x, y), "!!")
             # (x, y) -> (y, x) due to image input and numpy conversion
             mask[y][x] = cv2.GC_FGD
 
         for (x, y) in b_seg_indices:
-            print((x, y))
             mask[y][x] = cv2.GC_BGD
 
         # algorithm MUST parameters:
@@ -208,8 +206,9 @@ class SegmentSplitter:
         # auto separating to clusters without the ordinary way - user's picking
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         key_points_float = np.asarray(key_points, dtype=np.float32)
-        compactness, labels, centers = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        _, labels, _ = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
+        # print(key_points)
         # lists to hold pixels in each segment
         seg0 = SegmentSplitter.prepare_seg(list(), 0, key_points_float, labels)
         seg1 = SegmentSplitter.prepare_seg(list(), 1, key_points_float, labels)
@@ -222,11 +221,12 @@ class SegmentSplitter:
 
 if __name__ == "__main__":
     sys_path = "D:\\PycharmProjects\\ComputerVision\\Assignment_3\\OpticalFlow\\Datasets\\"
-    image0 = sys_path + "image001.jpg"
-    image1 = sys_path + "image004.jpg"
-    keyPointsfinder0 = KeyPointsFinder(image0)
-    keyPointsfinder1 = KeyPointsFinder(image1)
-    key_points0 = keyPointsfinder0.get_key_points(10)
-    key_points1 = keyPointsfinder1.get_key_points(10)
-    segmentFinder0 = SegmentSplitter.segmentation(image0, key_points0)
-    segmentFinder1 = SegmentSplitter.segmentation(image1, key_points1)
+    image = sys_path + "image001.jpg"
+    keyPointsFinder0 = KeyPointsFinder(image)
+    key_points0 = keyPointsFinder0.get_key_points(150)
+
+    keyPointsFinder1 = KeyPointsFinder(image)
+    key_points1 = keyPointsFinder1.get_key_points(150)
+
+    segmentFinder0 = SegmentSplitter.segmentation(image, key_points0)
+    segmentFinder1 = SegmentSplitter.segmentation(image, key_points1)

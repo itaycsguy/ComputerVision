@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import operator
 import argparse
+import os
+import sys
+sys.path.append(os.path.abspath('.'))
+from KeyPointsFinder import *
 
 
 Point_color = (0, 0, 255)
@@ -21,17 +25,16 @@ First_frame = 0
 RoundsOfLucasKanade = 9
 
 #Input Variables
-inputVideoName = "ballet.mp4"  #"highway.avi" #""bugs11.mp4"
-selectPoints = True
-numberOfPoints = 10
-
-
+inputVideoName = "bugs11.mp4"  #"highway.avi" #""bugs11.mp4"
+selectPoints = False
+numberOfPoints = 200
 
 
 def show_video():
     # Create a VideoCapture object and read from input file
     # If the input is the camera, pass 0 instead of the video file name
-    cap = cv2.VideoCapture(".//Datasets//" + inputVideoName)
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    cap = cv2.VideoCapture(".//Datasets//" + inputVideoName, fourcc)
 
     # Check if camera opened successfully
     if (cap.isOpened() == False):
@@ -157,10 +160,12 @@ def GetPoints():
     if selectPoints:
         GetPointsFromUser()
     else:
-        
+        orig_img = GetFrameByIndex(First_frame)
+        point_img = GetFrameByIndex(First_frame)
         #Find interested points by HOG
         #Hog will give us many points
         #We need to choose a number of them (like the parameter we have)
+        Points = KeyPointsFinder(orig_img).get_key_points(numberOfPoints)
         print("TODO: Choose points from HOG")
 
 
