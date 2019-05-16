@@ -40,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="343">
-              <caret line="364" column="42" lean-forward="true" selection-start-line="364" selection-start-column="42" selection-end-line="364" selection-end-column="42" />
+            <state relative-caret-position="193">
+              <caret line="347" column="124" selection-start-line="347" selection-start-column="124" selection-end-line="347" selection-end-column="124" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -603,8 +603,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
-          <caret line="364" column="42" lean-forward="true" selection-start-line="364" selection-start-column="42" selection-end-line="364" selection-end-column="42" />
+        <state relative-caret-position="193">
+          <caret line="347" column="124" selection-start-line="347" selection-start-column="124" selection-end-line="347" selection-end-column="124" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

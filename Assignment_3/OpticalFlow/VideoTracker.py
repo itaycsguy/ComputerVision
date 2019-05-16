@@ -199,39 +199,27 @@ class SegmentationWrapper:
     .   @param key_points Key-points from HOG peak points
     """
     @staticmethod
-    def segmentation(im0, kp0, im1, kp1):
-        global orig_img0, seg_img0, orig_img1, seg_img1
+    def segmentation(im, kp0, kp1):
+        global orig_img, seg_img
         global seg0, seg1, seg2, seg3
-        orig_img0 = im0.copy()
-        seg_img0 = im0.copy()
-        orig_img1 = im1.copy()
-        seg_img1 = im1.copy()
+        orig_img = im.copy()
+        seg_img = im.copy()
 
         # auto separating to clusters without the ordinary way - user's picking
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        key_points0_float = np.asarray(kp0, dtype=np.float32)
-        _, labels0, _ = cv2.kmeans(key_points0_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-        key_points1_float = np.asarray(kp1, dtype=np.float32)
-        _, labels1, _ = cv2.kmeans(key_points1_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        key_points_float = np.asarray(np.concatenate([kp0, kp1], axis=0), dtype=np.float32)
+        _, labels, _ = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
         # lists to hold pixels in each segment
-        seg0 = SegmentationWrapper.prepare_seg(list(), 0, key_points0_float, labels0)
-        seg1 = SegmentationWrapper.prepare_seg(list(), 1, key_points0_float, labels0)
-        seg2 = SegmentationWrapper.prepare_seg(list(), 2, key_points0_float, labels0)
-        seg3 = SegmentationWrapper.prepare_seg(list(), 3, key_points0_float, labels0)
+        seg0 = SegmentationWrapper.prepare_seg(list(), 0, key_points_float, labels)
+        seg1 = SegmentationWrapper.prepare_seg(list(), 1, key_points_float, labels)
+        seg2 = SegmentationWrapper.prepare_seg(list(), 2, key_points_float, labels)
+        seg3 = SegmentationWrapper.prepare_seg(list(), 3, key_points_float, labels)
 
-        ig = SegmentDetector(orig_img0)
-        seg_img0 = ig.calc_multivoting_grabcut().astype(np.uint8)
+        ig = SegmentDetector(orig_img)
+        seg_img = ig.calc_multivoting_grabcut().astype(np.uint8)
 
-        seg0 = SegmentationWrapper.prepare_seg(list(), 0, key_points1_float, labels1)
-        seg1 = SegmentationWrapper.prepare_seg(list(), 1, key_points1_float, labels1)
-        seg2 = SegmentationWrapper.prepare_seg(list(), 2, key_points1_float, labels1)
-        seg3 = SegmentationWrapper.prepare_seg(list(), 3, key_points1_float, labels1)
-
-        ig = SegmentDetector(orig_img1)
-        seg_img1 = ig.calc_multivoting_grabcut().astype(np.uint8)
-
-        return seg_img0 | seg_img1
+        return seg_img
 
 
 class VideoTracker:
@@ -357,8 +345,8 @@ class VideoTracker:
                         img = cv2.circle(img, (a, b), 3, [0, 0, 255], -1)
                     img = cv2.add(img, mask)
                 elif method == SEGMENTATION:
-                    # Problem with the complexity: time
-                    img = SegmentationWrapper.segmentation(prev_img, [item.ravel() for item in old], next_img, [item.ravel() for item in new])
+                    # Problem: segmentation method doesn't work well - also it takes a long time to wait (maybe should save)
+                    img = SegmentationWrapper.segmentation(next_img, [item.ravel() for item in old], [item.ravel() for item in new])
 
                 # print('processed frame #' + str(iterate_num))
                 cv2.imshow('Processed Frame Out', img)
