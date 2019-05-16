@@ -27,6 +27,7 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,8 +41,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="193">
-              <caret line="347" column="124" selection-start-line="347" selection-start-column="124" selection-end-line="347" selection-end-column="124" />
+            <state relative-caret-position="368">
+              <caret line="406" column="17" lean-forward="true" selection-start-line="406" selection-start-column="17" selection-end-line="406" selection-end-column="17" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -60,7 +61,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ROC_Curve_By_Pred</find>
       <find>ROC_Curve</find>
       <find>precision</find>
       <find>currentk</find>
@@ -90,6 +90,7 @@
       <find>print</find>
       <find>segmentation</find>
       <find>KEY_POINTS</find>
+      <find>drawThresh</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -596,15 +597,15 @@
     </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="11096" column="9" lean-forward="true" selection-start-line="11096" selection-start-column="9" selection-end-line="11096" selection-end-column="9" />
+        <state relative-caret-position="189">
+          <caret line="3135" column="4" selection-start-line="3135" selection-start-column="4" selection-end-line="3135" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="347" column="124" selection-start-line="347" selection-start-column="124" selection-end-line="347" selection-end-column="124" />
+        <state relative-caret-position="368">
+          <caret line="406" column="17" lean-forward="true" selection-start-line="406" selection-start-column="17" selection-end-line="406" selection-end-column="17" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
