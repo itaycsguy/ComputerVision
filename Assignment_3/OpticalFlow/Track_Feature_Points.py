@@ -122,7 +122,7 @@ def GetPointsFromUser():
         if (k == 27) or (len(Points) == numberOfPoints):  # escape
             break
     cv2.destroyAllWindows()
-    return orig_img, point_img, Points
+    return Points
 
 
 def Getderivatives(frame1 , frame2 , centerX1 , centerY1 , centerX2 ,centerY2 , windowSize):
