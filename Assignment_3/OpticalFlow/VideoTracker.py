@@ -3,7 +3,7 @@ import numpy as np
 
 # Key points
 inputDirectoryPath = ".//Datasets//"
-inputVideoName = "bugs11.mp4"  # "highway.avi" # "bugs11.mp4"
+inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4"
 selectPoints = False
 numberOfPoints = 150
 refreshThresh = 100
@@ -37,6 +37,7 @@ class SegmentDetector:
     """
     def calc_bin_grabcut(self, f_seg_indices, b_seg_indices, iterations=20):
         mask = np.ones(self.img.shape[:2], dtype=np.uint8) * cv2.GC_PR_BGD
+
         for (x, y) in f_seg_indices:
             # (x, y) -> (y, x) due to image input and numpy conversion
             mask[y][x] = cv2.GC_FGD
@@ -185,8 +186,10 @@ class SegmentationWrapper:
     .   @param labels All labels.
     """
     @staticmethod
-    def prepare_seg(seg, curr_label, key_points_float, labels):
-        seg_t = np.asarray(key_points_float[labels.ravel() == curr_label], dtype=np.uint32)
+    def prepare_seg(curr_label, centers, key_points_float, labels):
+        seg = list()
+        center_t = np.asarray(centers[curr_label]).reshape(-1, 2)
+        seg_t = np.flip(np.argsort(center_t - np.asarray(key_points_float[labels.ravel() == curr_label])))[:3]
         for i, _ in enumerate(seg_t):
             seg.append(tuple(seg_t[i]))
 
@@ -200,7 +203,7 @@ class SegmentationWrapper:
     .   @param key_points Key-points from HOG peak points
     """
     @staticmethod
-    def segmentation(im, flow):
+    def segmentation(im, optical_flow):
         global orig_img, seg_img
         global seg0, seg1, seg2, seg3
         orig_img = im.copy()
@@ -208,14 +211,14 @@ class SegmentationWrapper:
 
         # auto separating to clusters without the ordinary way - user's picking
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        key_points_float = np.asarray(flow, dtype=np.float32)
-        _, labels, _ = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        key_points_float = np.asarray(optical_flow, dtype=np.float32)
+        _, labels, centers = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
         # lists to hold pixels in each segment
-        seg0 = SegmentationWrapper.prepare_seg(list(), 0, key_points_float, labels)
-        seg1 = SegmentationWrapper.prepare_seg(list(), 1, key_points_float, labels)
-        seg2 = SegmentationWrapper.prepare_seg(list(), 2, key_points_float, labels)
-        seg3 = SegmentationWrapper.prepare_seg(list(), 3, key_points_float, labels)
+        seg0 = SegmentationWrapper.prepare_seg(0, centers, key_points_float, labels)
+        seg1 = SegmentationWrapper.prepare_seg(1, centers, key_points_float, labels)
+        seg2 = SegmentationWrapper.prepare_seg(2, centers, key_points_float, labels)
+        seg3 = SegmentationWrapper.prepare_seg(3, centers, key_points_float, labels)
 
         ig = SegmentDetector(orig_img)
         seg_img = ig.calc_multivoting_grabcut().astype(np.uint8)
@@ -235,12 +238,19 @@ class VideoTracker:
     .   @param index Frame index
     """
     def get_frame_from_video(self, index=0):
-        cap, _ = self.get_video_capturer()
-        ret, frame = cap.retrieve(flag=index)
-        if not ret:
-            print("Frame index is missing.")
-            exit(-1)
-
+        cap, frame = self.get_video_capturer()
+        # ret, frame = cap.retrieve(flag=index) # insure about this function
+        if index == 0:
+            return frame
+        i = 1
+        while cap.isOpened():
+            if i == index:
+                ret, frame = cap.read()
+                if not ret:
+                    print("Frame index is corrupted.")
+                    exit(-1)
+                break
+            i += 1
         return frame
 
 
@@ -374,7 +384,8 @@ class VideoTracker:
     .   @param image
     .   @param key_points
     """
-    def plot_peaks_of(self, image, key_points):
+    def plot_peaks_of(self, image):
+        key_points = self.fetch_key_points(image)
         img = image.copy()
         for i, point in enumerate(key_points):
             a, b = point.ravel()
@@ -384,24 +395,58 @@ class VideoTracker:
         if cv2.waitKey(0) & 0xff == 27:
             cv2.destroyAllWindows()
 
+    def flow_to_hsv(self, next_img, flow):
+        hsv = np.zeros(next_img.shape)
+        # set saturation
+        hsv[:, :, 1] = cv2.cvtColor(next_img, cv2.COLOR_RGB2HSV)[:, :, 1]
+        # convert from cartesian to polar
+        mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+        # hue corresponds to direction
+        hsv[..., 0] = ang * (180 / np.pi / 2)
+        # value corresponds to magnitude
+        hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
+        # convert HSV to int32's
+        hsv = np.asarray(hsv, dtype=np.float32)
+        rgb_flow = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+        gray_flow = cv2.cvtColor(rgb_flow, cv2.COLOR_RGB2GRAY)
+        return rgb_flow, gray_flow
+
+
+    def segment_flow(self, im0, im1, index0, index1):
+        # flip to use the higher one by task instructions
+        if index1 < index0:
+            im0, im1 = im1.copy(), im0.copy()
+            index0, index1 = index1, index0
+
+        # obtain dense optical flow parameters
+        flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(im0, cv2.COLOR_RGB2GRAY),
+                                            cv2.cvtColor(im1, cv2.COLOR_RGB2GRAY),
+                                            flow=None,
+                                            pyr_scale=0.5, levels=1, winsize=15,
+                                            iterations=2, poly_n=5, poly_sigma=1.1, flags=0)
+
+        # kind of rough segmentation
+        # self.flow_to_hsv(im1, flow)
+
+        seg_img = SegmentationWrapper.segmentation(im1, flow)
+        cv2.imshow('seg_img', seg_img.astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
     tracker = VideoTracker()
+
+    # debugging:
     # frame = tracker.get_frame_from_video()
-    # dst = tracker.fetch_key_points(frame)
-    # tracker.plot_peaks_of(frame, dst)
+    # tracker.plot_peaks_of(frame)
+
+    # task 1:
     # tracker.video_processing()
 
-    cap, prev_img = tracker.get_video_capturer()
-    mask = np.zeros_like(prev_img)
-    prev_pts = tracker.fetch_key_points(prev_img)
-    while cap.isOpened():
-        ret, next_img = cap.read()
-        if ret:
-            flow = cv2.calcOpticalFlowFarneback(prev_img, next_img, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-            seg_img = SegmentationWrapper.segmentation(prev_img, flow)
-            cv2.imshow('seg_img', seg_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            break
+    # task 2:
+    first_index = 0
+    second_index = 10
+    prev_img = tracker.get_frame_from_video(index=first_index)
+    next_img = tracker.get_frame_from_video(index=second_index)
+    tracker.segment_flow(prev_img, next_img, first_index, second_index)
