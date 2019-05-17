@@ -178,29 +178,35 @@ class SegmentDetector:
 class SegmentationWrapper:
 
     """
-    prepare_seg(seg[, curr_label[, key_points_float[, labels]]]) -> seg array with numpy pair to tuple pairs into
-    .   @brief Converting point from numpy array to tuple
-    .   @param seg A segment of points from the image.
+    prepare_seg(curr_label, kmeans_curr_center, kmeans_labels, optical_flow_float) -> seg array with numpy pair to tuple pairs into
+    .   @brief Converting point from numpy array to tuple.
     .   @param curr_label The current cluster where the segment is belonging to.
-    .   @param key_points_float All key-points array.
-    .   @param labels All labels.
+    .   @param kmeans_labels All labels.
+    .   @param kmeans_curr_center Kmeans output centers.
+    .   @param optical_flow_float All key-points array.
     """
     @staticmethod
-    def prepare_seg(curr_label, centers, key_points_float, labels):
-        seg = list()
-        center_t = np.asarray(centers[curr_label]).reshape(-1, 2)
-        seg_t = np.flip(np.argsort(center_t - np.asarray(key_points_float[labels.ravel() == curr_label])))[:3]
-        for i, _ in enumerate(seg_t):
-            seg.append(tuple(seg_t[i]))
+    def prepare_seg(curr_label, kmeans_curr_center, kmeans_labels, optical_flow_float):
+        locations = list()
+        min_values = list()
+        for i in range(optical_flow_float.shape[0]):
+            for j in range(optical_flow_float.shape[1]):
+                if kmeans_labels[i, j] == curr_label:
+                    locations.append((j, i))
+                    min_values.append(np.linalg.norm(kmeans_curr_center - optical_flow_float[i, j]))
 
-        return seg
+        min_indices = np.argsort(min_values)
+        final_locations = list()
+        for loc in min_indices:
+            final_locations.append(locations[loc])
+        return final_locations
 
 
     """
-    segmentation(inputImage, key_points) -> a segmented image
+    segmentation(im, optical_flow) -> a segmented image
     .   @brief Calculating the segmentation image
-    .   @param inputImage An image to make the segmentation
-    .   @param key_points Key-points from HOG peak points
+    .   @param im An image to make the segmentation
+    .   @param optical_flow Key-points from HOG peak points
     """
     @staticmethod
     def segmentation(im, optical_flow):
@@ -211,14 +217,15 @@ class SegmentationWrapper:
 
         # auto separating to clusters without the ordinary way - user's picking
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        key_points_float = np.asarray(optical_flow, dtype=np.float32)
-        _, labels, centers = cv2.kmeans(key_points_float, INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        optical_flow_float = np.asarray(optical_flow, dtype=np.float32)
+        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, 2), INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        labels = labels.reshape(optical_flow.shape[:2])
 
         # lists to hold pixels in each segment
-        seg0 = SegmentationWrapper.prepare_seg(0, centers, key_points_float, labels)
-        seg1 = SegmentationWrapper.prepare_seg(1, centers, key_points_float, labels)
-        seg2 = SegmentationWrapper.prepare_seg(2, centers, key_points_float, labels)
-        seg3 = SegmentationWrapper.prepare_seg(3, centers, key_points_float, labels)
+        seg0 = SegmentationWrapper.prepare_seg(0, centers[0], labels, optical_flow_float)
+        seg1 = SegmentationWrapper.prepare_seg(1, centers[1], labels, optical_flow_float)
+        seg2 = SegmentationWrapper.prepare_seg(2, centers[2], labels, optical_flow_float)
+        seg3 = SegmentationWrapper.prepare_seg(3, centers[3], labels, optical_flow_float)
 
         ig = SegmentDetector(orig_img)
         seg_img = ig.calc_multivoting_grabcut().astype(np.uint8)
@@ -412,11 +419,7 @@ class VideoTracker:
         return rgb_flow, gray_flow
 
 
-    def segment_flow(self, im0, im1, index0, index1):
-        # flip to use the higher one by task instructions
-        if index1 < index0:
-            im0, im1 = im1.copy(), im0.copy()
-            index0, index1 = index1, index0
+    def segment_flow(self, im0, im1):
 
         # obtain dense optical flow parameters
         flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(im0, cv2.COLOR_RGB2GRAY),
@@ -426,10 +429,13 @@ class VideoTracker:
                                             iterations=2, poly_n=5, poly_sigma=1.1, flags=0)
 
         # kind of rough segmentation
-        # self.flow_to_hsv(im1, flow)
+        # rgb, gray = self.flow_to_hsv(im1, flow)
+        # cv2.imshow('hsv_out', rgb.astype(np.uint8))
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
         seg_img = SegmentationWrapper.segmentation(im1, flow)
-        cv2.imshow('seg_img', seg_img.astype(np.uint8))
+        cv2.imshow('seg_img', seg_img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
@@ -449,4 +455,4 @@ if __name__ == "__main__":
     second_index = 10
     prev_img = tracker.get_frame_from_video(index=first_index)
     next_img = tracker.get_frame_from_video(index=second_index)
-    tracker.segment_flow(prev_img, next_img, first_index, second_index)
+    tracker.segment_flow(prev_img, next_img)
