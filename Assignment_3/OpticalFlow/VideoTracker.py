@@ -8,8 +8,8 @@ inputDirectoryPath = ".//Datasets//"
 
 # task data:
 inputVideoName = "ballet.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4"
-selectPoints = False
-numberOfPoints = 150
+selectPoints = True
+numberOfPoints = 10
 
 # Segmentation:
 # out data:
@@ -24,6 +24,13 @@ SEG_TWO_COLOR = (255, 0, 0)
 SEG_THREE_COLOR = (0, 255, 255)
 INIT_REQUIRED_COUNTER = 2
 INIT_CLUSTERS = 4
+
+
+Point_color = (0, 0, 255)
+Point_size = 7
+Line_color = (0, 255, 0)
+Line_size = 3
+
 
 class SegmentDetector:
 
@@ -338,14 +345,60 @@ class VideoTracker:
 
 
 
+    # mouse callback function
+    def mouse_click(self,event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            Points.append((x, y))
+        self.paint_point(Points, point_img)
+
+
+    # given a segment points and a color, paint in seg_image
+    def paint_point(self,points, im):
+        for center in points:
+            cv2.circle(im, center, Point_size, Point_color, -1)
+        return im
+
+    # let the user choose the points on the image
+    def GetPointsFromUser(self):
+        cv2.namedWindow("Select Points")
+        # mouse event listener
+        cv2.setMouseCallback("Select Points", self.mouse_click)
+        # lists to hold pixels in each segment
+
+        while True:
+            cv2.imshow("Select Points", point_img)
+            k = cv2.waitKey(20)
+
+            if (k == 27) or (len(Points) == numberOfPoints):  # escape
+                break
+        cv2.destroyAllWindows()
+
+        arr = []
+        for (y,x) in Points:
+            arr.__add__([[x ,y]])
+
+        return Points , arr
+
+
     """
     video_processing(key_points) -> None
     .   @brief Executing the video file frame by frame and processing the optical flow algorithm by key points
     """
     def video_processing(self):
+        global Points
+        global point_img
+        Points = []
         cap, prev_img = self.get_video_capturer()
+        point_img = prev_img
+        height, width, channels = prev_img.shape
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter(".//Results//Video" + inputVideoName[0:-4] + ".avi", fourcc, 20.0, (width, height))
         mask = np.zeros_like(prev_img)
-        prev_pts = self.fetch_key_points(prev_img)
+        if selectPoints:
+            # prev_pts , arr = self.GetPointsFromUser()
+            prev_pts = self.fetch_key_points(prev_img)
+        else:
+            prev_pts = self.fetch_key_points(prev_img)
         iterate_num = 1
         count = 0
         while cap.isOpened():
@@ -368,7 +421,8 @@ class VideoTracker:
 
                 # print('processed frame #' + str(iterate_num))
                 cv2.imshow('Processed Frame Out', img)
-                k = cv2.waitKey(30) & 0xff
+                out.write(img)
+                k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
 
@@ -384,7 +438,10 @@ class VideoTracker:
 
                 count += 1
                 iterate_num += 1
+            else:
+                break
 
+        out.release()
         cap.release()
         cv2.destroyAllWindows()
 
@@ -460,7 +517,7 @@ if __name__ == "__main__":
     # tracker.plot_peaks_of(frame)
 
     # task 1:
-    # tracker.video_processing()
+    tracker.video_processing()
 
     # task 2:
     # first_index = 0

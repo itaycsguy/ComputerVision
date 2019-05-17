@@ -3,7 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Velocityballet.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Videoballet.avi" beforeDir="false" afterPath="$PROJECT_DIR$/Results/Videoballet.avi" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Videoballet.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Videobugs11.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Videohighway.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Videowe.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Videowe1.avi" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Track_Feature_Points.py" beforeDir="false" afterPath="$PROJECT_DIR$/Track_Feature_Points.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,11 +21,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="73">
-              <caret line="303" selection-start-line="303" selection-end-line="303" />
+            <state relative-caret-position="-4109">
+              <caret line="24" column="23" selection-start-line="17" selection-end-line="24" selection-end-column="23" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
               </folding>
@@ -28,10 +36,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Segment_Image.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="33" column="60" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="60" />
+            <state relative-caret-position="51">
+              <caret line="33" column="60" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="60" />
               <folding>
                 <element signature="e#74#83#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/VideoTracker.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="154">
+              <caret line="400" column="21" selection-start-line="400" selection-start-column="21" selection-end-line="400" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -48,14 +68,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>paint_point</find>
-      <find>lin</find>
-      <find>lina</find>
-      <find>GetPointsFromUser</find>
-      <find>points</find>
-      <find>Lucas_Kanade_system</find>
-      <find>shape</find>
-      <find>Getderivatives</find>
       <find>height</find>
       <find>paint_velocity</find>
       <find>fr2</find>
@@ -68,7 +80,6 @@
       <find>indexFrame</find>
       <find>Error! Could not read image.</find>
       <find>.read</find>
-      <find>out</find>
       <find>inputVideoName</find>
       <find>det</find>
       <find>read</find>
@@ -78,6 +89,15 @@
       <find>waitkey</find>
       <find>wait</find>
       <find>deri</find>
+      <find>out</find>
+      <find>numberOfPoints</find>
+      <find>selectPoints</find>
+      <find>Points = []</find>
+      <find>mouse_click</find>
+      <find>paint_point</find>
+      <find>calc_next_point</find>
+      <find>fetch_key_points</find>
+      <find>GetPointsFromUser</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -89,6 +109,7 @@
         <option value="$PROJECT_DIR$/Optical_flow.py" />
         <option value="$PROJECT_DIR$/Segment_Image.py" />
         <option value="$PROJECT_DIR$/Track_Feature_Points.py" />
+        <option value="$PROJECT_DIR$/VideoTracker.py" />
       </list>
     </option>
   </component>
@@ -103,6 +124,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -123,7 +145,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -141,7 +162,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Track_Feature_Points">
+  <component name="RunManager" selected="Python.VideoTracker">
     <configuration name="Optical_flow" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="OpticalFlow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -205,8 +226,30 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="VideoTracker" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="OpticalFlow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VideoTracker.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.VideoTracker" />
         <item itemvalue="Python.Track_Feature_Points" />
         <item itemvalue="Python.Segment_Image" />
         <item itemvalue="Python.Optical_flow" />
@@ -235,7 +278,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.46317512" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3633388" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -314,22 +357,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
+    <entry file="file://$PROJECT_DIR$/Segment_Image.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="73">
-          <caret line="303" selection-start-line="303" selection-end-line="303" />
+        <state relative-caret-position="51">
+          <caret line="33" column="60" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="60" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Segment_Image.py">
+    <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="33" column="60" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="60" />
+        <state relative-caret-position="-4109">
+          <caret line="24" column="23" selection-start-line="17" selection-end-line="24" selection-end-column="23" />
           <folding>
             <element signature="e#74#83#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VideoTracker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="400" column="21" selection-start-line="400" selection-start-column="21" selection-end-line="400" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
