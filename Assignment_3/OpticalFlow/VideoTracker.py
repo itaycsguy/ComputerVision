@@ -1,14 +1,18 @@
 import cv2
 import numpy as np
 
-# Key points
+# Key points:
+# out data:
+refreshThresh = 100
 inputDirectoryPath = ".//Datasets//"
-inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4"
+
+# task data:
+inputVideoName = "ballet.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4"
 selectPoints = False
 numberOfPoints = 150
-refreshThresh = 100
 
-# Segmentation
+# Segmentation:
+# out data:
 SEGMENTATION = 1
 SEGMENT_ZERO = 0
 SEGMENT_ONE = 1
@@ -218,7 +222,15 @@ class SegmentationWrapper:
         # auto separating to clusters without the ordinary way - user's picking
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         optical_flow_float = np.asarray(optical_flow, dtype=np.float32)
-        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, 2), INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+
+        ROW_SIZE = 4
+        optical_flow_float_by_idx = np.zeros((optical_flow.shape[0], optical_flow.shape[1], ROW_SIZE), dtype=np.float32)
+        for i in range(optical_flow_float_by_idx.shape[0]):
+            for j in range(optical_flow_float_by_idx.shape[1]):
+                optical_flow_float_by_idx[i, j] = np.concatenate([[i, j], optical_flow_float[i, j]])
+        optical_flow_float = optical_flow_float_by_idx
+
+        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, ROW_SIZE), INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
         labels = labels.reshape(optical_flow.shape[:2])
 
         # lists to hold pixels in each segment
@@ -228,36 +240,29 @@ class SegmentationWrapper:
         seg3 = SegmentationWrapper.prepare_seg(3, centers[3], labels, optical_flow_float)
 
         ig = SegmentDetector(orig_img)
-        seg_img = ig.calc_multivoting_grabcut().astype(np.uint8)
+        final_mask = ig.calc_multivoting_grabcut()
+        trans_img = cv2.addWeighted(orig_img.copy().astype(np.uint8), 0.5, final_mask.copy().astype(np.uint8), 0.5, 0)
 
-        return seg_img
+        return trans_img
 
 
 class VideoTracker:
-
-    def __init__(self):
-        pass
-
 
     """
     get_frame_from_video(index=0) -> frame
     .   @brief Fetching a frame from some specific index
     .   @param index Frame index
     """
-    def get_frame_from_video(self, index=0):
+    def get_frame_from_video(self, index):
         cap, frame = self.get_video_capturer()
-        # ret, frame = cap.retrieve(flag=index) # insure about this function
         if index == 0:
             return frame
-        i = 1
-        while cap.isOpened():
-            if i == index:
-                ret, frame = cap.read()
-                if not ret:
-                    print("Frame index is corrupted.")
-                    exit(-1)
-                break
-            i += 1
+        cap.set(1, index)
+        ret, frame = cap.read()
+        if not ret:
+            print("Frame index is corrupted.")
+            exit(-1)
+        cap.release()
         return frame
 
 
@@ -419,7 +424,11 @@ class VideoTracker:
         return rgb_flow, gray_flow
 
 
-    def segment_flow(self, im0, im1):
+    def segment_flow(self, im0, im1, show_out=True):
+        if np.isscalar(im0) and np.isscalar(im1):
+            im0 = tracker.get_frame_from_video(index=im0)
+            im1 = tracker.get_frame_from_video(index=im1)
+
 
         # obtain dense optical flow parameters
         flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(im0, cv2.COLOR_RGB2GRAY),
@@ -429,30 +438,46 @@ class VideoTracker:
                                             iterations=2, poly_n=5, poly_sigma=1.1, flags=0)
 
         # kind of rough segmentation
-        # rgb, gray = self.flow_to_hsv(im1, flow)
+        rgb, gray = self.flow_to_hsv(im1, flow)
         # cv2.imshow('hsv_out', rgb.astype(np.uint8))
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
-        seg_img = SegmentationWrapper.segmentation(im1, flow)
-        cv2.imshow('seg_img', seg_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        trans_img = SegmentationWrapper.segmentation(im1, flow)
+        if not show_out:
+            cv2.imshow('trans_img', trans_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+        return trans_img
 
 
 if __name__ == "__main__":
     tracker = VideoTracker()
 
     # debugging:
-    # frame = tracker.get_frame_from_video()
+    # frame = tracker.get_frame_from_video(index=0)
     # tracker.plot_peaks_of(frame)
 
     # task 1:
     # tracker.video_processing()
 
     # task 2:
-    first_index = 0
-    second_index = 10
-    prev_img = tracker.get_frame_from_video(index=first_index)
-    next_img = tracker.get_frame_from_video(index=second_index)
-    tracker.segment_flow(prev_img, next_img)
+    # first_index = 0
+    # second_index = 5
+
+    # option A:
+    # prev_img = tracker.get_frame_from_video(index=first_index)
+    # next_img = tracker.get_frame_from_video(index=second_index)
+    # tracker.segment_flow(prev_img, next_img)
+
+    # option B:
+    # tracker.segment_flow(first_index, second_index, show_out=True)
+
+    # task 2 by loop:
+    # for i in range(0, 20, 5):
+    #     trans_img = tracker.segment_flow(i, i + 1, show_out=False)
+    #     cv2.imwrite("./Results/Images/" + str(i) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+
+    trans_img = tracker.segment_flow(10, 12, show_out=False)
+    cv2.imwrite("./Results/Images/" + str(10) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
