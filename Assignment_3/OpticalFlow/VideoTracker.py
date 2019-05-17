@@ -228,9 +228,8 @@ class SegmentationWrapper:
         for i in range(optical_flow_float_by_idx.shape[0]):
             for j in range(optical_flow_float_by_idx.shape[1]):
                 optical_flow_float_by_idx[i, j] = np.concatenate([[i, j], optical_flow_float[i, j]])
-        optical_flow_float = optical_flow_float_by_idx
 
-        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, ROW_SIZE), INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        _, labels, centers = cv2.kmeans(optical_flow_float_by_idx.reshape(-1, ROW_SIZE), INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
         labels = labels.reshape(optical_flow.shape[:2])
 
         # lists to hold pixels in each segment
