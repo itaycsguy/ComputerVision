@@ -5,27 +5,15 @@ import numpy as np
 # out data:
 refreshThresh = 100
 inputDirectoryPath = ".//Datasets//"
+outputDirectoryPath = ".//Results//"
 
 # task data:
-inputVideoName = "ballet.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4"
-selectPoints = True
-numberOfPoints = 10
-
-# Segmentation:
-# out data:
-SEGMENTATION = 1
-SEGMENT_ZERO = 0
-SEGMENT_ONE = 1
-SEGMENT_TWO = 2
-SEGMENT_THREE = 3
-SEG_ZERO_COLOR = (0, 0, 255)
-SEG_ONE_COLOR = (0, 255, 0)
-SEG_TWO_COLOR = (255, 0, 0)
-SEG_THREE_COLOR = (0, 255, 255)
-INIT_REQUIRED_COUNTER = 2
-INIT_CLUSTERS = 4
+inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4" # "driving.mp4"
+selectPoints = False
+numberOfPoints = 100
 
 
+# out data
 Point_color = (0, 0, 255)
 Point_size = 7
 Line_color = (0, 255, 0)
@@ -33,6 +21,16 @@ Line_size = 3
 
 
 class SegmentDetector:
+    SEGMENTATION = 1
+    SEGMENT_ZERO = 0
+    SEGMENT_ONE = 1
+    SEGMENT_TWO = 2
+    SEGMENT_THREE = 3
+    SEG_ZERO_COLOR = (0, 0, 255)
+    SEG_ONE_COLOR = (0, 255, 0)
+    SEG_TWO_COLOR = (255, 0, 0)
+    SEG_THREE_COLOR = (0, 255, 255)
+    INIT_CLUSTERS = 4
 
     def __init__(self, image, seg_counter=INIT_CLUSTERS):
         self.img = image
@@ -177,34 +175,38 @@ class SegmentDetector:
             f0_final, f1_final = (f0, f1)
         print("Done masks multi-voting isolation and global mask segments enhancing..")
 
-        f0_mask = f0_final[:, :, np.newaxis] * SEG_ZERO_COLOR
-        f1_mask = f1_final[:, :, np.newaxis] * SEG_ONE_COLOR
-        f2_mask = f2_final[:, :, np.newaxis] * SEG_TWO_COLOR
-        f3_mask = f3_final[:, :, np.newaxis] * SEG_THREE_COLOR
+        f0_mask = f0_final[:, :, np.newaxis] * SegmentDetector.SEG_ZERO_COLOR
+        f1_mask = f1_final[:, :, np.newaxis] * SegmentDetector.SEG_ONE_COLOR
+        f2_mask = f2_final[:, :, np.newaxis] * SegmentDetector.SEG_TWO_COLOR
+        f3_mask = f3_final[:, :, np.newaxis] * SegmentDetector.SEG_THREE_COLOR
         print("The process is finished.")
 
         return f0_mask + f1_mask + f2_mask + f3_mask
 
 
 class SegmentationWrapper:
+    ROW_SIZE = 2
+    BEGIN_AT_FEATURE = 0
+    CRITERIA = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 
     """
-    prepare_seg(curr_label, kmeans_curr_center, kmeans_labels, optical_flow_float) -> seg array with numpy pair to tuple pairs into
+    prepare_seg(curr_label, kmeans_curr_center, optical_flow_float, kmeans_labels) -> seg array with numpy pair to tuple pairs into
     .   @brief Converting point from numpy array to tuple.
     .   @param curr_label The current cluster where the segment is belonging to.
-    .   @param kmeans_labels All labels.
     .   @param kmeans_curr_center Kmeans output centers.
     .   @param optical_flow_float All key-points array.
+    .   @param kmeans_labels All labels.
     """
     @staticmethod
-    def prepare_seg(curr_label, kmeans_curr_center, kmeans_labels, optical_flow_float):
+    def prepare_seg(curr_label, kmeans_curr_center, optical_flow_float, kmeans_labels, begin_at_feature):
         locations = list()
         min_values = list()
         for i in range(optical_flow_float.shape[0]):
             for j in range(optical_flow_float.shape[1]):
                 if kmeans_labels[i, j] == curr_label:
+                    # flipping is corresponded to (0, 0) at the left upper frame corner
                     locations.append((j, i))
-                    min_values.append(np.linalg.norm(kmeans_curr_center - optical_flow_float[i, j]))
+                    min_values.append(np.linalg.norm(kmeans_curr_center[begin_at_feature:] - optical_flow_float[i, j][begin_at_feature:]))
 
         min_indices = np.argsort(min_values)
         final_locations = list()
@@ -214,36 +216,61 @@ class SegmentationWrapper:
 
 
     """
+    features_extenstion(curr_label, kmeans_curr_center, kmeans_labels, optical_flow_float) -> seg array with numpy pair to tuple pairs into
+    .   @brief Converting point from numpy array to tuple.
+    .   @param curr_label The current cluster where the segment is belonging to.
+    .   @param kmeans_labels All labels.
+    .   @param kmeans_curr_center Kmeans output centers.
+    .   @param optical_flow_float All key-points array.
+    """
+    @staticmethod
+    def features_extension(ROW_SIZE, optical_flow, additional_flow_param):
+        optical_flow_by_features = np.zeros((optical_flow.shape[0], optical_flow.shape[1], ROW_SIZE), dtype=np.float32)
+        for i in range(optical_flow_by_features.shape[0]):
+            for j in range(optical_flow_by_features.shape[1]):
+                if additional_flow_param is not None:
+                    optical_flow_by_features[i, j] = np.concatenate([additional_flow_param[i, j], optical_flow[i, j]])
+                else:
+                    optical_flow_by_features[i, j] = optical_flow[i, j]
+
+        return optical_flow_by_features.copy()
+
+
+
+    """
     segmentation(im, optical_flow) -> a segmented image
     .   @brief Calculating the segmentation image
     .   @param im An image to make the segmentation
     .   @param optical_flow Key-points from HOG peak points
     """
     @staticmethod
-    def segmentation(im, optical_flow):
+    def segmentation(im, optical_flow, additional_flow_param=None):
         global orig_img, seg_img
         global seg0, seg1, seg2, seg3
         orig_img = im.copy()
         seg_img = im.copy()
 
-        # auto separating to clusters without the ordinary way - user's picking
-        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        optical_flow_float = np.asarray(optical_flow, dtype=np.float32)
+        optical_flow_float = SegmentationWrapper.features_extension(SegmentationWrapper.ROW_SIZE,
+                                                                    np.asarray(optical_flow, dtype=np.float32),
+                                                                    additional_flow_param)
 
-        ROW_SIZE = 4
-        optical_flow_float_by_idx = np.zeros((optical_flow.shape[0], optical_flow.shape[1], ROW_SIZE), dtype=np.float32)
-        for i in range(optical_flow_float_by_idx.shape[0]):
-            for j in range(optical_flow_float_by_idx.shape[1]):
-                optical_flow_float_by_idx[i, j] = np.concatenate([[i, j], optical_flow_float[i, j]])
-
-        _, labels, centers = cv2.kmeans(optical_flow_float_by_idx.reshape(-1, ROW_SIZE), INIT_CLUSTERS, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, SegmentationWrapper.ROW_SIZE),
+                                        SegmentDetector.INIT_CLUSTERS,
+                                        None,
+                                        SegmentationWrapper.CRITERIA,
+                                        10,
+                                        cv2.KMEANS_RANDOM_CENTERS)
         labels = labels.reshape(optical_flow.shape[:2])
 
         # lists to hold pixels in each segment
-        seg0 = SegmentationWrapper.prepare_seg(0, centers[0], labels, optical_flow_float)
-        seg1 = SegmentationWrapper.prepare_seg(1, centers[1], labels, optical_flow_float)
-        seg2 = SegmentationWrapper.prepare_seg(2, centers[2], labels, optical_flow_float)
-        seg3 = SegmentationWrapper.prepare_seg(3, centers[3], labels, optical_flow_float)
+        seg0 = SegmentationWrapper.prepare_seg(0, centers[0], optical_flow_float, labels,
+                                               SegmentationWrapper.BEGIN_AT_FEATURE)
+        seg1 = SegmentationWrapper.prepare_seg(1, centers[1], optical_flow_float, labels,
+                                               SegmentationWrapper.BEGIN_AT_FEATURE)
+        seg2 = SegmentationWrapper.prepare_seg(2, centers[2], optical_flow_float, labels,
+                                               SegmentationWrapper.BEGIN_AT_FEATURE)
+        seg3 = SegmentationWrapper.prepare_seg(3, centers[3], optical_flow_float, labels,
+                                               SegmentationWrapper.BEGIN_AT_FEATURE)
 
         ig = SegmentDetector(orig_img)
         final_mask = ig.calc_multivoting_grabcut()
@@ -253,6 +280,50 @@ class SegmentationWrapper:
 
 
 class VideoTracker:
+
+    """
+    mouse_click() -> None
+    .   @brief Taking a position of some mouse click
+    .   @param event Event object
+    .   @param x An x location
+    .   @param y An y location
+    """
+    def mouse_click(self, event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            Points.append((x, y))
+        self.paint_point(Points, point_img)
+
+
+    """
+    paint_point() -> painted image
+    .   @brief Painting circles on an image
+    .   @param points Points to draw
+    .   @param im An image
+    """
+    def paint_point(self, points, im):
+        for center in points:
+            cv2.circle(im, center, Point_size, Point_color, -1)
+        return im
+
+
+    """
+    get_points_from_user() -> Points array
+    .   @brief Picking points from a frame interactively
+    """
+    def get_points_from_user(self):
+        cv2.namedWindow("Select Points")
+        # mouse event listener
+        cv2.setMouseCallback("Select Points", self.mouse_click)
+
+        # lists to hold pixels in each segment
+        while True:
+            cv2.imshow("Select Points", point_img)
+            k = cv2.waitKey(20)
+            if (k == 27) or (len(Points) == numberOfPoints):  # escape
+                break
+        cv2.destroyAllWindows()
+
+        return np.asarray(Points).reshape(-1, 1, 2)
 
     """
     get_frame_from_video(index=0) -> frame
@@ -343,42 +414,6 @@ class VideoTracker:
         return next_pts, status.ravel()
 
 
-
-    # mouse callback function
-    def mouse_click(self,event, x, y, flags, params):
-        if event == cv2.EVENT_LBUTTONDOWN:
-            Points.append((x, y))
-        self.paint_point(Points, point_img)
-
-
-    # given a segment points and a color, paint in seg_image
-    def paint_point(self,points, im):
-        for center in points:
-            cv2.circle(im, center, Point_size, Point_color, -1)
-        return im
-
-    # let the user choose the points on the image
-    def GetPointsFromUser(self):
-        cv2.namedWindow("Select Points")
-        # mouse event listener
-        cv2.setMouseCallback("Select Points", self.mouse_click)
-        # lists to hold pixels in each segment
-
-        while True:
-            cv2.imshow("Select Points", point_img)
-            k = cv2.waitKey(20)
-
-            if (k == 27) or (len(Points) == numberOfPoints):  # escape
-                break
-        cv2.destroyAllWindows()
-
-        arr = []
-        for (y,x) in Points:
-            arr.__add__([[x ,y]])
-
-        return Points , arr
-
-
     """
     video_processing(key_points) -> None
     .   @brief Executing the video file frame by frame and processing the optical flow algorithm by key points
@@ -386,16 +421,14 @@ class VideoTracker:
     def video_processing(self):
         global Points
         global point_img
-        Points = []
+        Points = list()
         cap, prev_img = self.get_video_capturer()
         point_img = prev_img
-        height, width, channels = prev_img.shape
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter(".//Results//Video" + inputVideoName[0:-4] + ".avi", fourcc, 20.0, (width, height))
+        video_instance = cv2.VideoWriter(outputDirectoryPath + inputVideoName[0:-4] + "_out.avi", cv2.VideoWriter_fourcc(*'XVID'), 20.0, prev_img.shape[:2])
         mask = np.zeros_like(prev_img)
         if selectPoints:
-            # prev_pts , arr = self.GetPointsFromUser()
-            prev_pts = self.fetch_key_points(prev_img)
+            # issue - fall after collection
+            prev_pts = self.get_points_from_user()
         else:
             prev_pts = self.fetch_key_points(prev_img)
         iterate_num = 1
@@ -420,7 +453,7 @@ class VideoTracker:
 
                 # print('processed frame #' + str(iterate_num))
                 cv2.imshow('Processed Frame Out', img)
-                out.write(img)
+                video_instance.write(img)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -440,9 +473,9 @@ class VideoTracker:
             else:
                 break
 
-        out.release()
-        cap.release()
         cv2.destroyAllWindows()
+        video_instance.release()
+        cap.release()
 
 
 
@@ -463,6 +496,7 @@ class VideoTracker:
         if cv2.waitKey(0) & 0xff == 27:
             cv2.destroyAllWindows()
 
+
     def flow_to_hsv(self, next_img, flow):
         hsv = np.zeros(next_img.shape)
         # set saturation
@@ -477,7 +511,7 @@ class VideoTracker:
         hsv = np.asarray(hsv, dtype=np.float32)
         rgb_flow = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
         gray_flow = cv2.cvtColor(rgb_flow, cv2.COLOR_RGB2GRAY)
-        return rgb_flow, gray_flow
+        return hsv, rgb_flow, gray_flow
 
 
     def segment_flow(self, im0, im1, show_out=True):
@@ -494,11 +528,7 @@ class VideoTracker:
                                             iterations=2, poly_n=5, poly_sigma=1.1, flags=0)
 
         # kind of rough segmentation
-        rgb, gray = self.flow_to_hsv(im1, flow)
-        # cv2.imshow('hsv_out', rgb.astype(np.uint8))
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
+        # _, rgb, _ = self.flow_to_hsv(im1, flow)
         trans_img = SegmentationWrapper.segmentation(im1, flow)
         if not show_out:
             cv2.imshow('trans_img', trans_img)
@@ -516,7 +546,7 @@ if __name__ == "__main__":
     # tracker.plot_peaks_of(frame)
 
     # task 1:
-    tracker.video_processing()
+    # tracker.video_processing()
 
     # task 2:
     # first_index = 0
@@ -536,4 +566,4 @@ if __name__ == "__main__":
     #     cv2.imwrite("./Results/Images/" + str(i) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
 
     trans_img = tracker.segment_flow(10, 12, show_out=False)
-    cv2.imwrite("./Results/Images/" + str(10) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+    cv2.imwrite(outputDirectoryPath + str(10) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
