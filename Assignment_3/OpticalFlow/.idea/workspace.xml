@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Velocityballet.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videoballet.avi" beforeDir="false" afterPath="$PROJECT_DIR$/Results/Videoballet.avi" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videoballet.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videobugs11.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videohighway.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videowe.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videowe1.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Track_Feature_Points.py" beforeDir="false" afterPath="$PROJECT_DIR$/Track_Feature_Points.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/VideoTracker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/Images/10.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/Results/Images/10.jpg" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,8 +39,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="400" column="21" selection-start-line="400" selection-start-column="21" selection-end-line="400" selection-end-column="21" />
+            <state relative-caret-position="188">
+              <caret line="404" column="38" lean-forward="true" selection-start-line="404" selection-start-column="38" selection-end-line="404" selection-end-column="38" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -113,7 +104,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="676" />
     <option name="width" value="697" />
     <option name="height" value="735" />
@@ -270,7 +261,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19717261" />
@@ -379,8 +370,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="400" column="21" selection-start-line="400" selection-start-column="21" selection-end-line="400" selection-end-column="21" />
+        <state relative-caret-position="188">
+          <caret line="404" column="38" lean-forward="true" selection-start-line="404" selection-start-column="38" selection-end-line="404" selection-end-column="38" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
