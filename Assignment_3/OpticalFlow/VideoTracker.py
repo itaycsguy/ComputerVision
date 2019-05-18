@@ -3,14 +3,13 @@ import numpy as np
 
 # Key points:
 # out data:
-refreshThresh = 100
 inputDirectoryPath = ".//Datasets//"
 outputDirectoryPath = ".//Results//"
 
 # task data:
 inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4" # "driving.mp4"
 selectPoints = False
-numberOfPoints = 100
+numberOfPoints = 200
 
 
 # out data
@@ -185,7 +184,7 @@ class SegmentDetector:
 
 
 class SegmentationWrapper:
-    ROW_SIZE = 2
+    INIT_ROW_SIZE = 2
     BEGIN_AT_FEATURE = 0
     CRITERIA = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
 
@@ -249,18 +248,21 @@ class SegmentationWrapper:
         global seg0, seg1, seg2, seg3
         orig_img = im.copy()
         seg_img = im.copy()
+        additional_size = 0
+        if additional_flow_param is not None:
+            additional_size = len(additional_flow_param[0, 0])
 
-        optical_flow_float = SegmentationWrapper.features_extension(SegmentationWrapper.ROW_SIZE,
+        optical_flow_float = SegmentationWrapper.features_extension(SegmentationWrapper.INIT_ROW_SIZE + additional_size,
                                                                     np.asarray(optical_flow, dtype=np.float32),
                                                                     additional_flow_param)
 
-        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, SegmentationWrapper.ROW_SIZE),
+        _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, SegmentationWrapper.INIT_ROW_SIZE + additional_size),
                                         SegmentDetector.INIT_CLUSTERS,
                                         None,
                                         SegmentationWrapper.CRITERIA,
                                         10,
                                         cv2.KMEANS_RANDOM_CENTERS)
-        labels = labels.reshape(optical_flow.shape[:2])
+        labels = labels.reshape(optical_flow_float.shape[:2])
 
         # lists to hold pixels in each segment
         seg0 = SegmentationWrapper.prepare_seg(0, centers[0], optical_flow_float, labels,
@@ -280,6 +282,18 @@ class SegmentationWrapper:
 
 
 class VideoTracker:
+    SF_INITIAL = 0
+    SF_GAUSSIAN = 1
+    DIV_REFRESH = 8
+    DEFAULT_REFRESH_THRESH = 100
+    JPEG_PARAM = [int(cv2.IMWRITE_JPEG_QUALITY), 95]
+
+    def __init__(self):
+        self.total_frames = -1
+        self.is_ar_least_half_kp = False
+        self.refresh_thresh = VideoTracker.DEFAULT_REFRESH_THRESH
+        self.last_frames_number = list()
+        self.lfn_pointer = 0
 
     """
     mouse_click() -> None
@@ -332,13 +346,20 @@ class VideoTracker:
     """
     def get_frame_from_video(self, index):
         cap, frame = self.get_video_capturer()
-        if index == 0:
-            return frame
-        cap.set(1, index)
-        ret, frame = cap.read()
-        if not ret:
-            print("Frame index is corrupted.")
-            exit(-1)
+        if index > 0:
+            cap.set(1, index)
+            ret, frame = cap.read()
+            if not ret:
+                print("Frame index is corrupted.")
+                exit(-1)
+
+        # handling session name
+        if len(self.last_frames_number) == 2:
+            self.last_frames_number[self.lfn_pointer] = index
+            self.lfn_pointer = (self.lfn_pointer + 1) % 2
+        else:
+            self.last_frames_number.append(index)
+
         cap.release()
         return frame
 
@@ -354,6 +375,8 @@ class VideoTracker:
         if not cap.isOpened():
             print(video_name, "does not exist.")
             exit(-1)
+        self.total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.refresh_thresh = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) / VideoTracker.DIV_REFRESH)
         _, frame = cap.read()
 
         return cap, frame
@@ -392,6 +415,7 @@ class VideoTracker:
             else:
                 prev_dst_amt = dst.shape[0]
         print("Found", dst.shape[0], "key points.")
+        self.is_ar_least_half_kp = int(len(dst) / 2) >= self.total_frames
         return dst
 
 
@@ -418,20 +442,22 @@ class VideoTracker:
     video_processing(key_points) -> None
     .   @brief Executing the video file frame by frame and processing the optical flow algorithm by key points
     """
-    def video_processing(self):
+    def video_processing(self, save_out=False):
         global Points
         global point_img
         Points = list()
         cap, prev_img = self.get_video_capturer()
         point_img = prev_img
-        video_instance = cv2.VideoWriter(outputDirectoryPath + inputVideoName[0:-4] + "_out.avi", cv2.VideoWriter_fourcc(*'XVID'), 20.0, prev_img.shape[:2])
+        video_instance = None
+        if save_out:
+            video_instance = cv2.VideoWriter(outputDirectoryPath + "OF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi", cv2.VideoWriter_fourcc(*'XVID'), 20.0, prev_img.shape[:2])
         mask = np.zeros_like(prev_img)
         if selectPoints:
             # issue - fall after collection
             prev_pts = self.get_points_from_user()
         else:
             prev_pts = self.fetch_key_points(prev_img)
-        iterate_num = 1
+        # iterate_num = 1
         count = 0
         while cap.isOpened():
             ret, next_img = cap.read()
@@ -453,7 +479,8 @@ class VideoTracker:
 
                 # print('processed frame #' + str(iterate_num))
                 cv2.imshow('Processed Frame Out', img)
-                video_instance.write(img)
+                if video_instance is not None:
+                    video_instance.write(img)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -461,7 +488,7 @@ class VideoTracker:
                 # updating the next iteration
                 mask = np.zeros_like(mask)
                 prev_img = next_img.copy()
-                if count == refreshThresh:
+                if count == self.refresh_thresh:
                     print("Points refreshing..")
                     prev_pts = self.fetch_key_points(prev_img)
                     count = 0
@@ -469,12 +496,13 @@ class VideoTracker:
                     prev_pts = new.copy()
 
                 count += 1
-                iterate_num += 1
+                # iterate_num += 1
             else:
                 break
 
         cv2.destroyAllWindows()
-        video_instance.release()
+        if video_instance is not None:
+            video_instance.release()
         cap.release()
 
 
@@ -514,22 +542,41 @@ class VideoTracker:
         return hsv, rgb_flow, gray_flow
 
 
-    def segment_flow(self, im0, im1, show_out=True):
+    def segment_flow(self, im0, im1, show_out=True, save_out=False, flag=SF_INITIAL):
         if np.isscalar(im0) and np.isscalar(im1):
-            im0 = tracker.get_frame_from_video(index=im0)
-            im1 = tracker.get_frame_from_video(index=im1)
+            im0 = self.get_frame_from_video(index=im0)
+            im1 = self.get_frame_from_video(index=im1)
 
+        flow_name = str(self.last_frames_number[0]) + "_" + str(self.last_frames_number[1])
 
         # obtain dense optical flow parameters
-        flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(im0, cv2.COLOR_RGB2GRAY),
-                                            cv2.cvtColor(im1, cv2.COLOR_RGB2GRAY),
-                                            flow=None,
-                                            pyr_scale=0.5, levels=1, winsize=15,
-                                            iterations=2, poly_n=5, poly_sigma=1.1, flags=0)
+        prev_pts = self.fetch_key_points(im0)
+        flow = None
+        if flag == VideoTracker.SF_INITIAL:
+            next_pts, status = self.calc_next_point(im0, im1, prev_pts)
+            flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(im0, cv2.COLOR_RGB2GRAY),
+                                                cv2.cvtColor(im1, cv2.COLOR_RGB2GRAY),
+                                                flow=next_pts[status == 1],
+                                                pyr_scale=0.5, levels=1, winsize=20,
+                                                iterations=2, poly_n=5, poly_sigma=1.1,
+                                                flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
+        elif flag == VideoTracker.SF_GAUSSIAN:
+            flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(im0, cv2.COLOR_RGB2GRAY),
+                                                cv2.cvtColor(im1, cv2.COLOR_RGB2GRAY),
+                                                flow=None,
+                                                pyr_scale=0.5, levels=1, winsize=20,
+                                                iterations=2, poly_n=5, poly_sigma=1.1,
+                                                flags=cv2.OPTFLOW_FARNEBACK_GAUSSIAN)
 
-        # kind of rough segmentation
-        # _, rgb, _ = self.flow_to_hsv(im1, flow)
-        trans_img = SegmentationWrapper.segmentation(im1, flow)
+
+        # types of rough colouring segmentations:
+        # HSV           - Bad data
+        # RGB           - Good as an additional data
+        # GRAY-SCALE    - Less than RGB data
+        hsv, rgb, gray = self.flow_to_hsv(im1, flow)
+        trans_img = SegmentationWrapper.segmentation(im1, flow, rgb)
+        if save_out:
+            cv2.imwrite(outputDirectoryPath + "SF_" + flow_name + "_out.jpg", trans_img, VideoTracker.JPEG_PARAM)
         if not show_out:
             cv2.imshow('trans_img', trans_img)
             cv2.waitKey(0)
@@ -560,10 +607,5 @@ if __name__ == "__main__":
     # option B:
     # tracker.segment_flow(first_index, second_index, show_out=True)
 
-    # task 2 by loop:
-    # for i in range(0, 20, 5):
-    #     trans_img = tracker.segment_flow(i, i + 1, show_out=False)
-    #     cv2.imwrite("./Results/Images/" + str(i) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-
-    trans_img = tracker.segment_flow(10, 12, show_out=False)
-    cv2.imwrite(outputDirectoryPath + str(10) + ".jpg", trans_img, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+    # debugging:
+    trans_img = tracker.segment_flow(12, 17, show_out=True, save_out=True, flag=VideoTracker.SF_INITIAL)
