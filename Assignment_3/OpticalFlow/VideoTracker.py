@@ -7,9 +7,9 @@ inputDirectoryPath = ".//Datasets//"
 outputDirectoryPath = ".//Results//"
 
 # task data:
-inputVideoName = "billiard.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4" # "driving.mp4"
-selectPoints = False
-numberOfPoints = 200
+inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4" # "driving.mp4"
+selectPoints = True
+numberOfPoints = 5
 
 
 # out data
@@ -451,6 +451,7 @@ class VideoTracker:
         Points = list()
         cap, prev_img = self.get_video_capturer()
         point_img = prev_img
+        velocityimage = prev_img
         video_instance = None
         if save_out:
             if not os.path.exists(outputDirectoryPath):
@@ -482,10 +483,11 @@ class VideoTracker:
                     # velocity computation
                     mask = cv2.line(mask, (a, b), (c, d), [0, 255, 0], 2)
                     img = cv2.circle(img, (a, b), 3, [0, 0, 255], -1)
+                velocityimage = cv2.add(velocityimage, mask)
                 img = cv2.add(img, mask)
 
                 cv2.imshow('Processed Frame Out', img)
-                if video_instance is not None:
+                if save_out:
                     video_instance.write(img)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
@@ -503,8 +505,10 @@ class VideoTracker:
 
                 count += 1
 
+        cv2.imshow("fds",velocityimage)
+        cv2.waitKey(0)
         cv2.destroyAllWindows()
-        if video_instance is not None:
+        if save_out:
             video_instance.release()
         cap.release()
 
