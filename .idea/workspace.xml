@@ -29,10 +29,8 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Segment_Image.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/SegmentsFinder.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Track_Feature_Points.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_10_15_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_12_17_out.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,8 +44,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="547" column="54" lean-forward="true" selection-start-line="547" selection-start-column="54" selection-end-line="547" selection-end-column="54" />
+            <state relative-caret-position="220">
+              <caret line="611" lean-forward="true" selection-start-line="611" selection-end-line="611" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -66,8 +64,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>data</find>
-      <find>get_test_FPR</find>
       <find>FPR</find>
       <find>get_test_precision</find>
       <find>recogniz</find>
@@ -96,6 +92,8 @@
       <find>video_instance</find>
       <find>INIT_REQUIRED_COUNTER</find>
       <find>INIT_CLUSTERS</find>
+      <find>inputDirectoryPath</find>
+      <find>outputDirectoryPath</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -178,13 +176,6 @@
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="Results" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -376,12 +367,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.12961012" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.12961012" />
       <window_info id="Structure" order="1" sideWeight="0.501462" side_tool="true" weight="0.12961012" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3726977" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3726977" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39653304" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -403,7 +394,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/dlib-19.6/MANIFEST.in" />
     <entry file="file://$PROJECT_DIR$/dlib-19.6/setup.py" />
     <entry file="file://$PROJECT_DIR$/dlib-19.6/appveyor.yml" />
     <entry file="file://$PROJECT_DIR$/dlib-19.6/README.md" />
@@ -629,10 +619,13 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_10_15_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_12_17_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="547" column="54" lean-forward="true" selection-start-line="547" selection-start-column="54" selection-end-line="547" selection-end-column="54" />
+        <state relative-caret-position="220">
+          <caret line="611" lean-forward="true" selection-start-line="611" selection-end-line="611" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
