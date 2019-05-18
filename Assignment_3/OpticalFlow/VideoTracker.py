@@ -7,9 +7,13 @@ inputDirectoryPath = ".//Datasets//"
 outputDirectoryPath = ".//Results//"
 
 # task data:
-inputVideoName = "rushHour.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4"
+inputVideoName = "billiard.avi"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4"
 selectPoints = False
-numberOfPoints = 1500
+numberOfPoints = 200
+
+# not too many & not too few
+# selectPoints = True
+# numberOfPoints = 20
 
 
 # out data
@@ -337,7 +341,7 @@ class VideoTracker:
                 break
         cv2.destroyAllWindows()
 
-        return np.asarray(Points).reshape(-1, 1, 2)
+        return np.asarray(Points, dtype=np.float32).reshape(-1, 1, 2)
 
     """
     get_frame_from_video(index=0) -> frame
@@ -451,7 +455,7 @@ class VideoTracker:
         Points = list()
         cap, prev_img = self.get_video_capturer()
         point_img = prev_img
-        velocityimage = prev_img
+        velocity_image = prev_img.copy()
         video_instance = None
         if save_out:
             if not os.path.exists(outputDirectoryPath):
@@ -461,7 +465,6 @@ class VideoTracker:
                                              cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
         mask = np.zeros_like(prev_img)
         if selectPoints:
-            # issue - fall after collection
             prev_pts = self.get_points_from_user()
         else:
             prev_pts = self.fetch_key_points(prev_img)
@@ -485,8 +488,8 @@ class VideoTracker:
                     # velocity computation
                     mask = cv2.line(mask, (a, b), (c, d), [0, 255, 0], 2)
                     img = cv2.circle(img, (a, b), 3, [0, 0, 255], -1)
-                velocityimage = cv2.add(velocityimage, mask)
                 img = cv2.add(img, mask)
+                velocity_image = cv2.add(velocity_image, mask)
 
                 cv2.imshow('Processed Frame Out', img)
                 if save_out:
@@ -507,10 +510,9 @@ class VideoTracker:
 
                 count += 1
 
-        cv2.imshow("fds",velocityimage)
-        cv2.waitKey(0)
         cv2.destroyAllWindows()
         if save_out:
+            cv2.imwrite(outputDirectoryPath + "Velocity_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.jpg", velocity_image, VideoTracker.JPEG_PARAM)
             video_instance.release()
         cap.release()
 
@@ -605,7 +607,7 @@ if __name__ == "__main__":
     # tracker.plot_peaks_of(frame)
 
     # task 1:
-    tracker.video_processing(save_out=True)
+    tracker.video_processing()
 
     # task 2:
     # first_index = 0
