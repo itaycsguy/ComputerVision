@@ -3,14 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Velocityballet.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videoballet.avi" beforeDir="false" afterPath="$PROJECT_DIR$/Results/Videoballet.avi" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videoballet.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videobugs11.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videohighway.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videowe.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/Videowe1.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Track_Feature_Points.py" beforeDir="false" afterPath="$PROJECT_DIR$/Track_Feature_Points.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_billiard_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_billiard_600_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_bugs11_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_bugs11_70_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_driving_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_driving_600_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_highway_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_highway_70_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_rushHour_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_rushHour_600_out.avi" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,37 +23,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4109">
-              <caret line="24" column="23" selection-start-line="17" selection-end-line="24" selection-end-column="23" />
-              <folding>
-                <element signature="e#74#83#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Segment_Image.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="33" column="60" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="60" />
-              <folding>
-                <element signature="e#74#83#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="400" column="21" selection-start-line="400" selection-start-column="21" selection-end-line="400" selection-end-column="21" />
+            <state relative-caret-position="375">
+              <caret line="509" column="31" lean-forward="true" selection-start-line="509" selection-start-column="31" selection-end-line="509" selection-end-column="31" />
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#0#14#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -68,10 +46,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>height</find>
-      <find>paint_velocity</find>
-      <find>fr2</find>
-      <find>cap</find>
       <find>fr1</find>
       <find>Points</find>
       <find>round</find>
@@ -89,7 +63,6 @@
       <find>waitkey</find>
       <find>wait</find>
       <find>deri</find>
-      <find>out</find>
       <find>numberOfPoints</find>
       <find>selectPoints</find>
       <find>Points = []</find>
@@ -98,6 +71,11 @@
       <find>calc_next_point</find>
       <find>fetch_key_points</find>
       <find>GetPointsFromUser</find>
+      <find>out</find>
+      <find>out</find>
+      <find>out=</find>
+      <find>video_instance</find>
+      <find>get_video_capturer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -131,6 +109,11 @@
             <path>
               <item name="OpticalFlow" type="b2602c69:ProjectViewProjectNode" />
               <item name="OpticalFlow" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OpticalFlow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OpticalFlow" type="462c0819:PsiDirectoryNode" />
+              <item name="Results" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="OpticalFlow" type="b2602c69:ProjectViewProjectNode" />
@@ -278,7 +261,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3633388" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.11456628" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -379,10 +362,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="400" column="21" selection-start-line="400" selection-start-column="21" selection-end-line="400" selection-end-column="21" />
+        <state relative-caret-position="375">
+          <caret line="509" column="31" lean-forward="true" selection-start-line="509" selection-start-column="31" selection-end-line="509" selection-end-column="31" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
