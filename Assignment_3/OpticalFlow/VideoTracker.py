@@ -7,9 +7,9 @@ inputDirectoryPath = ".//Datasets//"
 outputDirectoryPath = ".//Results//"
 
 # task data:
-inputVideoName = "billiard.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4" # "driving.mp4"
+inputVideoName = "rushHour.mp4"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4"
 selectPoints = False
-numberOfPoints = 200
+numberOfPoints = 1500
 
 
 # out data
@@ -455,7 +455,9 @@ class VideoTracker:
         if save_out:
             if not os.path.exists(outputDirectoryPath):
                 os.mkdir(outputDirectoryPath)
-            video_instance = cv2.VideoWriter(outputDirectoryPath + "OF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi", cv2.VideoWriter_fourcc(*'XVID'), 20.0, prev_img.shape[:2])
+            w, h, _ = prev_img.shape
+            video_instance = cv2.VideoWriter(outputDirectoryPath + "OF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi",
+                                             cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
         mask = np.zeros_like(prev_img)
         if selectPoints:
             # issue - fall after collection
@@ -614,4 +616,4 @@ if __name__ == "__main__":
     # tracker.segment_flow(first_index, second_index, show_out=True)
 
     # debugging:
-    trans_img = tracker.segment_flow(12, 17, show_out=False, save_out=True, flag=VideoTracker.SF_GAUSSIAN)
+    # trans_img = tracker.segment_flow(12, 17, show_out=False, save_out=True, flag=VideoTracker.SF_GAUSSIAN)
