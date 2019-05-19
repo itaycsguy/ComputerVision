@@ -1,9 +1,10 @@
 import cv2, os
 import numpy as np
 
-# Key points:
 # out data:
+# directory where all input data should being resided - should be provided by the user
 inputDirectoryPath = ".//Datasets//"
+# directory where results should being saved - it is created if it doesn't exist
 outputDirectoryPath = ".//Results//"
 
 # "ballet.mp4"      - multi segmentation
@@ -484,8 +485,9 @@ class VideoTracker:
 
 
     """
-    video_processing(key_points) -> None
+    video_processing(save_out=False) -> None
     .   @brief Executing the video file frame by frame and processing the optical flow algorithm by key points
+    .   @param save_out
     """
     def video_processing(self, save_out=False):
         global Points
@@ -559,10 +561,9 @@ class VideoTracker:
 
 
     """
-    plot_peaks_of(image, key_points) -> None
+    plot_peaks_of(image) -> None
     .   @brief Displaying the key point that were found to this specific image
     .   @param image
-    .   @param key_points
     """
     def plot_peaks_of(self, image):
         key_points = self.fetch_key_points(image)
@@ -577,8 +578,8 @@ class VideoTracker:
 
 
     """
-    flow_to_properties(image, key_points) -> [magnitude, angle], hsv, rgb and gray-scale
-    .   @brief Computing [magnitude, angle], hsv, rgb and gray-scale image properties
+    flow_to_properties(next_img, flow) -> [magnitude, angle], hsv, rgb and gray-scale
+    .   @brief Computing image properties
     .   @param next_img
     .   @param flow
     """
@@ -604,13 +605,13 @@ class VideoTracker:
 
 
     """
-    flow_to_properties(image, key_points) -> [magnitude, angle], hsv, rgb and gray-scale
+    flow_to_properties(input_by_video[, show_out=True[, save_out=False[, flag=SF_INITIAL]]]) -> [magnitude, angle], hsv, rgb and gray-scale
     .   @brief Computing the segmentation flow of 2 frames
     .   @param input_by_video   True allows to use frameNumber1, frameNumber2 as indices to inputVideoName 
                                 False allows to read images from im1, im2 
-    .   @param show_out[default=True]
-    .   @param save_out[default=False]
-    .   @param flag[default=SF_INITIAL]
+    .   @param show_out
+    .   @param save_out
+    .   @param flag
     """
     def segment_flow(self, input_by_video, show_out=True, save_out=False, flag=SF_INITIAL):
         image1 = None
@@ -633,6 +634,7 @@ class VideoTracker:
         flow = None
         if flag == VideoTracker.SF_INITIAL:
             next_pts, status = self.calc_next_point(image1, image2, self.fetch_key_points(image1))
+            # parameters are found to being good enough to the most of video frames
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=next_pts[status == 1],
@@ -640,11 +642,12 @@ class VideoTracker:
                                                 iterations=2, poly_n=5, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         elif flag == VideoTracker.SF_GAUSSIAN:
+            # Gaussian uses the standard parameters just as recommended at openCV documentation
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=None,
                                                 pyr_scale=0.5, levels=1, winsize=15,
-                                                iterations=4, poly_n=5, poly_sigma=1.1,
+                                                iterations=2, poly_n=5, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_FARNEBACK_GAUSSIAN)
 
         # self.print_progress_bar(1, 100, prefix='Progress:', suffix='Complete', length=50)
@@ -673,7 +676,14 @@ if __name__ == "__main__":
     # tracker.plot_peaks_of(frame)
 
     # task 1:
-    # tracker.video_processing()
+    # debugging:
+    # frame = tracker.get_frame_from_video(index=0)
+    # tracker.plot_peaks_of(frame)
+    # practice example with all parameters:
+    # tracker.video_processing(save_out=False)
+    tracker.video_processing()
 
     # task 2:
-    trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=True, flag=VideoTracker.SF_INITIAL)
+    # practice example with all parameters:
+    # trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=False, flag=VideoTracker.SF_INITIAL)
+    trans_img = tracker.segment_flow(inputByVideo)

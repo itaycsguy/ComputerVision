@@ -42,10 +42,10 @@
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="301">
-              <caret line="676" lean-forward="true" selection-start-line="676" selection-end-line="676" />
+              <caret line="686" column="43" lean-forward="true" selection-start-line="686" selection-start-column="43" selection-end-line="686" selection-end-column="43" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <marker date="1558249703027" expanded="true" signature="12758:12847" ph="..." />
+                <marker date="1558250350403" expanded="true" signature="12912:13001" ph="..." />
               </folding>
             </state>
           </provider>
@@ -372,12 +372,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.20864068" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.20864068" />
       <window_info id="Structure" order="1" sideWeight="0.501462" side_tool="true" weight="0.12961012" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3726977" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.3726977" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39653304" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -399,7 +399,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="37">
@@ -603,6 +602,9 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_billiard_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -612,16 +614,16 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_100_102_out.jpg">
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_highway_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="301">
-          <caret line="676" lean-forward="true" selection-start-line="676" selection-end-line="676" />
+          <caret line="686" column="43" lean-forward="true" selection-start-line="686" selection-start-column="43" selection-end-line="686" selection-end-column="43" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <marker date="1558249703027" expanded="true" signature="12758:12847" ph="..." />
+            <marker date="1558250350403" expanded="true" signature="12912:13001" ph="..." />
           </folding>
         </state>
       </provider>
