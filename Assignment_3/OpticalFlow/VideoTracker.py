@@ -71,6 +71,20 @@ class SegmentDetector:
         bgd_model = np.zeros((1, 65), np.float64)
         fgd_model = np.zeros((1, 65), np.float64)
 
+        print(self.img.shape)
+        print(self.img)
+        print(mask.shape)
+        print(mask)
+        print()
+        print(bgd_model)
+        print()
+        print(fgd_model)
+        print()
+        print(iterations)
+        print()
+
+        print(cv2.GC_INIT_WITH_MASK)
+
         mask, _, _ = cv2.grabCut(self.img, mask, None, bgd_model, fgd_model, iterations, cv2.GC_INIT_WITH_MASK)
         mask = np.where((mask == cv2.GC_PR_BGD) | (mask == cv2.GC_BGD), 0, 1).astype(np.uint8)
 
@@ -681,7 +695,7 @@ if __name__ == "__main__":
     # tracker.plot_peaks_of(frame)
     # practice example with all parameters:
     # tracker.video_processing(save_out=False)
-    tracker.video_processing()
+    # tracker.video_processing()
 
     # task 2:
     # practice example with all parameters:
