@@ -605,11 +605,11 @@ if __name__ == "__main__":
     # tracker.plot_peaks_of(frame)
 
     # task 1:
-    tracker.video_processing(save_out=True)
+    # tracker.video_processing(save_out=True)
 
     # task 2:
-    # first_index = 0
-    # second_index = 5
+    first_index = 0
+    second_index = 5
 
     # option A:
     # prev_img = tracker.get_frame_from_video(index=first_index)
@@ -617,7 +617,7 @@ if __name__ == "__main__":
     # tracker.segment_flow(prev_img, next_img)
 
     # option B:
-    # tracker.segment_flow(first_index, second_index, show_out=True)
+    tracker.segment_flow(first_index, second_index, show_out=True)
 
     # debugging:
     # trans_img = tracker.segment_flow(12, 17, show_out=False, save_out=True, flag=VideoTracker.SF_GAUSSIAN)
