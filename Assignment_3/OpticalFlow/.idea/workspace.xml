@@ -3,16 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_billiard_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_billiard_600_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_bugs11_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_bugs11_70_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_driving_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_driving_600_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_highway_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_highway_70_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_rushHour_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Results/OF_rushHour_600_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Results/OF_rushHour_1500_out.avi" beforeDir="false" afterPath="$PROJECT_DIR$/Results/OF_rushHour_1500_out.avi" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="509" column="31" lean-forward="true" selection-start-line="509" selection-start-column="31" selection-end-line="509" selection-end-column="31" />
+            <state relative-caret-position="364">
+              <caret line="572" column="32" lean-forward="true" selection-start-line="572" selection-start-column="23" selection-end-line="572" selection-end-column="47" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -261,7 +252,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.11456628" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.21603929" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -302,13 +293,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/cv2/cv2/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="9582" column="4" selection-start-line="9582" selection-start-column="4" selection-end-line="9582" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/cv2/cv2/HOGDescriptor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
@@ -340,30 +324,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Segment_Image.py">
+    <entry file="file://$PROJECT_DIR$/Segment_Image.py" />
+    <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py" />
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/cv2/cv2/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="33" column="60" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="60" />
-          <folding>
-            <element signature="e#74#83#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Track_Feature_Points.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4109">
-          <caret line="24" column="23" selection-start-line="17" selection-end-line="24" selection-end-column="23" />
-          <folding>
-            <element signature="e#74#83#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1175">
+          <caret line="2759" column="4" selection-start-line="2759" selection-start-column="4" selection-end-line="2759" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="509" column="31" lean-forward="true" selection-start-line="509" selection-start-column="31" selection-end-line="509" selection-end-column="31" />
+        <state relative-caret-position="364">
+          <caret line="572" column="32" lean-forward="true" selection-start-line="572" selection-start-column="23" selection-end-line="572" selection-end-column="47" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
