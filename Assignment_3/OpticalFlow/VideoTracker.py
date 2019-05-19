@@ -6,10 +6,16 @@ import numpy as np
 inputDirectoryPath = ".//Datasets//"
 outputDirectoryPath = ".//Results//"
 
+# "ballet.mp4"      - multi segmentation
+# "highway.avi"     - binary segmentation
+# "bugs11.mp4"      - binary segmentation
+# "rushHour.mp4"    - multi segmentation / binary segmentation
+# "billiard.mp4"    - binary segmentation
+
 # task data:
-inputVideoName = "highway.avi"  # "highway.avi" # "bugs11.mp4" # "rushHour.mp4" # "billiard.mp4"
+inputVideoName = "rushHour.mp4"
 selectPoints = False
-numberOfPoints = 200
+numberOfPoints = 2000
 
 # segmentation:
 inputByVideo = True
@@ -35,7 +41,7 @@ class SegmentDetector:
     SEG_ONE_COLOR = (0, 255, 0)
     SEG_TWO_COLOR = (255, 0, 0)
     SEG_THREE_COLOR = (0, 255, 255)
-    INIT_CLUSTERS = 2
+    INIT_CLUSTERS = 4
 
 
     def __init__(self, image, seg_counter=INIT_CLUSTERS):
@@ -276,16 +282,14 @@ class SegmentationWrapper:
                                                SegmentationWrapper.BEGIN_AT_FEATURE)
         seg1 = SegmentationWrapper.prepare_seg(1, centers[1], optical_flow_float, labels,
                                                SegmentationWrapper.BEGIN_AT_FEATURE)
-        if SegmentDetector.INIT_CLUSTERS > 2:
+        seg2 = list()
+        seg3 = list()
+        if SegmentDetector.INIT_CLUSTERS == 3:
             seg2 = SegmentationWrapper.prepare_seg(2, centers[2], optical_flow_float, labels,
                                                    SegmentationWrapper.BEGIN_AT_FEATURE)
-        else:
-            seg2 = list()
-        if SegmentDetector.INIT_CLUSTERS > 3:
+        if SegmentDetector.INIT_CLUSTERS == 4:
             seg3 = SegmentationWrapper.prepare_seg(3, centers[3], optical_flow_float, labels,
                                                    SegmentationWrapper.BEGIN_AT_FEATURE)
-        else:
-            seg3 = list()
 
         ig = SegmentDetector(orig_img)
         final_mask = ig.calc_multivoting_grabcut()
@@ -320,11 +324,11 @@ class VideoTracker:
         length      - Optional  : character length of bar (Int)
         fill        - Optional  : bar fill character (Str)
     """
-    def printProgressBar (self, iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
+    def print_progress_bar(self, iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
         percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-        filledLength = int(length * iteration // total)
-        bar = fill * filledLength + '-' * (length - filledLength)
-        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+        filled_length = int(length * iteration // total)
+        bar = fill * filled_length + '-' * (length - filled_length)
+        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end='\r')
         # Print New Line on Complete
         if iteration == total:
             print()
@@ -546,7 +550,9 @@ class VideoTracker:
 
         cv2.destroyAllWindows()
         if save_out:
-            cv2.imwrite(outputDirectoryPath + "Velocity_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.jpg", velocity_image, VideoTracker.JPEG_PARAM)
+            out_name = outputDirectoryPath + "Velocity_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.jpg"
+            cv2.imwrite(out_name, velocity_image, VideoTracker.JPEG_PARAM)
+            print(out_name, "is saved.")
             video_instance.release()
         cap.release()
 
@@ -570,7 +576,13 @@ class VideoTracker:
             cv2.destroyAllWindows()
 
 
-    def flow_to_hsv(self, next_img, flow):
+    """
+    flow_to_properties(image, key_points) -> [magnitude, angle], hsv, rgb and gray-scale
+    .   @brief Computing [magnitude, angle], hsv, rgb and gray-scale image properties
+    .   @param next_img
+    .   @param flow
+    """
+    def flow_to_properties(self, next_img, flow):
         hsv = np.zeros(next_img.shape)
         # set saturation
         hsv[:, :, 1] = cv2.cvtColor(next_img, cv2.COLOR_RGB2HSV)[:, :, 1]
@@ -591,6 +603,15 @@ class VideoTracker:
         return polar_flow, hsv, rgb_flow, gray_flow
 
 
+    """
+    flow_to_properties(image, key_points) -> [magnitude, angle], hsv, rgb and gray-scale
+    .   @brief Computing the segmentation flow of 2 frames
+    .   @param input_by_video   True allows to use frameNumber1, frameNumber2 as indices to inputVideoName 
+                                False allows to read images from im1, im2 
+    .   @param show_out[default=True]
+    .   @param save_out[default=False]
+    .   @param flag[default=SF_INITIAL]
+    """
     def segment_flow(self, input_by_video, show_out=True, save_out=False, flag=SF_INITIAL):
         image1 = None
         image2 = None
@@ -603,11 +624,10 @@ class VideoTracker:
 
         flow_name = str(self.last_frames_number[0]) + "_" + str(self.last_frames_number[1])
 
-        cv2.imshow('image1', image1)
-        cv2.waitKey(0)
-        cv2.imshow('image1', image2)
-        cv2.waitKey(0)
-
+        # cv2.imshow('image1', image1)
+        # cv2.waitKey(0)
+        # cv2.imshow('image1', image2)
+        # cv2.waitKey(0)
 
         # obtain dense optical flow parameters
         flow = None
@@ -624,17 +644,19 @@ class VideoTracker:
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=None,
                                                 pyr_scale=0.5, levels=1, winsize=15,
-                                                iterations=2, poly_n=5, poly_sigma=1.1,
+                                                iterations=4, poly_n=5, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_FARNEBACK_GAUSSIAN)
 
-        # self.printProgressBar(1, 100, prefix='Progress:', suffix='Complete', length=50)
+        # self.print_progress_bar(1, 100, prefix='Progress:', suffix='Complete', length=50)
 
-        polar_flow, hsv, rgb, gray = self.flow_to_hsv(image1, flow)
-        trans_img = SegmentationWrapper.segmentation(image2, polar_flow, flow)
+        polar_flow, hsv, rgb, gray = self.flow_to_properties(image1, flow)
+        trans_img = SegmentationWrapper.segmentation(image2, flow, polar_flow)
         if save_out:
             if not os.path.exists(outputDirectoryPath):
                 os.mkdir(outputDirectoryPath)
-            cv2.imwrite(outputDirectoryPath + "SF_" + flow_name + "_out.jpg", trans_img, VideoTracker.JPEG_PARAM)
+            out_name = outputDirectoryPath + "SF_" + inputVideoName[0:-4] + "_" + flow_name + "_out.jpg"
+            cv2.imwrite(out_name, trans_img, VideoTracker.JPEG_PARAM)
+            print(out_name, "is saved.")
         if show_out:
             cv2.imshow('trans_img', trans_img)
             cv2.waitKey(0)
@@ -654,4 +676,4 @@ if __name__ == "__main__":
     # tracker.video_processing()
 
     # task 2:
-    trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=False, flag=VideoTracker.SF_INITIAL)
+    trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=True, flag=VideoTracker.SF_INITIAL)

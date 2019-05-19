@@ -28,7 +28,6 @@
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/App.xaml.cs" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml" afterDir="false" />
       <change beforePath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" beforeDir="false" afterPath="D:/GitHub/realmeeting/realmeeting/realmeeting/MainPage.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -42,11 +41,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="620" column="83" lean-forward="true" selection-start-line="620" selection-start-column="83" selection-end-line="620" selection-end-column="83" />
+            <state relative-caret-position="301">
+              <caret line="676" lean-forward="true" selection-start-line="676" selection-end-line="676" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <marker date="1558219249316" expanded="true" signature="12625:12714" ph="..." />
+                <marker date="1558249703027" expanded="true" signature="12758:12847" ph="..." />
               </folding>
             </state>
           </provider>
@@ -400,37 +399,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/sklearn/metrics/ranking.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-24">
-          <caret line="454" column="13" lean-forward="true" selection-start-line="454" selection-start-column="13" selection-end-line="454" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/scipy/interpolate/_bsplines.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/function_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="82">
-          <caret line="37" column="4" selection-start-line="37" selection-start-column="4" selection-end-line="37" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/lib/function_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1">
-          <caret line="1282" column="4" selection-start-line="1282" selection-start-column="4" selection-end-line="1282" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/builtins.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_histogram_intersection.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -612,9 +580,6 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_rushHour_200_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_1500_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -632,13 +597,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_billiard_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_bugs11_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="620" column="83" lean-forward="true" selection-start-line="620" selection-start-column="83" selection-end-line="620" selection-end-column="83" />
+        <state relative-caret-position="301">
+          <caret line="676" lean-forward="true" selection-start-line="676" selection-end-line="676" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <marker date="1558219249316" expanded="true" signature="12625:12714" ph="..." />
+            <marker date="1558249703027" expanded="true" signature="12758:12847" ph="..." />
           </folding>
         </state>
       </provider>
