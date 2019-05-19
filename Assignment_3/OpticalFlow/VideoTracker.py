@@ -12,28 +12,30 @@ outputDirectoryPath = ".//Results//"
 # "bugs11.mp4"      - binary segmentation
 # "rushHour.mp4"    - multi segmentation / binary segmentation
 # "billiard.mp4"    - binary segmentation
+# "petel_fight.mp4"  - segmentation
 
 # task data:
-inputVideoName = "rushHour.mp4"
+inputVideoName = "petel_fight.mp4"
 selectPoints = False
-numberOfPoints = 2000
+numberOfPoints = 200
 
 # segmentation:
 inputByVideo = True
 im1 = None
 im2 = None
-frameNumber1 = 100
-frameNumber2 = 102
+frameNumber1 = 201
+frameNumber2 = 210
+# number of segments:
+INIT_CLUSTERS = 2
 
 # out data
 Point_color = (0, 0, 255)
 Point_size = 7
 Line_color = (0, 255, 0)
-Line_size = 3
+Line_size = 2
 
 
 class SegmentDetector:
-    SEGMENTATION = 1
     SEGMENT_ZERO = 0
     SEGMENT_ONE = 1
     SEGMENT_TWO = 2
@@ -42,7 +44,6 @@ class SegmentDetector:
     SEG_ONE_COLOR = (0, 255, 0)
     SEG_TWO_COLOR = (255, 0, 0)
     SEG_THREE_COLOR = (0, 255, 255)
-    INIT_CLUSTERS = 4
 
 
     def __init__(self, image, seg_counter=INIT_CLUSTERS):
@@ -175,7 +176,15 @@ class SegmentDetector:
     """
     def calc_multivoting_grabcut(self):
         print("\nProcessing..")
-        f0 = f0_complement = f1 = f1_complement = f2 = f2_complement = f3 = f3_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f0 = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f0_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f1 = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f1_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f2 = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f2_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f3 = np.zeros(self.img.shape[:2], dtype=np.uint8)
+        f3_complement = np.zeros(self.img.shape[:2], dtype=np.uint8)
+
         if self.segments_counter == 2:
             f0 = self.calc_bin_grabcut(seg0, seg1)
             f1 = np.ones(self.img.shape[:2], dtype=np.uint8) - f0
@@ -285,7 +294,7 @@ class SegmentationWrapper:
                                                                     additional_flow_param)
 
         _, labels, centers = cv2.kmeans(optical_flow_float.reshape(-1, SegmentationWrapper.INIT_ROW_SIZE + additional_size),
-                                        SegmentDetector.INIT_CLUSTERS,
+                                        INIT_CLUSTERS,
                                         None,
                                         SegmentationWrapper.CRITERIA,
                                         10,
@@ -297,12 +306,11 @@ class SegmentationWrapper:
                                                SegmentationWrapper.BEGIN_AT_FEATURE)
         seg1 = SegmentationWrapper.prepare_seg(1, centers[1], optical_flow_float, labels,
                                                SegmentationWrapper.BEGIN_AT_FEATURE)
-        seg2 = list()
-        seg3 = list()
-        if SegmentDetector.INIT_CLUSTERS == 3:
+        if INIT_CLUSTERS >= 3:
+            seg3 = list()
             seg2 = SegmentationWrapper.prepare_seg(2, centers[2], optical_flow_float, labels,
                                                    SegmentationWrapper.BEGIN_AT_FEATURE)
-        if SegmentDetector.INIT_CLUSTERS == 4:
+        if INIT_CLUSTERS == 4:
             seg3 = SegmentationWrapper.prepare_seg(3, centers[3], optical_flow_float, labels,
                                                    SegmentationWrapper.BEGIN_AT_FEATURE)
 
@@ -639,10 +647,10 @@ class VideoTracker:
 
         flow_name = str(self.last_frames_number[0]) + "_" + str(self.last_frames_number[1])
 
-        # cv2.imshow('image1', image1)
-        # cv2.waitKey(0)
-        # cv2.imshow('image1', image2)
-        # cv2.waitKey(0)
+        cv2.imshow('pet', image1)
+        cv2.waitKey(0)
+        cv2.imshow('pet', image2)
+        cv2.waitKey(0)
 
         # obtain dense optical flow parameters
         flow = None
@@ -652,8 +660,8 @@ class VideoTracker:
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=next_pts[status == 1],
-                                                pyr_scale=0.5, levels=1, winsize=15,
-                                                iterations=2, poly_n=5, poly_sigma=1.1,
+                                                pyr_scale=0.5, levels=1, winsize=25,
+                                                iterations=4, poly_n=2, poly_sigma=0.9,
                                                 flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         elif flag == VideoTracker.SF_GAUSSIAN:
             # Gaussian uses the standard parameters just as recommended at openCV documentation
