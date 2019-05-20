@@ -6,7 +6,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/petel_fight.mp4" afterDir="false" />
       <change beforePath="D:/GitHub/.gitignore" beforeDir="false" afterPath="D:/GitHub/.gitignore" afterDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/.gitignore" beforeDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/app/.gitignore" beforeDir="false" />
@@ -50,6 +49,27 @@
       <change beforePath="D:/GitHub/RealMeeting/settings.gradle" beforeDir="false" />
       <change beforePath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" beforeDir="false" afterPath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image001.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image004.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image006.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image007.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/vehicle_test.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_billiard_1500_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_billiard_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_billiard_5_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_bugs11_100_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_bugs11_20_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_highway_100_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_highway_20_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_rushHour_1500_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_rushHour_200_out.avi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_100_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_20_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_100_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_20_out.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_rushHour_200_out.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -63,11 +83,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="649" column="83" lean-forward="true" selection-start-line="649" selection-start-column="83" selection-end-line="649" selection-end-column="83" />
+            <state relative-caret-position="216">
+              <caret line="648" column="61" selection-start-line="648" selection-start-column="61" selection-end-line="648" selection-end-column="61" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1558299519459" expanded="true" signature="13253:13342" ph="..." />
+                <marker date="1558311775701" expanded="true" signature="13191:13280" ph="..." />
               </folding>
             </state>
           </provider>
@@ -84,7 +104,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>DEF_C</find>
       <find>DEF_K</find>
       <find>get_simi</find>
       <find>__update_confusion_matrix</find>
@@ -98,7 +117,6 @@
       <find>SEGMENT_ZERO</find>
       <find>SEG_ZERO_COLOR</find>
       <find>calc_bin_grabcut</find>
-      <find>img</find>
       <find>imread</find>
       <find>wait</find>
       <find>print</find>
@@ -108,12 +126,14 @@
       <find>video_instance</find>
       <find>INIT_REQUIRED_COUNTER</find>
       <find>INIT_CLUSTERS</find>
-      <find>inputDirectoryPath</find>
       <find>outputDirectoryPath</find>
       <find>Images</find>
       <find>frameNumber2</find>
       <find>get_video_capturer</find>
       <find>prev_pts</find>
+      <find>imwrite</find>
+      <find>img</find>
+      <find>inputDirectoryPath</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -145,7 +165,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1065" />
     <option name="y" value="220" />
     <option name="width" value="767" />
@@ -202,7 +222,7 @@
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="Datasets" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="Results" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -422,18 +442,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/matplotlib/axes/_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37">
-          <caret line="230" selection-start-line="230" selection-end-line="230" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/dlib/svm_c_trainer_linear.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/__init__.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/rvm_trainer_radial_basis.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_rank_trainer.py" />
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/dlib/svm_c_trainer_sparse_radial_basis.py" />
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__/ml_StatModel.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -459,22 +467,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image004.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image006.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image007.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image001.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/highway.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/vehicle_test.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" />
@@ -585,19 +578,52 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_billiard_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_100_102_out.jpg">
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_201_210_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_petel_fight_201_210_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF3_highway_201_210_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/vehicle_test.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image001.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image004.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image006.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image007.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/highway_201_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/highway_210_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_highway_201_210_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="649" column="83" lean-forward="true" selection-start-line="649" selection-start-column="83" selection-end-line="649" selection-end-column="83" />
+        <state relative-caret-position="216">
+          <caret line="648" column="61" selection-start-line="648" selection-start-column="61" selection-end-line="648" selection-end-column="61" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <marker date="1558299519459" expanded="true" signature="13253:13342" ph="..." />
+            <marker date="1558311775701" expanded="true" signature="13191:13280" ph="..." />
           </folding>
         </state>
       </provider>

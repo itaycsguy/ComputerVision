@@ -7,26 +7,26 @@ inputDirectoryPath = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 outputDirectoryPath = ".//Results//"
 
-# "ballet.mp4"      - multi segmentation
-# "highway.avi"     - binary segmentation
-# "bugs11.mp4"      - binary segmentation
-# "rushHour.mp4"    - multi segmentation / binary segmentation
-# "billiard.mp4"    - binary segmentation
-# "petel_fight.mp4"  - segmentation
+# "ballet.mp4"
+# "highway.avi"
+# "bugs11.mp4"
+# "rushHour.mp4"
+# "billiard.mp4"
+# "petel_fight.mp4"
 
 # task data:
-inputVideoName = "petel_fight.mp4"
+inputVideoName = "highway.avi"
 selectPoints = False
-numberOfPoints = 200
+numberOfPoints = 300
 
 # segmentation:
 inputByVideo = True
-im1 = None
-im2 = None
+im1 = ""    # example: inputDirectoryPath + "highway_201_out.jpg"
+im2 = ""    # example: inputDirectoryPath + "highway_210_out.jpg"
 frameNumber1 = 201
 frameNumber2 = 210
 # number of segments:
-INIT_CLUSTERS = 2
+INIT_CLUSTERS = 3
 
 # out data
 Point_color = (0, 0, 255)
@@ -97,7 +97,7 @@ class SegmentDetector:
         f0_complement = np.ones(self.img.shape[:2], dtype=np.uint8) - self.calc_bin_grabcut(seg1 + seg2 + seg3, seg0)
 
         # voting per segment
-        f0 = f0_1 + f0_2 + f0_3 + f0_complement + f0_12 + f0_13 + f0_23 + (2 * f0_123)
+        f0 = f0_1 + f0_2 + f0_3 + f0_complement + f0_12 + f0_13 + f0_23 + 2 * f0_123
         return f0, f0_complement
 
 
@@ -310,7 +310,7 @@ class SegmentationWrapper:
 class VideoTracker:
     SF_INITIAL = 0
     SF_GAUSSIAN = 1
-    DIV_REFRESH = 8
+    DIV_REFRESH = 4
     DEFAULT_REFRESH_THRESH = 100
     JPEG_PARAM = [int(cv2.IMWRITE_JPEG_QUALITY), 95]
 
@@ -468,7 +468,6 @@ class VideoTracker:
                 break
             else:
                 prev_dst_amt = dst.shape[0]
-        print("Found", dst.shape[0], "key points.")
         self.is_ar_least_half_kp = int(len(dst) / 2) >= self.total_frames
         return dst
 
@@ -498,6 +497,7 @@ class VideoTracker:
     .   @param save_out
     """
     def video_processing(self, save_out=False):
+        print("Running video processing..")
         global Points
         global point_img
         Points = list()
@@ -565,6 +565,7 @@ class VideoTracker:
             print(out_name, "is saved.")
             video_instance.release()
         cap.release()
+        print("Done!")
 
 
 
@@ -622,21 +623,20 @@ class VideoTracker:
     .   @param flag
     """
     def segment_flow(self, input_by_video, show_out=True, save_out=False, flag=SF_INITIAL):
+        print("Running segment flow..")
         image1 = None
         image2 = None
+        flow_name = ""
         if input_by_video:
             image1 = self.get_frame_from_video(index=frameNumber1)
             image2 = self.get_frame_from_video(index=frameNumber2)
+            flow_name = str(self.last_frames_number[0]) + "_" + str(self.last_frames_number[1])
         else:
             image1 = cv2.imread(im1)
             image2 = cv2.imread(im2)
-
-        flow_name = str(self.last_frames_number[0]) + "_" + str(self.last_frames_number[1])
-
-        cv2.imshow('pet', image1)
-        cv2.waitKey(0)
-        cv2.imshow('pet', image2)
-        cv2.waitKey(0)
+            splitted_im1 = im1.split("//")
+            splitted_im2 = im2.split("//")
+            flow_name = splitted_im1[len(splitted_im1)-1][0:-4] + "_" + splitted_im2[len(splitted_im2)-1][0:-4]
 
         # obtain dense optical flow parameters
         flow = None
@@ -646,8 +646,8 @@ class VideoTracker:
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=next_pts[status == 1],
-                                                pyr_scale=0.5, levels=1, winsize=25,
-                                                iterations=4, poly_n=2, poly_sigma=0.9,
+                                                pyr_scale=0.6, levels=4, winsize=15,
+                                                iterations=4, poly_n=3, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         elif flag == VideoTracker.SF_GAUSSIAN:
             # Gaussian uses the standard parameters just as recommended at openCV documentation
@@ -673,6 +673,7 @@ class VideoTracker:
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
+        print("Done!")
         return trans_img
 
 
@@ -680,18 +681,22 @@ if __name__ == "__main__":
     tracker = VideoTracker()
 
     # debugging + example:
-    # frame = tracker.get_frame_from_video(index=0)
+    # frame = tracker.get_frame_from_video(index=frameNumber1)
+    # out_name = inputDirectoryPath + inputVideoName[0:-4] + "_" + str(frameNumber1) + "_out.jpg"
+    # cv2.imwrite(out_name, frame, VideoTracker.JPEG_PARAM)
     # tracker.plot_peaks_of(frame)
 
     # task 1:
     # debugging:
-    # frame = tracker.get_frame_from_video(index=0)
+    # frame = tracker.get_frame_from_video(index=frameNumber2)
     # tracker.plot_peaks_of(frame)
     # practice example with all parameters:
     # tracker.video_processing(save_out=False)
+
     # tracker.video_processing()
 
     # task 2:
     # practice example with all parameters:
     # trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=False, flag=VideoTracker.SF_INITIAL)
+
     trans_img = tracker.segment_flow(inputByVideo)
