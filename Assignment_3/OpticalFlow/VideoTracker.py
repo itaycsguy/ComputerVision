@@ -646,8 +646,8 @@ class VideoTracker:
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=next_pts[status == 1],
-                                                pyr_scale=0.6, levels=4, winsize=15,
-                                                iterations=4, poly_n=3, poly_sigma=1.1,
+                                                pyr_scale=0.5, levels=1, winsize=15,
+                                                iterations=4, poly_n=5, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         elif flag == VideoTracker.SF_GAUSSIAN:
             # Gaussian uses the standard parameters just as recommended at openCV documentation

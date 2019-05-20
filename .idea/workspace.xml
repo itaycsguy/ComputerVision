@@ -6,6 +6,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/OF_highway_300_out.avi" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/OF_petel_fight_300_out.avi" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/SF3_highway_201_210_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/SF_ballet_100_102_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/SF_petel_fight_201_210_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/Velocity_highway_300_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/Velocity_petel_fight_300_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/ballet_100_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/ballet_102_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/highway_201_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/highway_210_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/petel_fight.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/petel_fight_201_out.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/petel_fight_210_out.jpg" afterDir="false" />
       <change beforePath="D:/GitHub/.gitignore" beforeDir="false" afterPath="D:/GitHub/.gitignore" afterDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/.gitignore" beforeDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/app/.gitignore" beforeDir="false" />
@@ -48,28 +62,6 @@
       <change beforePath="D:/GitHub/RealMeeting/gradlew.bat" beforeDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/settings.gradle" beforeDir="false" />
       <change beforePath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" beforeDir="false" afterPath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image001.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image004.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image006.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image007.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/vehicle_test.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_billiard_1500_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_billiard_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_billiard_5_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_bugs11_100_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_bugs11_20_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_highway_100_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_highway_20_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_rushHour_1500_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/OF_rushHour_200_out.avi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_100_out.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_20_out.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_100_out.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_20_out.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_rushHour_200_out.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -84,10 +76,10 @@
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="216">
-              <caret line="648" column="61" selection-start-line="648" selection-start-column="61" selection-end-line="648" selection-end-column="61" />
+              <caret line="648" column="62" selection-start-line="648" selection-start-column="62" selection-end-line="648" selection-end-column="62" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1558311775701" expanded="true" signature="13191:13280" ph="..." />
+                <marker date="1558360214906" expanded="true" signature="13191:13280" ph="..." />
               </folding>
             </state>
           </provider>
@@ -217,13 +209,6 @@
               <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="Results" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -236,11 +221,13 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow" />
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow\Datasets" />
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
       <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow" />
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow\Datasets" />
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
       <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
@@ -415,12 +402,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.20864068" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.20864068" />
       <window_info id="Structure" order="1" sideWeight="0.501462" side_tool="true" weight="0.12961012" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.28710726" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.28710726" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39653304" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -620,10 +607,10 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
-          <caret line="648" column="61" selection-start-line="648" selection-start-column="61" selection-end-line="648" selection-end-column="61" />
+          <caret line="648" column="62" selection-start-line="648" selection-start-column="62" selection-end-line="648" selection-end-column="62" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <marker date="1558311775701" expanded="true" signature="13191:13280" ph="..." />
+            <marker date="1558360214906" expanded="true" signature="13191:13280" ph="..." />
           </folding>
         </state>
       </provider>
