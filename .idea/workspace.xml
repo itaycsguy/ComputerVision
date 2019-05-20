@@ -48,6 +48,8 @@
       <change beforePath="D:/GitHub/RealMeeting/gradlew.bat" beforeDir="false" />
       <change beforePath="D:/GitHub/RealMeeting/settings.gradle" beforeDir="false" />
       <change beforePath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" beforeDir="false" afterPath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -60,11 +62,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="648" column="62" selection-start-line="648" selection-start-column="62" selection-end-line="648" selection-end-column="62" />
+            <state relative-caret-position="297">
+              <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
-                <marker date="1558360214906" expanded="true" signature="13191:13280" ph="..." />
               </folding>
             </state>
           </provider>
@@ -142,7 +143,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="1065" />
     <option name="y" value="220" />
     <option name="width" value="767" />
@@ -154,28 +155,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="ComputerVision" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-              <item name="src_task1" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -193,6 +172,28 @@
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
               <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="ComputerVision" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
+              <item name="venv" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
+              <item name="venv" type="462c0819:PsiDirectoryNode" />
+              <item name="src_task1" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -384,14 +385,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.20864068" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.18071654" />
       <window_info id="Structure" order="1" sideWeight="0.501462" side_tool="true" weight="0.12961012" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" weight="0.28710726" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.28710726" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39653304" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -413,31 +414,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__/ml_StatModel.py" />
-    <entry file="file://$PROJECT_DIR$/Assignment_2/Object_Recognition_System.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="984" column="44" selection-start-line="984" selection-start-column="44" selection-end-line="984" selection-end-column="44" />
-          <folding>
-            <element signature="e#74#83#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/numpy/core/_multiarray_umath.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="7222" column="10" selection-start-line="7222" selection-start-column="4" selection-end-line="7222" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons/numpy/core/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="4427" selection-start-line="4427" selection-end-line="4427" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/highway.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -501,21 +477,13 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_12_17_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Images/10.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_1500_out.jpg" />
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_100_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_20_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_100_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_100_out.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_20_out.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_bugs11_100_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_rushHour_1500_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_rushHour_200_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_rushHour_200_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_1500_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -533,13 +501,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_100_102_out.jpg" />
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_20_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_20_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_highway_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -549,52 +513,47 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_billiard_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_201_210_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_201_210_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_petel_fight_201_210_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF3_highway_201_210_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/vehicle_test.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image001.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image004.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image006.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image007.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF3_highway_201_210_out.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/vehicle_test.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image001.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image004.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image006.jpg" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/image007.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/highway_201_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Datasets/highway_210_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF2_rushHour_100_102_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_ballet_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_highway_201_210_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/highway_210_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/highway_201_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/SF3_highway_201_210_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/SF_ballet_100_102_out.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="648" column="62" selection-start-line="648" selection-start-column="62" selection-end-line="648" selection-end-column="62" />
+        <state relative-caret-position="297">
+          <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
-            <marker date="1558360214906" expanded="true" signature="13191:13280" ph="..." />
           </folding>
         </state>
       </provider>

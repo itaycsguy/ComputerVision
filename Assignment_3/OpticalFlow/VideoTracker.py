@@ -1,4 +1,5 @@
-import cv2, os
+# Itay Guy, 305104184 & Elias Jadon, 207755737
+import cv2, os, argparse
 import numpy as np
 
 # out data:
@@ -17,16 +18,17 @@ outputDirectoryPath = ".//Results//"
 # task data:
 inputVideoName = "highway.avi"
 selectPoints = False
-numberOfPoints = 300
+numberOfPoints = 500
 
 # segmentation:
 inputByVideo = True
-im1 = ""    # example: inputDirectoryPath + "highway_201_out.jpg"
-im2 = ""    # example: inputDirectoryPath + "highway_210_out.jpg"
+im1 = inputDirectoryPath + "highway_201_out.jpg"    # example: inputDirectoryPath + "highway_201_out.jpg"
+im2 = inputDirectoryPath + "highway_210_out.jpg"    # example: inputDirectoryPath + "highway_210_out.jpg"
 frameNumber1 = 201
 frameNumber2 = 210
+
 # number of segments:
-INIT_CLUSTERS = 3
+INIT_CLUSTERS = 2
 
 # out data
 Point_color = (0, 0, 255)
@@ -646,15 +648,15 @@ class VideoTracker:
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=next_pts[status == 1],
-                                                pyr_scale=0.5, levels=1, winsize=15,
-                                                iterations=4, poly_n=5, poly_sigma=1.1,
+                                                pyr_scale=0.5, levels=1, winsize=18,
+                                                iterations=4, poly_n=3, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_USE_INITIAL_FLOW)
         elif flag == VideoTracker.SF_GAUSSIAN:
             # Gaussian uses the standard parameters just as recommended at openCV documentation
             flow = cv2.calcOpticalFlowFarneback(cv2.cvtColor(image1, cv2.COLOR_RGB2GRAY),
                                                 cv2.cvtColor(image2, cv2.COLOR_RGB2GRAY),
                                                 flow=None,
-                                                pyr_scale=0.5, levels=1, winsize=15,
+                                                pyr_scale=0.5, levels=1, winsize=14,
                                                 iterations=2, poly_n=5, poly_sigma=1.1,
                                                 flags=cv2.OPTFLOW_FARNEBACK_GAUSSIAN)
 
@@ -678,25 +680,37 @@ class VideoTracker:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Computer Vision - Assignment 3')
+    parser.add_argument("--optical_flow", help="Executing an optical flow.", action="store_true")
+    parser.add_argument("--segment_flow", help="Executing a segment flow.", action="store_true")
+    args = parser.parse_args()
     tracker = VideoTracker()
 
-    # debugging + example:
-    # frame = tracker.get_frame_from_video(index=frameNumber1)
-    # out_name = inputDirectoryPath + inputVideoName[0:-4] + "_" + str(frameNumber1) + "_out.jpg"
-    # cv2.imwrite(out_name, frame, VideoTracker.JPEG_PARAM)
-    # tracker.plot_peaks_of(frame)
+    flag = False
+    if args.optical_flow:
+        # debugging + example:
+        # frame = tracker.get_frame_from_video(index=frameNumber1)
+        # out_name = inputDirectoryPath + inputVideoName[0:-4] + "_" + str(frameNumber1) + "_out.jpg"
+        # cv2.imwrite(out_name, frame, VideoTracker.JPEG_PARAM)
+        # tracker.plot_peaks_of(frame)
 
-    # task 1:
-    # debugging:
-    # frame = tracker.get_frame_from_video(index=frameNumber2)
-    # tracker.plot_peaks_of(frame)
-    # practice example with all parameters:
-    # tracker.video_processing(save_out=False)
+        # task 1:
+        # debugging:
+        # frame = tracker.get_frame_from_video(index=frameNumber2)
+        # tracker.plot_peaks_of(frame)
+        # practice example with all parameters:
+        # tracker.video_processing(save_out=False)
 
-    # tracker.video_processing()
+        flag = True
+        tracker.video_processing()
 
-    # task 2:
-    # practice example with all parameters:
-    # trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=False, flag=VideoTracker.SF_INITIAL)
+    if args.segment_flow:
+        # task 2:
+        # practice example with all parameters:
+        # trans_img = tracker.segment_flow(inputByVideo, show_out=True, save_out=False, flag=VideoTracker.SF_INITIAL)
 
-    trans_img = tracker.segment_flow(inputByVideo)
+        flag = True
+        trans_img = tracker.segment_flow(inputByVideo)
+
+    if not flag:
+        print("Should pick any functionality to execute. for help use -h.")
