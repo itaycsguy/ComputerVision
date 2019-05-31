@@ -7,24 +7,19 @@ import numpy as np
 inputDirectoryPath = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 outputDirectoryPath = ".//Results//"
-
-# task data:
-inputVideoName = "Soccer1.mp4"
+MIN_MATCH_COUNT = 4
+inputVideoName = "Soccer2.mp4"
 selectPoints = False
-numberOfPoints = 500
-
-# out data
+numberOfPoints = 15
 Point_color = (0, 0, 255)
 Point_size = 7
 Line_color = (0, 255, 0)
 Line_size = 2
 
+
 class VideoTracker:
-    SF_INITIAL = 0
-    SF_GAUSSIAN = 1
     DIV_REFRESH = 4
     DEFAULT_REFRESH_THRESH = 100
-    JPEG_PARAM = [int(cv2.IMWRITE_JPEG_QUALITY), 95]
 
     def __init__(self):
         self.total_frames = -1
@@ -32,27 +27,6 @@ class VideoTracker:
         self.refresh_thresh = VideoTracker.DEFAULT_REFRESH_THRESH
         self.last_frames_number = list()
         self.lfn_pointer = 0
-
-
-    """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-    """
-    def print_progress_bar(self, iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
-        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-        filled_length = int(length * iteration // total)
-        bar = fill * filled_length + '-' * (length - filled_length)
-        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end='\r')
-        # Print New Line on Complete
-        if iteration == total:
-            print()
 
 
     """
@@ -204,84 +178,6 @@ class VideoTracker:
 
 
     """
-    video_processing(save_out=False) -> None
-    .   @brief Executing the video file frame by frame and processing the optical flow algorithm by key points
-    .   @param save_out
-    """
-    def video_processing(self, save_out=False):
-        print("Running video processing..")
-        global Points
-        global point_img
-        Points = list()
-        cap, prev_img = self.get_video_capturer()
-        point_img = prev_img
-        velocity_image = prev_img.copy()
-        video_instance = None
-        if save_out:
-            if not os.path.exists(outputDirectoryPath):
-                os.mkdir(outputDirectoryPath)
-            w, h, _ = prev_img.shape
-            video_instance = cv2.VideoWriter(outputDirectoryPath + "OF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi",
-                                             cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
-        mask = np.zeros_like(prev_img)
-        if selectPoints:
-            prev_pts = self.get_points_from_user()
-        else:
-            prev_pts = self.fetch_key_points(prev_img)
-
-        count = 0
-        while cap.isOpened():
-            ret, next_img = cap.read()
-            if not ret:
-                break
-            else:
-                # computing the next points
-                next_pts, status = self.calc_next_point(prev_img, next_img, prev_pts)
-                new = next_pts[status == 1]
-                old = prev_pts[status == 1]
-
-                # draw the tracks
-                img = next_img.copy()
-                for i, (n, o) in enumerate(zip(new, old)):
-                    a, b = n.ravel()
-                    c, d = o.ravel()
-                    # velocity computation
-                    mask = cv2.line(mask, (a, b), (c, d), [0, 255, 0], 2)
-                    img = cv2.circle(img, (a, b), 3, [0, 0, 255], -1)
-                img = cv2.add(img, mask)
-                velocity_image = cv2.add(velocity_image, mask)
-
-                cv2.imshow('Processed Frame Out', img)
-                if save_out:
-                    video_instance.write(img)
-                k = cv2.waitKey(1) & 0xff
-                if k == 27:
-                    break
-
-                # updating the next iteration
-                mask = np.zeros_like(mask)
-                prev_img = next_img.copy()
-                if count == self.refresh_thresh:
-                    print("Points refreshing..")
-                    prev_pts = self.fetch_key_points(prev_img)
-                    count = 0
-                else:
-                    prev_pts = new.copy()
-
-                count += 1
-
-        cv2.destroyAllWindows()
-        if save_out:
-            out_name = outputDirectoryPath + "Velocity_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.jpg"
-            cv2.imwrite(out_name, velocity_image, VideoTracker.JPEG_PARAM)
-            print(out_name, "is saved.")
-            video_instance.release()
-        cap.release()
-        print("Done!")
-
-
-
-    """
     plot_peaks_of(image) -> None
     .   @brief Displaying the key point that were found to this specific image
     .   @param image
@@ -298,35 +194,100 @@ class VideoTracker:
             cv2.destroyAllWindows()
 
 
+    """
+    Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
+    homography_tracking([overhead_view[, save_out]]) -> None
+    .   @brief Computing the homography between 2 frames into a video sequence
+    .   @param overhead_view [default=False] - If true it will be mapped to some overhead view
+    .   @param save_out                      - If true the video will be saved out to Results directory
+    """
+    def homography_tracking(self, overhead_view=False, save_out=False):
+        print("Running homography tracking process..")
+        global Points
+        global point_img
+        Points = list()
+        cap, prev_img = self.get_video_capturer()
+        point_img = prev_img.copy()
+        video_instance = None
+        video_name = ""
+        if save_out:
+            if not os.path.exists(outputDirectoryPath):
+                os.mkdir(outputDirectoryPath)
+            w, h, _ = prev_img.shape
+            video_name = outputDirectoryPath + "HCT_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi"
+            video_instance = cv2.VideoWriter(video_name, cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
+        if selectPoints:
+
+            prev_pts = self.get_points_from_user()
+        else:
+            prev_pts = self.fetch_key_points(prev_img)
+
+        # Points of the initial frame where we should find the homography
+        init_img = prev_img.copy()
+        init_pts = prev_pts.copy()
+
+        if overhead_view:
+            # TODO: need to handle overhead case
+            pass
+
+        while cap.isOpened():
+            ret, next_img = cap.read()
+            if not ret:
+                break
+            else:
+                # computing the next points
+                next_pts, status = self.calc_next_point(init_img, next_img, prev_pts)
+                good = next_pts[status == 1]
+                # need to verify there is no less than 4 points due to projective requirements for at least 8 equations
+                if len(good) >= MIN_MATCH_COUNT:
+                    try:
+                        # computing homography to the initial frame
+                        H, mask = cv2.findHomography(init_pts, good, cv2.RANSAC, 5.0)
+                        # computing the transformation and paste it onto the initial frame
+                        h, w, _ = next_img.shape
+                        dst = cv2.perspectiveTransform(init_pts, H)
+
+                        # TODO: need to compute the object location and adjust it the first frame - mosic image
+                        img = cv2.add(init_img, cv2.polylines(next_img, [np.int32(dst)], True, 255, 2, cv2.LINE_AA))
+                        cv2.imshow('Processed Frame Out', img)
+                        if save_out:
+                            video_instance.write(img)
+                        k = cv2.waitKey(1) & 0xff
+                        if k == 27:
+                            break
+                    except Exception as _:
+                        # TODO: need to check the exception source
+                        pass
+                else:
+                    print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
+
+
+        cv2.destroyAllWindows()
+        if save_out:
+            video_instance.release()
+            print(video_name, "is saved.")
+        cap.release()
+        print("Done!")
+
+
 if __name__ == "__main__":
     tracker = VideoTracker()
-    tracker.video_processing()
+    tracker.homography_tracking()
 
-    # Next Section is made for the submission time - DO NOT REMOVE!
-    """
-    parser = argparse.ArgumentParser(description='Computer Vision - Assignment 4')
-    parser.add_argument("--optical_flow", help="Executing an optical flow.", action="store_true")
-    args = parser.parse_args()
-    tracker = VideoTracker()
-
-    flag = False
-    if args.optical_flow:
-        # debugging + example:
-        # frame = tracker.get_frame_from_video(index=frameNumber1)
-        # out_name = inputDirectoryPath + inputVideoName[0:-4] + "_" + str(frameNumber1) + "_out.jpg"
-        # cv2.imwrite(out_name, frame, VideoTracker.JPEG_PARAM)
-        # tracker.plot_peaks_of(frame)
-
-        # task 1:
-        # debugging:
-        # frame = tracker.get_frame_from_video(index=frameNumber2)
-        # tracker.plot_peaks_of(frame)
-        # practice example with all parameters:
-        # tracker.video_processing(save_out=False)
-
-        flag = True
-        tracker.video_processing()
-
-    if not flag:
-        print("Should pick any functionality to execute. for help use -h.")
-    """
+    # Submission time - DO NOT REMOVE!
+    # parser = argparse.ArgumentParser(description='Computer Vision - Assignment 4')
+    # parser.add_argument("--homo_first_frame", help="Find an homography to the first frame.", action="store_true")
+    # parser.add_argument("--homo_overhead_view", help="Find an homography to some overhead view.", action="store_true")
+    # args = parser.parse_args()
+    # tracker = VideoTracker()
+    #
+    # flag = False
+    # if args.homo_first_frame:
+    #     flag = True
+    #     tracker.homography_tracking()
+    # elif args.homo_overhead_view:
+    #     flag = True
+    #     tracker.homography_tracking(overhead_view=True)
+    #
+    # if not flag:
+    #     print("Should pick any functionality to execute. for help use -h.")
