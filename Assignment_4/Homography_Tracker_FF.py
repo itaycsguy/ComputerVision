@@ -145,11 +145,10 @@ class Homography_Tracker_FF:
                         # computing homography to the initial frame
                         H, mask = cv2.findHomography(init_pts, good, cv2.RANSAC, 5.0)
                         # computing the transformation and paste it onto the initial frame
-                        h, w, _ = next_img.shape
-                        dst = cv2.perspectiveTransform(init_pts, H)
 
-                        # TODO: need to compute the object location and adjust it the first frame - mosic image
-                        img = cv2.add(init_img, cv2.polylines(next_img, [np.int32(dst)], True, 255, 2, cv2.LINE_AA))
+                        img = cv2.warpPerspective(next_img, H, (next_img.shape[1], next_img.shape[0]))
+                        img = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
+                        
                         cv2.imshow('Processed Frame Out', img)
                         if save_out:
                             video_instance.write(img)
@@ -158,6 +157,7 @@ class Homography_Tracker_FF:
                             break
                     except Exception as _:
                         # TODO: need to check the exception source
+                        print("Main loop exception!")
                         pass
                 else:
                     print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
