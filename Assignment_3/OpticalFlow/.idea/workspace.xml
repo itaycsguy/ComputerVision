@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a72d81c4-e014-46d9-a961-728dce0aa54a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/VideoTracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/VideoTracker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,14 +12,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-184">
-              <caret line="165" column="10" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="10" />
+            <state relative-caret-position="211">
+              <caret line="647" column="83" selection-start-line="647" selection-start-column="83" selection-end-line="647" selection-end-column="83" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$USER_HOME$/Desktop/Submission_Assignment_3/VideoTracker.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="262">
+              <caret line="689" column="21" selection-start-line="689" selection-start-column="21" selection-end-line="689" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -77,6 +86,7 @@
         <option value="$PROJECT_DIR$/Segment_Image.py" />
         <option value="$PROJECT_DIR$/Track_Feature_Points.py" />
         <option value="$PROJECT_DIR$/VideoTracker.py" />
+        <option value="$USER_HOME$/Desktop/Submission_Assignment_3/VideoTracker.py" />
       </list>
     </option>
   </component>
@@ -91,7 +101,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -117,6 +126,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -134,7 +144,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.VideoTracker">
+  <component name="RunManager" selected="Python.VideoTracker (1)">
     <configuration name="Optical_flow" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="OpticalFlow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -198,6 +208,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="VideoTracker (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="OpticalFlow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop/Submission_Assignment_3" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/Desktop/Submission_Assignment_3/VideoTracker.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="VideoTracker" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="OpticalFlow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -221,6 +252,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.VideoTracker (1)" />
         <item itemvalue="Python.VideoTracker" />
         <item itemvalue="Python.Track_Feature_Points" />
         <item itemvalue="Python.Segment_Image" />
@@ -250,7 +282,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.101472996" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.38625205" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -333,11 +365,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-184">
-          <caret line="165" column="10" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="10" />
+        <state relative-caret-position="211">
+          <caret line="647" column="83" selection-start-line="647" selection-start-column="83" selection-end-line="647" selection-end-column="83" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/Submission_Assignment_3/VideoTracker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="689" column="21" selection-start-line="689" selection-start-column="21" selection-end-line="689" selection-end-column="21" />
         </state>
       </provider>
     </entry>
