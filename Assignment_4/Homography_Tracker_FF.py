@@ -108,6 +108,54 @@ class Homography_Tracker_FF:
         return next_pts, status.ravel()
 
 
+    def blend_frames(self, A, B):
+        # generate Gaussian pyramid for A
+        G = A.copy()
+        gpA = [G]
+        for i in range(6):
+            G = cv2.pyrDown(G)
+            gpA.append(G)
+
+        # generate Gaussian pyramid for B
+        G = B.copy()
+        gpB = [G]
+        for i in range(6):
+            G = cv2.pyrDown(G)
+            gpB.append(G)
+
+        # generate Laplacian Pyramid for A
+        lpA = [gpA[5]]
+        for i in range(5, 0, -1):
+            size = (gpA[i-1].shape[1], gpA[i-1].shape[0])
+            GE = cv2.pyrUp(gpA[i], dstsize=size)
+            L = cv2.subtract(gpA[i-1], GE)
+            lpA.append(L)
+
+        # generate Laplacian Pyramid for B
+        lpB = [gpB[5]]
+        for i in range(5, 0, -1):
+            size = (gpB[i-1].shape[1], gpB[i-1].shape[0])
+            GE = cv2.pyrUp(gpB[i], dstsize=size)
+            L = cv2.subtract(gpB[i-1], GE)
+            lpB.append(L)
+
+        # Now add left and right halves of images in each level
+        LS = []
+        for la, lb in zip(lpA, lpB):
+            rows, cols, dpt = la.shape
+            ls = np.hstack((la[:, 0:int(cols/2)], lb[:, int(cols/2):]))
+            LS.append(ls)
+
+        # now reconstruct
+        ls_ = LS[0]
+        for i in range(1, 6):
+            size = (LS[i].shape[1], LS[i].shape[0])
+            ls_ = cv2.pyrUp(ls_, dstsize=size)
+            ls_ = cv2.add(ls_, LS[i])
+
+        return ls_
+
+
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
     run_tracking([save_out]) -> None
@@ -141,24 +189,26 @@ class Homography_Tracker_FF:
                 good = next_pts[status == 1]
                 # need to verify there is no less than 4 points due to projective requirements for at least 8 equations
                 if len(good) >= MIN_MATCH_COUNT:
-                    try:
-                        # computing homography to the initial frame
-                        H, mask = cv2.findHomography(init_pts, good, cv2.RANSAC, 5.0)
-                        # computing the transformation and paste it onto the initial frame
-
-                        img = cv2.warpPerspective(next_img, H, (next_img.shape[1], next_img.shape[0]))
-                        img = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
-                        
-                        cv2.imshow('Processed Frame Out', img)
-                        if save_out:
-                            video_instance.write(img)
-                        k = cv2.waitKey(1) & 0xff
-                        if k == 27:
-                            break
-                    except Exception as _:
-                        # TODO: need to check the exception source
-                        print("Main loop exception!")
-                        pass
+                    # try:
+                    # computing homography to the initial frame
+                    H, mask = cv2.findHomography(init_pts, good, cv2.RANSAC, 5.0)
+                    # computing the transformation and paste it onto the initial frame
+                    dst = cv2.perspectiveTransform(next_pts, H)
+                    img = cv2.warpPerspective(next_img, H, (next_img.shape[1], next_img.shape[0]))
+                    img = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
+                    # img = cv2.add(np.zeros_like(img), cv2.polylines(np.zeros_like(init_img), [np.int32(dst)], True, 255, 2))
+                    # img = self.blend_frames(init_img, img)
+                    cv2.imshow('Processed Frame Out', img)
+                    # cv2.waitKey(0)
+                    if save_out:
+                        video_instance.write(img)
+                    k = cv2.waitKey(1) & 0xff
+                    if k == 27:
+                        break
+                    # except Exception as _:
+                    #     TODO: need to check the exception source
+                    # print("Main loop exception!")
+                    # pass
                 else:
                     print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
 
