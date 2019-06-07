@@ -145,7 +145,7 @@ class Homography_Tracker_FF:
     .   @param prev_pts Key points of the previous frame
     """
     def calc_next_point(self, prev_img, next_img, prev_pts):
-        w, h, _ = prev_img.shape    # winSize=(22, 22)
+        w, h, _ = prev_img.shape
         lk_params = dict(winSize=(22, 22),
                          maxLevel=3,
                          criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
@@ -224,13 +224,15 @@ class Homography_Tracker_FF:
         return stitched[y:y + h, x:x + w]
 
 
-    def calc_homography_stitched(self, img0, pts0, img1, pts1):
+    def calc_stitched_scene_homography(self, good_init_prev, good_init_next, prev_img, good_prev, next_img, good_next):
         # Computing Homography transformation with the initial point's frame
-        H, _ = cv2.findHomography(pts1, pts0, cv2.RANSAC, 5.0)
+        H_next, _ = cv2.findHomography(good_next, good_init_next, cv2.RANSAC, 5.0)
+        H_prev, _ = cv2.findHomography(good_prev, good_init_prev, cv2.RANSAC, 5.0)
         # Warping the next frame with the Homography matrix
-        warped_img = cv2.warpPerspective(img1, H, flags=cv2.WARP_INVERSE_MAP, dsize=(img1.shape[1], img1.shape[0]))
+        warped_img_next = cv2.warpPerspective(next_img, H_next, flags=cv2.WARP_INVERSE_MAP, dsize=(next_img.shape[1], next_img.shape[0]))
+        warped_img_prev = cv2.warpPerspective(prev_img, H_prev, flags=cv2.WARP_INVERSE_MAP, dsize=(prev_img.shape[1], prev_img.shape[0]))
         # Stitching between the initial frame and the next warped frame to single new frame
-        return cv2.Stitcher.create(cv2.Stitcher_SCANS).stitch([warped_img, img0])
+        return cv2.Stitcher.create(cv2.Stitcher_SCANS).stitch([warped_img_next, warped_img_prev])
 
 
 
@@ -242,11 +244,13 @@ class Homography_Tracker_FF:
         x_min = int(min(points[:, 1]))
         x_max = int(max(points[:, 1]))
         overview_img = np.zeros((y_max - y_min, x_max - x_min), dtype=np.uint8)
-        status, stitched = self.calc_homography_stitched(img, img_pts, overview_img, overview_pts)
+        status, stitched = self.calc_stitched_scene_homography(img, img_pts, overview_img, overview_pts)
         if status == cv2.Stitcher_OK:
             cv2.imshow("series", stitched)
             # cv2.waitKey(0)
             return stitched
+
+        return img
 
 
 
@@ -265,13 +269,14 @@ class Homography_Tracker_FF:
         cap, init_img = self.get_video_capturer()
         # init_img = cv2.resize(init_img, (256, 256), interpolation=cv2.INTER_CUBIC)
 
-        w, h, _ = init_img.shape
-        video_instance = cv2.VideoWriter(outputDirectoryPath + "FF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi",
-                                         cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
+        # w, h, _ = init_img.shape
+        # video_instance = cv2.VideoWriter(outputDirectoryPath + "FF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi",
+        #                                  cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
 
         point_img = init_img.copy()
         init_pts = self.fetch_key_points(init_img)  # self.get_points_from_user()
         # init_img = self.overhead_mapping(init_img, init_pts)
+        prev_img = init_img.copy()
         while cap.isOpened():
             ret, next_img = cap.read()
             # next_img = cv2.resize(next_img, (256, 256), interpolation=cv2.INTER_CUBIC)
@@ -279,27 +284,40 @@ class Homography_Tracker_FF:
                 break
             else:
                 # Optical flow: find correspondences
-                next_pts, status = self.calc_next_point(init_img, next_img, init_pts)
-                good = next_pts[status == 1]
-                # Auto handling of the correspondences bugs
-                if len(good) >= MIN_MATCH_COUNT:
-                    status, stitched = self.calc_homography_stitched(init_img, init_pts, next_img, next_pts)
+                prev_pts, prev_status = self.calc_next_point(init_img, prev_img, init_pts)
+                good_prev = prev_pts[prev_status == 1]
+                next_pts, next_status = self.calc_next_point(init_img, next_img, init_pts)
+                good_next = next_pts[next_status == 1]
+                min_good_points = min(len(good_next), len(good_prev))
+                if min_good_points >= MIN_MATCH_COUNT:
+                    # Handling of the correspondences
+                    good_init_prev = init_pts[prev_status == 1]
+                    good_init_next = init_pts[next_status == 1]
+                    # Computing the Homography & Stitiching process
+                    status, stitched = self.calc_stitched_scene_homography(good_init_prev,
+                                                                           good_init_next,
+                                                                           prev_img,
+                                                                           good_prev,
+                                                                           next_img,
+                                                                           good_next)
+
+                    prev_img = next_img.copy()
                     if status == cv2.Stitcher_OK:
                         stitched = cv2.resize(stitched, (init_img.shape[1], init_img.shape[0]), interpolation=cv2.INTER_CUBIC)
-                        # cv2.imshow("series", stitched)
+                        cv2.imshow("series", stitched)
                         # cv2.waitKey(0)
-                        video_instance.write(stitched)
+                        # video_instance.write(stitched)
 
                     k = cv2.waitKey(1) & 0xff
                     if k == 27:
                         break
                 else:
-                    print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
+                    print("Not enough matches are found - %d/%d" % (len(good_next), MIN_MATCH_COUNT))
 
         cv2.destroyAllWindows()
         if save_out:
             pass
-        video_instance.release()
+        # video_instance.release()
         cap.release()
         print("Done!")
 
