@@ -9,8 +9,7 @@ inputDirectoryPath = ".//Datasets//"
 outputDirectoryPath = ".//Results//"
 
 inputVideoName = "ParkingLot.mp4"
-MIN_MATCH_COUNT = 4
-numberOfPoints = 1000
+numberOfPoints = 20
 
 Point_color = (0, 0, 255)
 Point_size = 7
@@ -158,18 +157,55 @@ class Homography_Tracker_FF:
 
 
     """
+    __align_images(im1, im2) -> projected im1 on im2, homography matrix
+    .   @brief Computing the projected image of im1 on im2 using ORB object
     """
-    def plot_ROI(self, image, points):
-        img = image.copy()
-        for _, point in enumerate(points):
-            a, b = point
-            img = cv2.circle(img, (int(a), int(b)), 5, [0, 0, 255], -1)
+    def __align_images(self, im1, im2):
+        good_match_percent = 0.15
+        im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+        im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
 
-        cv2.imshow('Key points displaying', img)
-        if cv2.waitKey(0) & 0xff == 27:
-            cv2.destroyAllWindows()
+        # Detect ORB features and compute descriptors
+        orb = cv2.ORB_create(numberOfPoints)
+        kp1, desc1 = orb.detectAndCompute(im1_gray, None)
+        kp2, desc2 = orb.detectAndCompute(im2_gray, None)
 
+        # Match features
+        matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING)
+        matches = matcher.match(desc1, desc2, None)
 
+        # Sort matches by score
+        matches.sort(key=lambda x: x.distance, reverse=False)
+
+        # Remove not so good matches
+        good_matches = int(len(matches) * good_match_percent)
+        matches = matches[:good_matches]
+
+        # Draw top matches
+        # im_matches = cv2.drawMatches(im1, kp1, im2, kp2, matches, None)
+        # cv2.imwrite("matches.jpg", im_matches)
+
+        # Extract location of good matches
+        p1 = np.zeros((len(matches), 2), dtype=np.float32)
+        p2 = np.zeros((len(matches), 2), dtype=np.float32)
+
+        for i, match in enumerate(matches):
+            p1[i, :] = kp1[match.queryIdx].pt
+            p2[i, :] = kp2[match.trainIdx].pt
+
+        # Find homography
+        H, _ = cv2.findHomography(p1, p2, cv2.RANSAC)
+
+        # Use homography
+        h, w, _ = im2.shape
+        im_reg = cv2.warpPerspective(im1, H, (w, h))
+
+        return im_reg, H
+
+    """
+    grab_contours(cnts) -> contours list
+    .   @brief Implementing the imutils' function
+    """
     def grab_contours(self, cnts):
         # if the length the contours tuple returned by cv2.findContours
         # is '2' then we are using either OpenCV v2.4, v4-beta, or
@@ -194,9 +230,13 @@ class Homography_Tracker_FF:
         return cnts
 
 
-    def cut_stitched(self, stitched_img):
-        stitched = cv2.copyMakeBorder(stitched_img, 10, 10, 10, 10, cv2.BORDER_CONSTANT, (0, 0, 0))
-        gray = cv2.cvtColor(stitched, cv2.COLOR_BGR2GRAY)
+    """
+    get_contour_mask(frame) -> mask of the outer rectangle
+    .   @brief Computing the outer rectangle mask
+    """
+    def get_contour_mask(self, frame):
+        # frame = cv2.copyMakeBorder(frame, 10, 10, 10, 10, cv2.BORDER_CONSTANT, (0, 0, 0))
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
 
         cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
@@ -208,118 +248,105 @@ class Homography_Tracker_FF:
         (x, y, w, h) = cv2.boundingRect(largest_cnt)
         cv2.rectangle(mask, (x, y), (x + w, y + h), 255, -1)
 
-        min_rect = mask.copy()
-        sub = mask.copy()
-
-        while cv2.countNonZero(sub) > 0:
-            min_rect = cv2.erode(min_rect, None)
-            sub = cv2.subtract(min_rect, thresh)
-
-        # find contours in the minimum rectangular mask and then extract the bounding box (x, y)-coordinates
-        cnts = cv2.findContours(min_rect.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = self.grab_contours(cnts)
-        min_cnt = max(cnts, key=cv2.contourArea)
-        (x, y, w, h) = cv2.boundingRect(min_cnt)
-
-        return stitched[y:y + h, x:x + w]
+        return mask
 
 
-    def calc_stitched_scene_homography(self, good_init_prev, good_init_next, prev_img, good_prev, next_img, good_next):
-        # Computing Homography transformation with the initial point's frame
-        H_next, _ = cv2.findHomography(good_next, good_init_next, cv2.RANSAC, 5.0)
-        H_prev, _ = cv2.findHomography(good_prev, good_init_prev, cv2.RANSAC, 5.0)
-        # Warping the next frame with the Homography matrix
-        warped_img_next = cv2.warpPerspective(next_img, H_next, flags=cv2.WARP_INVERSE_MAP, dsize=(next_img.shape[1], next_img.shape[0]))
-        warped_img_prev = cv2.warpPerspective(prev_img, H_prev, flags=cv2.WARP_INVERSE_MAP, dsize=(prev_img.shape[1], prev_img.shape[0]))
-        # Stitching between the initial frame and the next warped frame to single new frame
-        return cv2.Stitcher.create(cv2.Stitcher_SCANS).stitch([warped_img_next, warped_img_prev])
-
-
-
-    def overhead_mapping(self, img, overview_pts):
-        img_pts = np.asarray([[0, 0], [img.shape[1], 0], [0, img.shape[0]], [img.shape[1], img.shape[0]]]).reshape(-1, 1, 2)
-        points = overview_pts.reshape(len(overview_pts), 2)
-        y_min = int(min(points[:, 0]))
-        y_max = int(max(points[:, 0]))
-        x_min = int(min(points[:, 1]))
-        x_max = int(max(points[:, 1]))
-        overview_img = np.zeros((y_max - y_min, x_max - x_min), dtype=np.uint8)
-        status, stitched = self.calc_stitched_scene_homography(img, img_pts, overview_img, overview_pts)
-        if status == cv2.Stitcher_OK:
-            cv2.imshow("series", stitched)
-            # cv2.waitKey(0)
-            return stitched
-
+    """
+    mark_ROI(image, points) -> marked point on the image
+    .   @brief Marking the region of interest of an image
+    """
+    def mark_ROI(self, image, points):
+        img = image.copy()
+        for _, point in enumerate(points):
+            a, b = point
+            img = cv2.circle(img, (int(a), int(b)), 5, [0, 255, 0], +1)
         return img
 
 
+    def overhead_mapping(self, img, overview_pts):
+        pass
+
+
+    """
+    calc_homography(curr_frame, T, dsize, golden_frame, golden_pts) -> warped image, good point of the warped image
+    .   @brief Computing an homography between 2 images
+    """
+    def calc_homography(self, curr_frame, T, dsize, golden_frame, golden_pts):
+        # Computing the next points by optical flow
+        curr_pts, status = self.calc_next_point(golden_frame, curr_frame, golden_pts)
+        # Reaching the correspondences only
+        good_curr_pts = curr_pts[status == 1]
+        good_curr_pts = good_curr_pts.reshape(len(good_curr_pts), 2)
+        good_golden_pts = golden_pts[status == 1]
+        good_golden_pts = good_golden_pts.reshape(len(good_golden_pts), 2)
+        # Marking the correspondences points on the current frame we are about the warping
+        curr_frame = self.mark_ROI(curr_frame, good_curr_pts)
+        # Computing the actual homography between the golden and the current frame
+        H, _ = cv2.findHomography(srcPoints=good_curr_pts, dstPoints=good_golden_pts, method=cv2.RANSAC,
+                                  ransacReprojThreshold=5.0, maxIters=1000, confidence=0.995)
+        # Warping the current frame using the homography that has been found step ago
+        curr_warped = cv2.warpPerspective(src=curr_frame, M=np.matmul(H, T), dsize=dsize,
+                                          flags=cv2.INTER_NEAREST)
+        return curr_warped, good_curr_pts
 
 
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
-    run_tracking([save_out]) -> None
-    .   @brief Computing the homography between 2 frames into a video sequence
-    .   @param save_out - If true the video will be saved out to Results directory
+    run_tracking() -> None
+    .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self, save_out=False):
-        print("Running homography tracking process..")
+    def run_tracking(self):
+        print("Processing..")
         global Points
         global point_img
         Points = list()
-        cap, init_img = self.get_video_capturer()
-        # init_img = cv2.resize(init_img, (256, 256), interpolation=cv2.INTER_CUBIC)
+        cap, golden_frame = self.get_video_capturer()
+        golden_pts = self.fetch_key_points(golden_frame)  # self.get_points_from_user()
+        point_img = golden_frame.copy()
+        w = golden_frame.shape[0]
+        h = golden_frame.shape[1]
+        c = golden_frame.shape[2]
 
-        # w, h, _ = init_img.shape
-        # video_instance = cv2.VideoWriter(outputDirectoryPath + "FF_" + inputVideoName[0:-4] + "_" + str(numberOfPoints) + "_out.avi",
-        #                                  cv2.VideoWriter_fourcc(*'XVID'), 20.0, (h, w))
+        # Final accumulated mosaic
+        mosaic = np.zeros((w * 2, h * 2, c), dtype=np.uint8)
 
-        point_img = init_img.copy()
-        init_pts = self.fetch_key_points(init_img)  # self.get_points_from_user()
-        # init_img = self.overhead_mapping(init_img, init_pts)
-        prev_img = init_img.copy()
+        xt = w / 2
+        yt = h / 2
+        # Translation matrix to the mosaic center due to homography alignment property
+        T = np.asmatrix([
+            [1, 0, xt],
+            [0, 1, yt],
+            [0, 0, 1]], dtype=np.float32)
+
         while cap.isOpened():
-            ret, next_img = cap.read()
-            # next_img = cv2.resize(next_img, (256, 256), interpolation=cv2.INTER_CUBIC)
+            ret, curr_frame = cap.read()
             if not ret:
                 break
             else:
-                # Optical flow: find correspondences
-                prev_pts, prev_status = self.calc_next_point(init_img, prev_img, init_pts)
-                good_prev = prev_pts[prev_status == 1]
-                next_pts, next_status = self.calc_next_point(init_img, next_img, init_pts)
-                good_next = next_pts[next_status == 1]
-                min_good_points = min(len(good_next), len(good_prev))
-                if min_good_points >= MIN_MATCH_COUNT:
-                    # Handling of the correspondences
-                    good_init_prev = init_pts[prev_status == 1]
-                    good_init_next = init_pts[next_status == 1]
-                    # Computing the Homography & Stitiching process
-                    status, stitched = self.calc_stitched_scene_homography(good_init_prev,
-                                                                           good_init_next,
-                                                                           prev_img,
-                                                                           good_prev,
-                                                                           next_img,
-                                                                           good_next)
+                # Computing the homography and warping the current frame
+                curr_warped, warped_pts = self.calc_homography(curr_frame, T, (h * 2, w * 2),
+                                                               golden_frame, golden_pts)
 
-                    prev_img = next_img.copy()
-                    if status == cv2.Stitcher_OK:
-                        stitched = cv2.resize(stitched, (init_img.shape[1], init_img.shape[0]), interpolation=cv2.INTER_CUBIC)
-                        cv2.imshow("series", stitched)
-                        # cv2.waitKey(0)
-                        # video_instance.write(stitched)
+                good_locations = np.where(curr_warped != [0, 0, 0])
 
-                    k = cv2.waitKey(1) & 0xff
-                    if k == 27:
-                        break
-                else:
-                    print("Not enough matches are found - %d/%d" % (len(good_next), MIN_MATCH_COUNT))
+                # Adding the pixel's which are not holding zero color to the final mosaic image
+                mosaic[good_locations] = curr_warped[good_locations]
+
+                resized_mosaic = cv2.resize(mosaic, (1400, 900), interpolation=cv2.INTER_CUBIC)
+                cv2.imshow("mosaic", resized_mosaic)
+
+                # Updating the previous frame (golden frame) to be the current one
+                golden_frame = curr_frame.copy()
+                golden_pts = warped_pts.copy()
+
+                k = cv2.waitKey(1) & 0xff
+                if k == 27:
+                    break
 
         cv2.destroyAllWindows()
-        if save_out:
-            pass
-        # video_instance.release()
         cap.release()
         print("Done!")
+
 
 
 if __name__ == "__main__":
