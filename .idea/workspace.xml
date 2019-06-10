@@ -7,7 +7,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assignment_3/OpticalFlow/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_3/OpticalFlow/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,8 +29,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_OV.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-204">
-              <caret column="21" selection-start-column="12" selection-end-column="21" />
+            <state relative-caret-position="442">
+              <caret line="27" selection-start-line="27" selection-end-line="27" />
             </state>
           </provider>
         </entry>
@@ -39,8 +38,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="110" column="62" selection-start-line="110" selection-start-column="62" selection-end-line="110" selection-end-column="62" />
+            <state relative-caret-position="255">
+              <caret line="363" column="71" lean-forward="true" selection-start-line="363" selection-start-column="71" selection-end-line="363" selection-end-column="71" />
               <folding>
                 <element signature="e#47#71#0" expanded="true" />
               </folding>
@@ -59,13 +58,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>compu</find>
-      <find>square</find>
-      <find>optimum</find>
-      <find>SEGMENT_ZERO</find>
-      <find>SEG_ZERO_COLOR</find>
-      <find>calc_bin_grabcut</find>
-      <find>imread</find>
       <find>wait</find>
       <find>print</find>
       <find>segmentation</find>
@@ -82,13 +74,20 @@
       <find>imwrite</find>
       <find>img</find>
       <find>inputDirectoryPath</find>
-      <find>fetch_key_points</find>
       <find>init_pts</find>
       <find>init_img</find>
       <find>next_pts</find>
       <find>good</find>
       <find>run_tracking</find>
       <find>calc_next_point</find>
+      <find>fetch_key_points</find>
+      <find>good_init_next</find>
+      <find>H_final</find>
+      <find>test2</find>
+      <find>concate_images</find>
+      <find>test</find>
+      <find>prev_stitched</find>
+      <find>mosaic</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -371,7 +370,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.2618658" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" weight="0.34697217" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39653304" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -392,14 +391,18 @@
     <MESSAGE value="initial commit" />
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py</url>
+          <line>474</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/fromnumeric.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-237">
-          <caret line="942" column="4" selection-start-line="942" selection-start-column="4" selection-end-line="942" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/VideoCapture.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/_methods.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -498,6 +501,13 @@
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results_Assignment_3/SF_ballet_100_102_out.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/cv2/cv2/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="10969" column="4" selection-start-line="10969" selection-start-column="4" selection-end-line="10969" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
@@ -507,22 +517,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_OV.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-204">
-          <caret column="21" selection-start-column="12" selection-end-column="21" />
+        <state relative-caret-position="442">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/cv2/cv2/__init__.py">
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-258859485/cv2/cv2/Stitcher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="10969" column="4" selection-start-line="10969" selection-start-column="4" selection-end-line="10969" selection-end-column="4" />
+        <state relative-caret-position="54">
+          <caret line="43" column="8" selection-start-line="43" selection-start-column="8" selection-end-line="43" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="110" column="62" selection-start-line="110" selection-start-column="62" selection-end-line="110" selection-end-column="62" />
+        <state relative-caret-position="255">
+          <caret line="363" column="71" lean-forward="true" selection-start-line="363" selection-start-column="71" selection-end-line="363" selection-end-column="71" />
           <folding>
             <element signature="e#47#71#0" expanded="true" />
           </folding>
