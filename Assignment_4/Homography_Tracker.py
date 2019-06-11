@@ -4,25 +4,25 @@ import numpy as np
 
 # out data:
 # directory where all input data should being resided - should be provided by the user
-inputDirectoryPath = ".//Datasets//"
+input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
-outputDirectoryPath = ".//Results//"
+output_dir_path = ".//Results//"
 
-inputVideoName = "ParkingLot.mp4"
-numberOfPoints = 20
+input_video_name = "ParkingLot.mp4"
+num_auto_key_points = 200
+numb_manual_key_points = 10
+is_manual_selection = False
 
+# User key-points selection
 Point_color = (0, 0, 255)
-Point_size = 7
+Point_size = 5
 Line_color = (0, 255, 0)
 Line_size = 2
 
-class Homography_Tracker_FF:
+class Homography_Tracker:
     """
     mouse_click() -> None
     .   @brief Taking a position of some mouse click
-    .   @param event Event object
-    .   @param x An x location
-    .   @param y An y location
     """
     def mouse_click(self, event, x, y, flags, params):
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -33,8 +33,6 @@ class Homography_Tracker_FF:
     """
     paint_point() -> painted image
     .   @brief Painting circles on an image
-    .   @param points Points to draw
-    .   @param im An image
     """
     def paint_point(self, points, im):
         for center in points:
@@ -43,10 +41,10 @@ class Homography_Tracker_FF:
 
 
     """
-    get_points_from_user() -> Points array
+    select_points_from_user() -> Points array
     .   @brief Picking points from a frame interactively
     """
-    def get_points_from_user(self):
+    def select_points_from_user(self):
         cv2.namedWindow("Select Points")
         # mouse event listener
         cv2.setMouseCallback("Select Points", self.mouse_click)
@@ -55,7 +53,7 @@ class Homography_Tracker_FF:
         while True:
             cv2.imshow("Select Points", point_img)
             k = cv2.waitKey(20)
-            if (k == 27) or (len(Points) == numberOfPoints):  # escape
+            if (k == 27) or (len(Points) == numb_manual_key_points):  # escape
                 break
         cv2.destroyAllWindows()
 
@@ -64,7 +62,6 @@ class Homography_Tracker_FF:
     """
     get_frame_from_video(index=0) -> frame
     .   @brief Fetching a frame from some specific index
-    .   @param index Frame index
     """
     def get_frame_from_video(self, index):
         cap, frame = self.get_video_capturer()
@@ -85,10 +82,10 @@ class Homography_Tracker_FF:
     .   @brief Accessing the video file and extracting the first frame
     """
     def get_video_capturer(self):
-        if not os.path.exists(inputDirectoryPath):
-            print(inputDirectoryPath, "does not exist.")
+        if not os.path.exists(input_dir_path):
+            print(input_dir_path, "does not exist.")
             exit(-1)
-        video_name = inputDirectoryPath + inputVideoName
+        video_name = input_dir_path + input_video_name
         cap = cv2.VideoCapture(video_name)
         if not cap.isOpened():
             print(video_name, "does not exist.")
@@ -102,153 +99,44 @@ class Homography_Tracker_FF:
 
 
     """
-    fetch_key_points(image[, qualityLevel=0.0001[, minDistance=7[, blockSize=7]]]) -> array of key points as tuples
-    .   @brief Extracting interesting points by harris corner algorithm
-    .   @param image The original RGB image
-    .   @param quality_level
-    .   @param min_distance
-    .   @param block_size
+    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=2000]]]]) -> array of key points as tuples
+    .   @brief Extracting ROI points
     """
-    def fetch_key_points(self, image, quality_level=0.0001, min_distance=7, block_size=7):
-        feature_params = dict(qualityLevel=quality_level,
-                              minDistance=min_distance,
-                              blockSize=block_size,
-                              useHarrisDetector=True)
-        dst = cv2.goodFeaturesToTrack(np.float32(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)),
-                                      numberOfPoints,
-                                      **feature_params)
-        # handling the case harris corner doesn't bring enough key points
-        # qualityLevel found to be effective parameter on the detected points amount
-        prev_dst_amt = dst.shape[0]
-        while dst.shape[0] != numberOfPoints:
-            if dst.shape[0] < numberOfPoints:
-                feature_params["qualityLevel"] = feature_params["qualityLevel"] / 10.0
-            else:
-                feature_params["qualityLevel"] = feature_params["qualityLevel"] * 10.0
-            dst = cv2.goodFeaturesToTrack(np.float32(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)),
-                                          numberOfPoints,
-                                          **feature_params)
-            if prev_dst_amt == dst.shape[0]:
-                # out if there is no improvement - maybe there is no points to take
-                break
-            else:
-                prev_dst_amt = dst.shape[0]
-        return dst
+    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=2000):
+        if max_corners < 0:
+            max_corners = num_auto_key_points
+        return cv2.goodFeaturesToTrack(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY),
+                                       qualityLevel=quality_level,
+                                       minDistance=min_distance,
+                                       blockSize=block_size,
+                                       maxCorners=max_corners)
 
 
     """
-    calc_next_point(prev_img, next_img, prev_pts) -> computed next key points, success status
+    calc_next_points(prev_img, next_img, prev_pts) -> computed next key points, success status
     .   @brief Extracting interesting points by corner harris algorithm
-    .   @param prev_img The previous original frame
-    .   @param next_img The current original frame
-    .   @param prev_pts Key points of the previous frame
     """
-    def calc_next_point(self, prev_img, next_img, prev_pts):
-        w, h, _ = prev_img.shape
-        lk_params = dict(winSize=(22, 22),
-                         maxLevel=3,
-                         criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+    def calc_next_points(self, prev_img, next_img, prev_pts):
         next_pts, status, err = cv2.calcOpticalFlowPyrLK(cv2.cvtColor(prev_img, cv2.COLOR_RGB2GRAY),
                                                          cv2.cvtColor(next_img, cv2.COLOR_RGB2GRAY),
                                                          prev_pts,
                                                          None,
-                                                         **lk_params)
+                                                         winSize=(22, 22),
+                                                         maxLevel=3,
+                                                         criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+                                                                   10, 0.03))
         return next_pts, status.ravel()
 
 
     """
-    __align_images(im1, im2) -> projected im1 on im2, homography matrix
-    .   @brief Computing the projected image of im1 on im2 using ORB object
+    get_key_points(frame[, is_manual=False]) -> key-point from frame
+    .   @brief Extracting or selection manually key-points from frame
     """
-    def __align_images(self, im1, im2):
-        good_match_percent = 0.15
-        im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
-        im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+    def get_key_points(self, frame, is_manual=False):
+        if is_manual:
+            return self.select_points_from_user()
 
-        # Detect ORB features and compute descriptors
-        orb = cv2.ORB_create(numberOfPoints)
-        kp1, desc1 = orb.detectAndCompute(im1_gray, None)
-        kp2, desc2 = orb.detectAndCompute(im2_gray, None)
-
-        # Match features
-        matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING)
-        matches = matcher.match(desc1, desc2, None)
-
-        # Sort matches by score
-        matches.sort(key=lambda x: x.distance, reverse=False)
-
-        # Remove not so good matches
-        good_matches = int(len(matches) * good_match_percent)
-        matches = matches[:good_matches]
-
-        # Draw top matches
-        # im_matches = cv2.drawMatches(im1, kp1, im2, kp2, matches, None)
-        # cv2.imwrite("matches.jpg", im_matches)
-
-        # Extract location of good matches
-        p1 = np.zeros((len(matches), 2), dtype=np.float32)
-        p2 = np.zeros((len(matches), 2), dtype=np.float32)
-
-        for i, match in enumerate(matches):
-            p1[i, :] = kp1[match.queryIdx].pt
-            p2[i, :] = kp2[match.trainIdx].pt
-
-        # Find homography
-        H, _ = cv2.findHomography(p1, p2, cv2.RANSAC)
-
-        # Use homography
-        h, w, _ = im2.shape
-        im_reg = cv2.warpPerspective(im1, H, (w, h))
-
-        return im_reg, H
-
-    """
-    grab_contours(cnts) -> contours list
-    .   @brief Implementing the imutils' function
-    """
-    def grab_contours(self, cnts):
-        # if the length the contours tuple returned by cv2.findContours
-        # is '2' then we are using either OpenCV v2.4, v4-beta, or
-        # v4-official
-        if len(cnts) == 2:
-            cnts = cnts[0]
-
-        # if the length of the contours tuple is '3' then we are using
-        # either OpenCV v3, v4-pre, or v4-alpha
-        elif len(cnts) == 3:
-            cnts = cnts[1]
-
-        # otherwise OpenCV has changed their cv2.findContours return
-        # signature yet again and I have no idea WTH is going on
-        else:
-            raise Exception(("Contours tuple must have length 2 or 3, "
-                             "otherwise OpenCV changed their cv2.findContours return "
-                             "signature yet again. Refer to OpenCV's documentation "
-                             "in that case"))
-
-        # return the actual contours array
-        return cnts
-
-
-    """
-    get_contour_mask(frame) -> mask of the outer rectangle
-    .   @brief Computing the outer rectangle mask
-    """
-    def get_contour_mask(self, frame):
-        # frame = cv2.copyMakeBorder(frame, 10, 10, 10, 10, cv2.BORDER_CONSTANT, (0, 0, 0))
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
-
-        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-        cnts = self.grab_contours(cnts)
-        largest_cnt = max(cnts, key=cv2.contourArea)
-
-        # allocate memory for the mask which will contain the rectangular bounding box of the stitched image region
-        mask = np.zeros(thresh.shape, dtype=np.uint8)
-        (x, y, w, h) = cv2.boundingRect(largest_cnt)
-        cv2.rectangle(mask, (x, y), (x + w, y + h), 255, -1)
-
-        return mask
+        return self.extract_key_points(frame)
 
 
     """
@@ -259,64 +147,66 @@ class Homography_Tracker_FF:
         img = image.copy()
         for _, point in enumerate(points):
             a, b = point
-            img = cv2.circle(img, (int(a), int(b)), 5, [0, 255, 0], +1)
+            img = cv2.circle(img, (int(a), int(b)), 5, [0, 0, 255], +1)
+
         return img
 
-
-    def overhead_mapping(self, img, overview_pts):
-        pass
 
 
     """
     calc_homography(curr_frame, T, dsize, golden_frame, golden_pts) -> warped image, good point of the warped image
     .   @brief Computing an homography between 2 images
     """
-    def calc_homography(self, curr_frame, T, dsize, golden_frame, golden_pts):
+    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts):
         # Computing the next points by optical flow
-        curr_pts, status = self.calc_next_point(golden_frame, curr_frame, golden_pts)
+        curr_pts, status = self.calc_next_points(golden_frame, curr_frame, golden_pts)
+
         # Reaching the correspondences only
         good_curr_pts = curr_pts[status == 1]
-        good_curr_pts = good_curr_pts.reshape(len(good_curr_pts), 2)
         good_golden_pts = golden_pts[status == 1]
-        good_golden_pts = good_golden_pts.reshape(len(good_golden_pts), 2)
+
         # Marking the correspondences points on the current frame we are about the warping
-        curr_frame = self.mark_ROI(curr_frame, good_curr_pts)
+        # curr_frame = self.mark_ROI(curr_frame, good_curr_pts.reshape(len(good_curr_pts), 2))
+
         # Computing the actual homography between the golden and the current frame
-        H, _ = cv2.findHomography(srcPoints=good_curr_pts, dstPoints=good_golden_pts, method=cv2.RANSAC,
-                                  ransacReprojThreshold=5.0, maxIters=1000, confidence=0.995)
+        H, _ = cv2.findHomography(good_curr_pts, good_golden_pts, cv2.RANSAC, 5.0)
+
         # Warping the current frame using the homography that has been found step ago
-        curr_warped = cv2.warpPerspective(src=curr_frame, M=np.matmul(H, T), dsize=dsize,
+        curr_warped = cv2.warpPerspective(curr_frame,
+                                          np.matmul(T, H), d_size,
                                           flags=cv2.INTER_NEAREST)
-        return curr_warped, good_curr_pts
+
+        return curr_warped, curr_pts
 
 
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
-    run_tracking() -> None
+    run_tracking([is_manual=False]) -> None
     .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self):
+    def run_tracking(self, is_manual=False):
         print("Processing..")
         global Points
         global point_img
         Points = list()
+
         cap, golden_frame = self.get_video_capturer()
-        golden_pts = self.fetch_key_points(golden_frame)  # self.get_points_from_user()
         point_img = golden_frame.copy()
-        w = golden_frame.shape[0]
-        h = golden_frame.shape[1]
-        c = golden_frame.shape[2]
+
+        golden_pts = self.get_key_points(golden_frame, is_manual)
+        w, h, c = golden_frame.shape
 
         # Final accumulated mosaic
-        mosaic = np.zeros((w * 2, h * 2, c), dtype=np.uint8)
+        mosaic = np.zeros((w*2, h*2, c), dtype=np.uint8)
 
-        xt = w / 2
-        yt = h / 2
         # Translation matrix to the mosaic center due to homography alignment property
+        x_translate = 2
+        y_translate = 1/2
+        scale = 2
         T = np.asmatrix([
-            [1, 0, xt],
-            [0, 1, yt],
-            [0, 0, 1]], dtype=np.float32)
+            [scale, 0, w*x_translate],
+            [0, scale, h*y_translate],
+            [0, 0, scale]], dtype=np.float32)
 
         while cap.isOpened():
             ret, curr_frame = cap.read()
@@ -324,21 +214,20 @@ class Homography_Tracker_FF:
                 break
             else:
                 # Computing the homography and warping the current frame
-                curr_warped, warped_pts = self.calc_homography(curr_frame, T, (h * 2, w * 2),
-                                                               golden_frame, golden_pts)
+                curr_warped, curr_pts = self.calc_homography(curr_frame,
+                                                             T, (h*2, w*2),
+                                                             golden_frame,
+                                                             golden_pts)
 
+                # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != [0, 0, 0])
-
-                # Adding the pixel's which are not holding zero color to the final mosaic image
                 mosaic[good_locations] = curr_warped[good_locations]
 
-                resized_mosaic = cv2.resize(mosaic, (1400, 900), interpolation=cv2.INTER_CUBIC)
-                cv2.imshow("mosaic", resized_mosaic)
-
-                # Updating the previous frame (golden frame) to be the current one
+                # Update the first frame to be the current
                 golden_frame = curr_frame.copy()
-                golden_pts = warped_pts.copy()
+                golden_pts = curr_pts.copy()
 
+                cv2.imshow("mosaic", mosaic)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -347,8 +236,12 @@ class Homography_Tracker_FF:
         cap.release()
         print("Done!")
 
+        cv2.imshow("mosaic", mosaic)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
 
 
 if __name__ == "__main__":
-    tracker = Homography_Tracker_FF()
-    tracker.run_tracking()
+    tracker = Homography_Tracker()
+    tracker.run_tracking(is_manual=is_manual_selection)
