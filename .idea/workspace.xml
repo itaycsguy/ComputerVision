@@ -5,9 +5,7 @@
     <bookmark url="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
-      <change beforePath="$PROJECT_DIR$/Assignment_4/Homography_Tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_4/Homography_Tracker.py" afterDir="false" />
-    </list>
+    <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +17,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="337" column="82" lean-forward="true" selection-start-line="337" selection-start-column="82" selection-end-line="337" selection-end-column="82" />
+            <state relative-caret-position="1872">
+              <caret line="337" column="82" selection-start-line="337" selection-start-column="82" selection-end-line="337" selection-end-column="82" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="346" column="18" lean-forward="true" selection-start-line="346" selection-start-column="18" selection-end-line="346" selection-end-column="18" />
+              <folding>
+                <element signature="e#47#71#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -111,33 +121,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_4" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -155,6 +138,22 @@
               <item name="ComputerVision" type="462c0819:PsiDirectoryNode" />
               <item name="venv" type="462c0819:PsiDirectoryNode" />
               <item name="src_task1" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="Assignment_4" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -347,9 +346,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.19791667" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.19791667" />
       <window_info id="Structure" order="1" sideWeight="0.501462" side_tool="true" weight="0.12961012" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -498,13 +496,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_OV.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="27" selection-start-line="27" selection-end-line="27" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_OV.py" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -514,8 +506,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1222">
-          <caret line="332" column="13" selection-start-line="332" selection-start-column="8" selection-end-line="332" selection-end-column="13" />
+        <state relative-caret-position="255">
+          <caret line="346" column="18" lean-forward="true" selection-start-line="346" selection-start-column="18" selection-end-line="346" selection-end-column="18" />
           <folding>
             <element signature="e#47#71#0" expanded="true" />
           </folding>
@@ -524,8 +516,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="337" column="82" lean-forward="true" selection-start-line="337" selection-start-column="82" selection-end-line="337" selection-end-column="82" />
+        <state relative-caret-position="1872">
+          <caret line="337" column="82" selection-start-line="337" selection-start-column="82" selection-end-line="337" selection-end-column="82" />
         </state>
       </provider>
     </entry>
