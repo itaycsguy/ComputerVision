@@ -8,7 +8,7 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "Billiard2.mp4"  # "ParkingLot.mp4"
+input_video_name = "Billiard2.mp4"
 num_auto_key_points = 200
 numb_manual_key_points = 4
 is_manual_selection = False
@@ -20,7 +20,7 @@ Line_color = (0, 255, 0)
 Line_size = 2
 
 
-class Homography_Tracker:
+class Rectification_Tracker:
     """
     mouse_click() -> None
     .   @brief Taking a position of some mouse click
@@ -181,6 +181,23 @@ class Homography_Tracker:
         return curr_warped, T_new
 
 
+    def rect_cut(self, frame, pts):
+        reshaped_pts = pts.reshape(len(pts), 2)
+        min_x = int(min(reshaped_pts, key=lambda x: x[0])[0])
+        max_x = int(max(reshaped_pts, key=lambda x: x[0])[0])
+        min_y = int(min(reshaped_pts, key=lambda x: x[1])[1])
+        max_y = int(max(reshaped_pts, key=lambda x: x[1])[1])
+
+        return frame[min_y:max_y, min_x:max_x], pts
+
+
+    def get_overview_coordinates(self):
+        return np.asarray([[0., 0.],
+                           [50., 0.],
+                           [0., 100.],
+                           [50., 100.]]).reshape(-1, 1, 2)
+
+
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
     run_tracking([is_manual=False]) -> None
@@ -194,19 +211,19 @@ class Homography_Tracker:
 
         cap, golden_frame = self.get_video_capturer()
         point_img = golden_frame.copy()
-        golden_pts = self.get_key_points(golden_frame, is_manual)
+        golden_frame, golden_pts = self.rect_cut(golden_frame, self.get_key_points(golden_frame, is_manual=True))
 
-        H, _ = cv2.findHomography(self.get_key_points(golden_frame, is_manual=True),
-                                  self.get_key_points(golden_frame, is_manual=False),
-                                  cv2.RANSAC, 5.0)
+        dst_points = self.get_overview_coordinates()
+        H, _ = cv2.findHomography(golden_pts, dst_points, cv2.RANSAC, 5.0)
+        golden_pts = self.get_key_points(golden_frame, is_manual)
 
         # Final accumulated mosaic
         w, h, c = golden_frame.shape
-        mosaic = np.zeros((w * 2, h * 2, c), dtype=np.uint8)
+        mosaic = np.zeros((w, h, c), dtype=np.uint8)
 
         # Translation matrix to the mosaic center due to homography alignment property
         x_translate = 1
-        y_translate = 0
+        y_translate = 1/4
         scale = 1
         T = np.matmul(
             np.asmatrix([
@@ -217,12 +234,13 @@ class Homography_Tracker:
 
         while cap.isOpened():
             ret, curr_frame = cap.read()
+            curr_frame = cv2.resize(curr_frame, (h, w), interpolation=cv2.INTER_CUBIC)
             if not ret:
                 break
             else:
                 # Computing the homography and warping the current frame
                 curr_warped, T = self.calc_homography(curr_frame,
-                                                      T, (h * 2, w * 2),
+                                                      T, (h, w),
                                                       golden_frame,
                                                       golden_pts)
 
@@ -249,5 +267,5 @@ class Homography_Tracker:
 
 
 if __name__ == "__main__":
-    tracker = Homography_Tracker()
+    tracker = Rectification_Tracker()
     tracker.run_tracking(is_manual=is_manual_selection)
