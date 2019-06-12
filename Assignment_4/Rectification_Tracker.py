@@ -8,10 +8,10 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "Billiard2.mp4" #"ParkingLot.mp4"
+input_video_name = "Billiard2.mp4"  # "ParkingLot.mp4"
 num_auto_key_points = 200
-numb_manual_key_points = 10
-is_manual_selection = True
+numb_manual_key_points = 4
+is_manual_selection = False
 
 # User key-points selection
 Point_color = (0, 0, 255)
@@ -19,31 +19,33 @@ Point_size = 5
 Line_color = (0, 255, 0)
 Line_size = 2
 
+
 class Homography_Tracker:
     """
     mouse_click() -> None
     .   @brief Taking a position of some mouse click
     """
+
     def mouse_click(self, event, x, y, flags, params):
         if event == cv2.EVENT_LBUTTONDOWN:
             Points.append((x, y))
         self.paint_point(Points, point_img)
 
-
     """
     paint_point() -> painted image
     .   @brief Painting circles on an image
     """
+
     def paint_point(self, points, im):
         for center in points:
             cv2.circle(im, center, Point_size, Point_color, -1)
         return im
 
-
     """
     select_points_from_user() -> Points array
     .   @brief Picking points from a frame interactively
     """
+
     def select_points_from_user(self):
         cv2.namedWindow("Select Points")
         # mouse event listener
@@ -63,6 +65,7 @@ class Homography_Tracker:
     get_frame_from_video(index=0) -> frame
     .   @brief Fetching a frame from some specific index
     """
+
     def get_frame_from_video(self, index):
         cap, frame = self.get_video_capturer()
         if index > 0:
@@ -75,12 +78,11 @@ class Homography_Tracker:
         cap.release()
         return frame
 
-
-
     """
     get_video_capturer(key_points) -> cv2.VideoCapturer, first video frame
     .   @brief Accessing the video file and extracting the first frame
     """
+
     def get_video_capturer(self):
         if not os.path.exists(input_dir_path):
             print(input_dir_path, "does not exist.")
@@ -97,11 +99,11 @@ class Homography_Tracker:
 
         return cap, frame
 
-
     """
     extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=2000]]]]) -> array of key points as tuples
     .   @brief Extracting ROI points
     """
+
     def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=2000):
         if max_corners < 0:
             max_corners = num_auto_key_points
@@ -111,11 +113,11 @@ class Homography_Tracker:
                                        blockSize=block_size,
                                        maxCorners=max_corners)
 
-
     """
     calc_next_points(prev_img, next_img, prev_pts) -> computed next key points, success status
     .   @brief Extracting interesting points by corner harris algorithm
     """
+
     def calc_next_points(self, prev_img, next_img, prev_pts):
         next_pts, status, err = cv2.calcOpticalFlowPyrLK(cv2.cvtColor(prev_img, cv2.COLOR_RGB2GRAY),
                                                          cv2.cvtColor(next_img, cv2.COLOR_RGB2GRAY),
@@ -127,22 +129,22 @@ class Homography_Tracker:
                                                                    10, 0.03))
         return next_pts, status.ravel()
 
-
     """
     get_key_points(frame[, is_manual=False]) -> key-point from frame
     .   @brief Extracting or selection manually key-points from frame
     """
+
     def get_key_points(self, frame, is_manual=False):
         if is_manual:
             return self.select_points_from_user()
 
         return self.extract_key_points(frame)
 
-
     """
     mark_ROI(image, points) -> marked point on the image
     .   @brief Marking the region of interest of an image
     """
+
     def mark_ROI(self, image, points):
         img = image.copy()
         for _, point in enumerate(points):
@@ -151,12 +153,11 @@ class Homography_Tracker:
 
         return img
 
-
-
     """
     calc_homography(curr_frame, T, dsize, golden_frame, golden_pts) -> warped image, good point of the warped image
     .   @brief Computing an homography between 2 frames
     """
+
     def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts):
         # Computing the next points by optical flow
         curr_pts, status = self.calc_next_points(golden_frame, curr_frame, golden_pts)
@@ -185,7 +186,7 @@ class Homography_Tracker:
     run_tracking([is_manual=False]) -> None
     .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self, is_manual=False):
+    def run_tracking(self, is_manual=True):
         print("Processing..")
         global Points
         global point_img
@@ -193,21 +194,26 @@ class Homography_Tracker:
 
         cap, golden_frame = self.get_video_capturer()
         point_img = golden_frame.copy()
-
         golden_pts = self.get_key_points(golden_frame, is_manual)
-        w, h, c = golden_frame.shape
+
+        H, _ = cv2.findHomography(self.get_key_points(golden_frame, is_manual=True),
+                                  self.get_key_points(golden_frame, is_manual=False),
+                                  cv2.RANSAC, 5.0)
 
         # Final accumulated mosaic
+        w, h, c = golden_frame.shape
         mosaic = np.zeros((w * 2, h * 2, c), dtype=np.uint8)
 
         # Translation matrix to the mosaic center due to homography alignment property
         x_translate = 1
         y_translate = 0
         scale = 1
-        T = np.asmatrix([
-            [scale, 0, w*x_translate],
-            [0, scale, h*y_translate],
-            [0, 0, scale]], dtype=np.float32)
+        T = np.matmul(
+            np.asmatrix([
+                [scale, 0, w * x_translate],
+                [0, scale, h * y_translate],
+                [0, 0, scale]],
+                dtype=np.float32), H)
 
         while cap.isOpened():
             ret, curr_frame = cap.read()
@@ -216,7 +222,7 @@ class Homography_Tracker:
             else:
                 # Computing the homography and warping the current frame
                 curr_warped, T = self.calc_homography(curr_frame,
-                                                      T, (h*2, w*2),
+                                                      T, (h * 2, w * 2),
                                                       golden_frame,
                                                       golden_pts)
 
@@ -240,7 +246,6 @@ class Homography_Tracker:
         cv2.imshow("mosaic", mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-
 
 
 if __name__ == "__main__":
