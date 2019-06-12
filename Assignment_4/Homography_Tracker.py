@@ -8,10 +8,10 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "Billiard2.mp4" #"ParkingLot.mp4"
+input_video_name = "ParkingLot.mp4"
 num_auto_key_points = 200
 numb_manual_key_points = 10
-is_manual_selection = True
+is_manual_selection = False
 
 # User key-points selection
 Point_color = (0, 0, 255)
@@ -198,16 +198,16 @@ class Homography_Tracker:
         w, h, c = golden_frame.shape
 
         # Final accumulated mosaic
-        mosaic = np.zeros((w * 2, h * 2, c), dtype=np.uint8)
+        mosaic = np.zeros((w, h, c), dtype=np.uint8)
 
         # Translation matrix to the mosaic center due to homography alignment property
-        x_translate = 1
-        y_translate = 0
-        scale = 1
+        scale = 1/3
+        x_translate = (1-scale)/2
+        y_translate = (1-scale)/2
         T = np.asmatrix([
-            [scale, 0, w*x_translate],
-            [0, scale, h*y_translate],
-            [0, 0, scale]], dtype=np.float32)
+            [scale, 0, h*x_translate],
+            [0, scale, w*y_translate],
+            [0, 0, 1]], dtype=np.float32)
 
         while cap.isOpened():
             ret, curr_frame = cap.read()
@@ -216,7 +216,7 @@ class Homography_Tracker:
             else:
                 # Computing the homography and warping the current frame
                 curr_warped, T = self.calc_homography(curr_frame,
-                                                      T, (h*2, w*2),
+                                                      T, (h, w),
                                                       golden_frame,
                                                       golden_pts)
 
@@ -228,7 +228,7 @@ class Homography_Tracker:
                 golden_frame = curr_frame.copy()
                 golden_pts = self.get_key_points(golden_frame, is_manual)
 
-                cv2.imshow("mosaic", cv2.resize(mosaic, (1200, 700)))
+                cv2.imshow("mosaic", mosaic)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
