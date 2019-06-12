@@ -332,7 +332,7 @@ class Homography_Tracker_FF:
                 # Adding the pixel's which are not holding zero color to the final mosaic image
                 mosaic[good_locations] = curr_warped[good_locations]
 
-                resized_mosaic = cv2.resize(mosaic, (1400, 900), interpolation=cv2.INTER_CUBIC)
+                resized_mosaic = cv2.resize(mosaic, (1400, 700), interpolation=cv2.INTER_CUBIC)
                 cv2.imshow("mosaic", resized_mosaic)
 
                 # Updating the previous frame (golden frame) to be the current one
