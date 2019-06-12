@@ -6,8 +6,56 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c69c236f-a18a-4477-8db7-f5befe7d2e66" name="Default Changelist" comment="initial commit">
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_4/Homography_Tracker_FF.py" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/Assignment_4/Rectification_Tracker.py" afterDir="false" />
+      <change beforePath="D:/GitHub/.gitignore" beforeDir="false" afterPath="D:/GitHub/.gitignore" afterDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/.gitignore" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/.gitignore" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/build.gradle" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/google-services.json" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/androidTest/java/weinnovate/realmeeting/ExampleInstrumentedTest.kt" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/java/weinnovate/realmeeting/MainActivity.kt" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/java/weinnovate/realmeeting/ui/main/PageViewModel.kt" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/java/weinnovate/realmeeting/ui/main/PlaceholderFragment.kt" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/java/weinnovate/realmeeting/ui/main/SectionsPagerAdapter.kt" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/layout/activity_main.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/layout/fragment_main.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/values-w820dp/dimens.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/values/dimens.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/main/res/values/styles.xml" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/app/src/test/java/weinnovate/realmeeting/ExampleUnitTest.kt" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/build.gradle" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/gradle.properties" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/gradlew" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/gradlew.bat" beforeDir="false" />
+      <change beforePath="D:/GitHub/RealMeeting/settings.gradle" beforeDir="false" />
+      <change beforePath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" beforeDir="false" afterPath="D:/GitHub/gp-spring-2019-assignments-itaycsguy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assignment_4/Homography_Tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assignment_4/Homography_Tracker.py" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,6 +65,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+<<<<<<< Updated upstream
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/VideoTracker.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -43,6 +92,13 @@
               <folding>
                 <element signature="e#47#71#0" expanded="true" />
               </folding>
+=======
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="394">
+              <caret line="226" column="48" lean-forward="true" selection-start-line="226" selection-start-column="48" selection-end-line="226" selection-end-column="48" />
+>>>>>>> Stashed changes
             </state>
           </provider>
         </entry>
@@ -142,13 +198,7 @@
             <path>
               <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ComputerVision" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="Assignment_3" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="OpticalFlow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="Assignment_4" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -183,17 +233,18 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_4" />
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow" />
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow\Datasets" />
+      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
+      <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow" />
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow\Datasets" />
       <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
       <recent name="D:\PycharmProjects\ComputerVision\src_task1" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow" />
-      <recent name="D:\PycharmProjects\ComputerVision\Assignment_3\OpticalFlow\Datasets" />
-      <recent name="D:\PycharmProjects\ComputerVision\Assignment_1" />
-      <recent name="D:\PycharmProjects\ComputerVision\venv\src_task1" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -362,15 +413,23 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
+<<<<<<< Updated upstream
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
+=======
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+>>>>>>> Stashed changes
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49853802" visible="true" weight="0.18005952" />
       <window_info id="Structure" order="1" sideWeight="0.501462" side_tool="true" weight="0.12961012" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
+<<<<<<< Updated upstream
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" weight="0.34697217" />
+=======
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6217071" visible="true" weight="0.28060672" />
+>>>>>>> Stashed changes
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49736565" weight="0.39653304" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -403,7 +462,32 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+<<<<<<< Updated upstream
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/VideoCapture.py" />
+=======
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/KeyPointsFinder.py" />
+    <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/venv/Lib/site-packages/pip-10.0.1-py3.7.egg/pip/_vendor/progress/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="92" column="13" lean-forward="true" selection-start-line="92" selection-start-column="13" selection-end-line="92" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-237">
+          <caret line="942" column="4" selection-start-line="942" selection-start-column="4" selection-end-line="942" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/VideoCapture.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="150" column="8" selection-start-line="150" selection-start-column="8" selection-end-line="150" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> Stashed changes
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/numpy/core/_methods.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="213">
@@ -453,7 +537,17 @@
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__.py" />
+=======
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1560694125/cv2/cv2/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="2802" column="4" selection-start-line="2802" selection-start-column="4" selection-end-line="2802" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> Stashed changes
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_billiard_200_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/SF_100_102_out.jpg" />
     <entry file="file://$PROJECT_DIR$/Assignment_3/OpticalFlow/Results/Velocity_highway_20_out.jpg" />
@@ -536,6 +630,13 @@
           <folding>
             <element signature="e#47#71#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assignment_4/Homography_Tracker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="226" column="48" lean-forward="true" selection-start-line="226" selection-start-column="48" selection-end-line="226" selection-end-column="48" />
         </state>
       </provider>
     </entry>
