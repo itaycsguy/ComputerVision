@@ -207,7 +207,7 @@ class Rectification_Tracker:
         min_y = int(min(reshaped_pts, key=lambda x: x[1])[1])
         max_y = int(max(reshaped_pts, key=lambda x: x[1])[1])
 
-        return frame[min_y:max_y, min_x:max_x], pts
+        return frame[min_y:max_y, min_x:max_x]
 
 
     """
@@ -235,31 +235,19 @@ class Rectification_Tracker:
         cap, golden_frame = self.get_video_capturer()
         point_img = golden_frame.copy()
 
-        # golden_shape = golden_frame.shape[:2]
-        golden_frame, golden_pts = self.rect_cut(golden_frame, self.get_key_points(golden_frame, is_manual=True))
-        H, _ = cv2.findHomography(golden_pts, golden_pts, cv2.RANSAC, 5.0)
+        golden_pts = self.get_key_points(golden_frame, is_manual=True)
+        rect_coord = self.get_overview_coordinates()
+        H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, 5.0)
         golden_pts = self.get_key_points(golden_frame, is_manual=False)
 
         w, h, c = golden_frame.shape
 
         # Final accumulated mosaic
         mosaic = np.zeros((w, h, c), dtype=np.uint8)
-
-        # Translation matrix to the mosaic center due to homography alignment property
-        scale = 1
-        x_scale = scale # golden_shape[0] / w
-        y_scale = scale # golden_shape[1] / h
-        x_translate = (1-scale)/2
-        y_translate = (1-scale)/2
-
-        T = np.matmul(np.asmatrix([
-            [x_scale, 0, h*x_translate],
-            [0, y_scale, w*y_translate],
-            [0, 0, 1]], dtype=np.float32), H)
+        T = H
 
         while cap.isOpened():
             ret, curr_frame = cap.read()
-            curr_frame = cv2.resize(curr_frame, (h, w), interpolation=cv2.INTER_CUBIC)
             if not ret:
                 break
             else:
