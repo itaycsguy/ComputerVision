@@ -140,16 +140,36 @@ class Homography_Tracker:
 
 
     """
-    mark_ROI(image, points) -> marked point on the image
-    .   @brief Marking the region of interest of an image
+    mark_ROI(image, points) -> marked point on the frame
+    .   @brief Marking the region of interest of an frame
     """
-    def mark_ROI(self, image, points):
-        img = image.copy()
+    def mark_ROI(self, frame, points):
+        frm = frame.copy()
         for _, point in enumerate(points):
             a, b = point
-            img = cv2.circle(img, (int(a), int(b)), 5, [0, 0, 255], +1)
+            frm = cv2.circle(frm, (int(a), int(b)), 5, [0, 0, 255], +1)
 
-        return img
+        return frm
+
+
+
+    """
+    mark_velocity(frame, new_pts, old_pts) -> marked velocity on the frame
+    .   @brief Marking the velocity on the frame
+    """
+    def mark_velocity(self, frame, new_pts, old_pts):
+        frm = frame.copy()
+        mask = np.zeros_like(frm)
+        for i, (n, o) in enumerate(zip(new_pts, old_pts)):
+            a, b = n.ravel()
+            c, d = o.ravel()
+
+            # velocity computation
+            mask = cv2.line(mask, (a, b), (c, d), [0, 0, 255], 8)
+            frm = cv2.circle(frm, (a, b), 3, [0, 255, 0], -1)
+
+        frm = cv2.add(frm, mask)
+        return frm
 
 
 
@@ -165,11 +185,13 @@ class Homography_Tracker:
         good_curr_pts = np.float32(curr_pts[status == 1])
         good_golden_pts = np.float32(golden_pts[status == 1])
 
-        # Marking the correspondences points on the current frame we are about the warping
-        # curr_frame = self.mark_ROI(curr_frame, good_curr_pts.reshape(len(good_curr_pts), 2))
-
         # Computing the actual homography between the golden and the current frame
         H, _ = cv2.findHomography(good_curr_pts, good_golden_pts, cv2.RANSAC, 5.0)
+
+        # Marking the velocity on the current warped frame
+        curr_frame = self.mark_velocity(curr_frame,
+                                        good_curr_pts.reshape(len(good_curr_pts), 2),
+                                        good_golden_pts.reshape(len(good_golden_pts), 2))
 
         T_new = np.matmul(T, H)
         # Warping the current frame using the homography that has been found step ago
@@ -224,7 +246,7 @@ class Homography_Tracker:
                 good_locations = np.where(curr_warped != [0, 0, 0])
                 mosaic[good_locations] = curr_warped[good_locations]
 
-                # Update the first frame to be the current
+                # Update the first frame and points to be the current
                 golden_frame = curr_frame.copy()
                 golden_pts = self.get_key_points(golden_frame, is_manual)
 
