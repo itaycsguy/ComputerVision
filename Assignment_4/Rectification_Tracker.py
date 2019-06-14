@@ -8,7 +8,7 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "HexBugs.mp4"
+input_video_name = "Billiard2.mp4"
 num_auto_key_points = 2000
 num_manual_key_points = 4
 is_manual_selection = False
@@ -178,9 +178,10 @@ class Rectification_Tracker:
     calc_homography(curr_frame, T, dsize, golden_frame, golden_pts) -> warped image, good point of the warped image
     .   @brief Computing an homography between 2 frames
     """
-    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts):
+    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts, visual_pts):
         # Computing the next points by optical flow
         curr_pts, status = self.calc_next_points(golden_frame, curr_frame, golden_pts)
+        next_visual_pts, visual_status = self.calc_next_points(golden_frame, curr_frame, visual_pts)
 
         # Reaching the correspondences only
         good_curr_pts = np.float32(curr_pts[status == 1])
@@ -196,9 +197,11 @@ class Rectification_Tracker:
                                           flags=cv2.INTER_NEAREST)
 
         # Marking the velocity on the current frame than warp it
+        visual_pts = visual_pts[visual_status == 1]
+        next_visual_pts = next_visual_pts[visual_status == 1]
         velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
-                                                               good_curr_pts.reshape(len(good_curr_pts), 2),
-                                                               good_golden_pts.reshape(len(good_golden_pts), 2)),
+                                                               next_visual_pts.reshape(len(next_visual_pts), 2),
+                                                               visual_pts.reshape(len(visual_pts), 2)),
                                             T_new, d_size,
                                             flags=cv2.INTER_NEAREST)
 
@@ -253,6 +256,8 @@ class Rectification_Tracker:
         # Final accumulated mosaic
         mosaic = np.zeros((w, h, c), dtype=np.uint8)
         velocity_mask = np.zeros_like(mosaic)
+
+        visual_pts = self.get_key_points(golden_frame, is_manual=True)
         while cap.isOpened():
             ret, curr_frame = cap.read()
             if not ret:
@@ -262,7 +267,8 @@ class Rectification_Tracker:
                 curr_warped, T, mask = self.calc_homography(curr_frame,
                                                             T, (h, w),
                                                             golden_frame,
-                                                            golden_pts)
+                                                            golden_pts,
+                                                            visual_pts)
                 velocity_mask = cv2.add(velocity_mask, mask)
                 # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != [0, 0, 0])
