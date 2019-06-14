@@ -1,5 +1,5 @@
 # Itay Guy, 305104184 & Elias Jadon, 207755737
-import cv2, os, argparse
+import cv2, os
 import numpy as np
 
 # out data:
@@ -8,16 +8,16 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "Billiard2.mp4"
-num_auto_key_points = 200
-numb_manual_key_points = 4
+input_video_name = "HexBugs.mp4"
+num_auto_key_points = 2000
+num_manual_key_points = 4
 is_manual_selection = False
 
 # User key-points selection
 Point_color = (0, 0, 255)
-Point_size = 5
+Point_size = 4
 Line_color = (0, 255, 0)
-Line_size = 2
+Line_size = 1
 
 class Rectification_Tracker:
     """
@@ -53,7 +53,7 @@ class Rectification_Tracker:
         while True:
             cv2.imshow("Select Points", point_img)
             k = cv2.waitKey(20)
-            if (k == 27) or (len(Points) == numb_manual_key_points):  # escape
+            if (k == 27) or (len(Points) == num_manual_key_points):  # escape
                 break
         cv2.destroyAllWindows()
 
@@ -102,9 +102,12 @@ class Rectification_Tracker:
     extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=2000]]]]) -> array of key points as tuples
     .   @brief Extracting ROI points
     """
-    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=2000):
-        if max_corners < 0:
+    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=200):
+        if is_manual_selection:
+            max_corners = num_manual_key_points
+        elif num_auto_key_points > 0:
             max_corners = num_auto_key_points
+
         return cv2.goodFeaturesToTrack(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY),
                                        qualityLevel=quality_level,
                                        minDistance=min_distance,
@@ -147,7 +150,7 @@ class Rectification_Tracker:
         frm = frame.copy()
         for _, point in enumerate(points):
             a, b = point
-            img = cv2.circle(frm, (int(a), int(b)), 5, [0, 0, 255], +1)
+            frm = cv2.circle(frm, (int(a), int(b)), Point_size, Point_color, +1)
 
         return frm
 
@@ -164,11 +167,11 @@ class Rectification_Tracker:
             c, d = o.ravel()
 
             # velocity computation
-            mask = cv2.line(mask, (a, b), (c, d), [0, 255, 0], 2)
-            frm = cv2.circle(frm, (a, b), 3, [0, 0, 255], -1)
+            mask = cv2.line(mask, (a, b), (c, d), Line_color, Line_size)
+            # frm = cv2.circle(frm, (a, b), 3, [0, 0, 255], -1)
 
-        frm = cv2.add(frm, mask)
-        return cv2.add(frm, mask)
+        # cv2.add(frm, mask)
+        return mask
 
 
     """
@@ -183,11 +186,6 @@ class Rectification_Tracker:
         good_curr_pts = np.float32(curr_pts[status == 1])
         good_golden_pts = np.float32(golden_pts[status == 1])
 
-        # Marking the velocity on the current frame
-        curr_frame = self.mark_velocity(curr_frame,
-                                        good_curr_pts.reshape(len(good_curr_pts), 2),
-                                        good_golden_pts.reshape(len(good_golden_pts), 2))
-
         # Computing the actual homography between the golden and the current frame
         H, _ = cv2.findHomography(good_curr_pts, good_golden_pts, cv2.RANSAC, 5.0)
 
@@ -197,28 +195,39 @@ class Rectification_Tracker:
                                           T_new, d_size,
                                           flags=cv2.INTER_NEAREST)
 
-        return curr_warped, T_new
+        # Marking the velocity on the current frame than warp it
+        velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
+                                                               good_curr_pts.reshape(len(good_curr_pts), 2),
+                                                               good_golden_pts.reshape(len(good_golden_pts), 2)),
+                                            T_new, d_size,
+                                            flags=cv2.INTER_NEAREST)
+
+        return curr_warped, T_new, velocity_mask
 
 
-    def rect_cut(self, frame, pts):
+    """
+    reorder_points(pts) -> reorganized points as defined
+    .   @brief Ordering 4 points as predefined by the rectangle
+    """
+    def reorder_points(self, pts):
         reshaped_pts = pts.reshape(len(pts), 2)
         min_x = int(min(reshaped_pts, key=lambda x: x[0])[0])
         max_x = int(max(reshaped_pts, key=lambda x: x[0])[0])
         min_y = int(min(reshaped_pts, key=lambda x: x[1])[1])
         max_y = int(max(reshaped_pts, key=lambda x: x[1])[1])
-
-        return frame[min_y:max_y, min_x:max_x]
+        pts = np.array([[min_x, min_y], [min_x, max_y], [max_x, min_y], [max_x, max_y]]).reshape(-1, 1, 2)
+        return pts
 
 
     """
-    .   TEST FUNCTION
+    get_overview_coordinates(h, w) -> return reshaped 4 points of a rectangle
+    .   @brief Building a rectangle by height and width of the input image
     """
-    def get_overview_coordinates(self):
-        rect_coor = [[0., 0.],
-                     [50., 0.],
-                     [0., 100.],
-                     [50., 100.]]
-        return np.asarray(rect_coor).reshape(-1, 1, 2)
+    def get_overview_coordinates(self, h, w):
+        return np.asarray([[0., 0.],
+                           [np.float32(h), 0.],
+                           [0., np.float32(w)],
+                           [np.float32(h), np.float32(w)]]).reshape(-1, 1, 2)
 
 
     """
@@ -234,29 +243,27 @@ class Rectification_Tracker:
 
         cap, golden_frame = self.get_video_capturer()
         point_img = golden_frame.copy()
-
-        golden_pts = self.get_key_points(golden_frame, is_manual=True)
-        rect_coord = self.get_overview_coordinates()
-        H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, 5.0)
-        golden_pts = self.get_key_points(golden_frame, is_manual=False)
-
         w, h, c = golden_frame.shape
+
+        golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True))
+        rect_coord = self.get_overview_coordinates(h, w)
+        T, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, 5.0)
+        golden_pts = self.get_key_points(golden_frame, is_manual=False)
 
         # Final accumulated mosaic
         mosaic = np.zeros((w, h, c), dtype=np.uint8)
-        T = H
-
+        velocity_mask = np.zeros_like(mosaic)
         while cap.isOpened():
             ret, curr_frame = cap.read()
             if not ret:
                 break
             else:
                 # Computing the homography and warping the current frame
-                curr_warped, T = self.calc_homography(curr_frame,
-                                                      T, (h, w),
-                                                      golden_frame,
-                                                      golden_pts)
-
+                curr_warped, T, mask = self.calc_homography(curr_frame,
+                                                            T, (h, w),
+                                                            golden_frame,
+                                                            golden_pts)
+                velocity_mask = cv2.add(velocity_mask, mask)
                 # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != [0, 0, 0])
                 mosaic[good_locations] = curr_warped[good_locations]
@@ -265,7 +272,8 @@ class Rectification_Tracker:
                 golden_frame = curr_frame.copy()
                 golden_pts = self.get_key_points(golden_frame, is_manual)
 
-                cv2.imshow("mosaic", mosaic)
+                mosaic = cv2.add(mosaic, velocity_mask)
+                cv2.imshow("Stable Mosaic Scene In Progress..", mosaic)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -274,7 +282,7 @@ class Rectification_Tracker:
         cap.release()
         print("Done!")
 
-        cv2.imshow("mosaic", mosaic)
+        cv2.imshow("Final Stable Mosaic Scene", mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 

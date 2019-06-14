@@ -1,5 +1,5 @@
 # Itay Guy, 305104184 & Elias Jadon, 207755737
-import cv2, os, argparse
+import cv2, os
 import numpy as np
 
 # out data:
@@ -10,12 +10,12 @@ output_dir_path = ".//Results//"
 
 input_video_name = "ParkingLot.mp4"
 num_auto_key_points = 200
-numb_manual_key_points = 10
+num_manual_key_points = 10
 is_manual_selection = False
 
 # User key-points selection
 Point_color = (0, 0, 255)
-Point_size = 5
+Point_size = 4
 Line_color = (0, 255, 0)
 Line_size = 2
 
@@ -53,7 +53,7 @@ class Homography_Tracker:
         while True:
             cv2.imshow("Select Points", point_img)
             k = cv2.waitKey(20)
-            if (k == 27) or (len(Points) == numb_manual_key_points):  # escape
+            if (k == 27) or (len(Points) == num_manual_key_points):  # escape
                 break
         cv2.destroyAllWindows()
 
@@ -99,12 +99,15 @@ class Homography_Tracker:
 
 
     """
-    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=2000]]]]) -> array of key points as tuples
+    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=200]]]]) -> array of key points as tuples
     .   @brief Extracting ROI points
     """
-    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=2000):
-        if max_corners < 0:
+    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=200):
+        if is_manual_selection:
+            max_corners = num_manual_key_points
+        elif num_auto_key_points > 0:
             max_corners = num_auto_key_points
+
         return cv2.goodFeaturesToTrack(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY),
                                        qualityLevel=quality_level,
                                        minDistance=min_distance,
@@ -147,7 +150,7 @@ class Homography_Tracker:
         frm = frame.copy()
         for _, point in enumerate(points):
             a, b = point
-            frm = cv2.circle(frm, (int(a), int(b)), 5, [0, 0, 255], +1)
+            frm = cv2.circle(frm, (int(a), int(b)), Point_size, Point_color, +1)
 
         return frm
 
@@ -165,11 +168,11 @@ class Homography_Tracker:
             c, d = o.ravel()
 
             # velocity computation
-            mask = cv2.line(mask, (a, b), (c, d), [0, 0, 255], 8)
-            frm = cv2.circle(frm, (a, b), 3, [0, 255, 0], -1)
+            mask = cv2.line(mask, (a, b), (c, d), Line_color, Line_size)
+            # frm = cv2.circle(frm, (a, b), 3, [0, 255, 0], -1)
 
-        frm = cv2.add(frm, mask)
-        return frm
+        # frm = cv2.add(frm, mask)
+        return mask
 
 
 
@@ -188,18 +191,20 @@ class Homography_Tracker:
         # Computing the actual homography between the golden and the current frame
         H, _ = cv2.findHomography(good_curr_pts, good_golden_pts, cv2.RANSAC, 5.0)
 
-        # Marking the velocity on the current warped frame
-        curr_frame = self.mark_velocity(curr_frame,
-                                        good_curr_pts.reshape(len(good_curr_pts), 2),
-                                        good_golden_pts.reshape(len(good_golden_pts), 2))
-
         T_new = np.matmul(T, H)
         # Warping the current frame using the homography that has been found step ago
         curr_warped = cv2.warpPerspective(curr_frame,
                                           T_new, d_size,
                                           flags=cv2.INTER_NEAREST)
 
-        return curr_warped, T_new
+        # Marking the velocity on the current frame than warp it
+        velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
+                                                               good_curr_pts.reshape(len(good_curr_pts), 2),
+                                                               good_golden_pts.reshape(len(good_golden_pts), 2)),
+                                            T_new, d_size,
+                                            flags=cv2.INTER_NEAREST)
+
+        return curr_warped, T_new, velocity_mask
 
 
     """
@@ -230,18 +235,18 @@ class Homography_Tracker:
             [scale, 0, h*x_translate],
             [0, scale, w*y_translate],
             [0, 0, 1]], dtype=np.float32)
-
+        velocity_mask = np.zeros_like(mosaic)
         while cap.isOpened():
             ret, curr_frame = cap.read()
             if not ret:
                 break
             else:
                 # Computing the homography and warping the current frame
-                curr_warped, T = self.calc_homography(curr_frame,
-                                                      T, (h, w),
-                                                      golden_frame,
-                                                      golden_pts)
-
+                curr_warped, T, mask = self.calc_homography(curr_frame,
+                                                            T, (h, w),
+                                                            golden_frame,
+                                                            golden_pts)
+                velocity_mask = cv2.add(velocity_mask, mask)
                 # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != [0, 0, 0])
                 mosaic[good_locations] = curr_warped[good_locations]
@@ -250,7 +255,8 @@ class Homography_Tracker:
                 golden_frame = curr_frame.copy()
                 golden_pts = self.get_key_points(golden_frame, is_manual)
 
-                cv2.imshow("mosaic", mosaic)
+                mosaic = cv2.add(mosaic, velocity_mask)
+                cv2.imshow("Moving Mosaic scene In Progress..", mosaic)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -259,7 +265,7 @@ class Homography_Tracker:
         cap.release()
         print("Done!")
 
-        cv2.imshow("mosaic", mosaic)
+        cv2.imshow("Final Moving Mosaic Scene", mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
