@@ -10,7 +10,7 @@ output_dir_path = ".//Results//"
 
 input_video_name = "HexBugs.mp4"    # "ParkingLot.mp4"
 num_auto_key_points = 2000
-num_manual_key_points = 1   # 20
+num_manual_key_points = 20
 moving_scene = False
 is_manual_selection = False
 save_out = False
@@ -144,6 +144,10 @@ class Rectification_Tracker:
                                                          maxLevel=3,
                                                          criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
                                                                    10, 0.03))
+        if status is not None:
+            status = status.ravel()
+        else:
+            status = list()
         return next_pts, status.ravel()
 
 
@@ -275,7 +279,7 @@ class Rectification_Tracker:
 
         Rectification_Tracker.ACTION_NAME = Action_Rect
         golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True, is_rect=True))
-        rect_coord = self.get_overview_coordinates(h, w)
+        rect_coord = self.get_overview_coordinates(w, h)
         H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, Rectification_Tracker.RANSAC_THRESH)
         golden_pts = self.get_key_points(golden_frame, is_manual=False)
 
@@ -296,12 +300,12 @@ class Rectification_Tracker:
             y_translate = (1-Rectification_Tracker.SCALE)/2
             T = np.matmul(
                 np.asmatrix([
-                    [Rectification_Tracker.SCALE, 0, h*x_translate],
-                    [0, Rectification_Tracker.SCALE, w*y_translate],
+                    [Rectification_Tracker.SCALE, 0, w*x_translate],
+                    [0, Rectification_Tracker.SCALE, h*y_translate],
                     [0, 0, 1]], dtype=np.float32), H)
 
         # Final accumulated mosaic
-        mosaic = np.zeros((w, h, c), dtype=np.uint8)
+        mosaic = np.zeros((h, w, c), dtype=np.uint8)
         velocity_mask = np.zeros_like(mosaic)
 
         while cap.isOpened():
@@ -311,7 +315,7 @@ class Rectification_Tracker:
             else:
                 # Computing the homography and warping the current frame
                 curr_warped, T, mask, pts, status = self.calc_homography(curr_frame,
-                                                                         T, (h, w),
+                                                                         T, (w, h),
                                                                          golden_frame,
                                                                          golden_pts,
                                                                          visual_pts,
@@ -330,8 +334,7 @@ class Rectification_Tracker:
                     velocity_mask = cv2.add(velocity_mask, mask)
                     mosaic = cv2.add(mosaic, velocity_mask)
 
-                mosaic = cv2.add(mosaic, velocity_mask)
-                cv2.imshow("Stable Mosaic Scene In Progress..", mosaic)
+                cv2.imshow("Stable Mosaic Scene In Progress..", np.rot90(np.fliplr(mosaic)))
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -340,14 +343,15 @@ class Rectification_Tracker:
         cap.release()
         print("Done!")
 
+        final_mosaic = np.rot90(np.fliplr(mosaic))
         if save_out:
             if not os.path.exists(output_dir_path):
                 os.mkdir(output_dir_path)
             out_name = "Stable_Scene_" + input_video_name[0:-4] + "_out.jpg"
-            cv2.imwrite(output_dir_path + out_name, mosaic, Rectification_Tracker.JPEG_PARAM)
+            cv2.imwrite(output_dir_path + out_name, final_mosaic, Rectification_Tracker.JPEG_PARAM)
             print(out_name, "is saved.")
 
-        cv2.imshow("Final Stable Mosaic Scene", mosaic)
+        cv2.imshow("Final Stable Mosaic Scene", final_mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
