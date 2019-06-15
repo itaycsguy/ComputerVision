@@ -8,18 +8,25 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "ParkingLot.mp4"
-num_auto_key_points = 200
-num_manual_key_points = 4
+input_video_name = "HexBugs.mp4"    #"ParkingLot.mp4"
+num_auto_key_points = 2000
+num_manual_key_points = 20
 is_manual_selection = False
+save_out = True
 
 # User key-points selection
 Point_color = (0, 0, 255)
 Point_size = 4
 Line_color = (0, 255, 0)
-Line_size = 2
+Line_size = 3
+
+# Action with the user
+Action_Track = "Select " + str(num_manual_key_points) + " Points To Track.."
 
 class Homography_Tracker:
+    ACTION_NAME = ""
+    JPEG_PARAM = [int(cv2.IMWRITE_JPEG_QUALITY), 95]
+
     """
     mouse_click() -> None
     .   @brief Taking a position of some mouse click
@@ -45,13 +52,13 @@ class Homography_Tracker:
     .   @brief Picking points from a frame interactively
     """
     def select_points_from_user(self):
-        cv2.namedWindow("Select Points")
+        cv2.namedWindow(Homography_Tracker.ACTION_NAME)
         # mouse event listener
-        cv2.setMouseCallback("Select Points", self.mouse_click)
+        cv2.setMouseCallback(Homography_Tracker.ACTION_NAME, self.mouse_click)
 
         # lists to hold pixels in each segment
         while True:
-            cv2.imshow("Select Points", point_img)
+            cv2.imshow(Homography_Tracker.ACTION_NAME, point_img)
             k = cv2.waitKey(20)
             if (k == 27) or (len(Points) == num_manual_key_points):  # escape
                 break
@@ -128,7 +135,11 @@ class Homography_Tracker:
                                                          maxLevel=3,
                                                          criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
                                                                    10, 0.03))
-        return next_pts, status.ravel()
+        if status is not None:
+            status = status.ravel()
+        else:
+            status = list()
+        return next_pts, status
 
 
     """
@@ -137,9 +148,13 @@ class Homography_Tracker:
     """
     def get_key_points(self, frame, is_manual=False):
         if is_manual:
-            return self.select_points_from_user()
+            points = self.select_points_from_user()
+            Points.clear()
+            return points
 
-        return self.extract_key_points(frame)
+        points = self.extract_key_points(frame)
+        Points.clear()
+        return points
 
 
     """
@@ -180,7 +195,7 @@ class Homography_Tracker:
     calc_homography(curr_frame, T, dsize, golden_frame, golden_pts) -> warped image, good point of the warped image
     .   @brief Computing an homography between 2 frames
     """
-    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts, visual_pts):
+    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts, visual_pts, visual_deviation):
         # Computing the next points by optical flow
         curr_pts, status = self.calc_next_points(golden_frame, curr_frame, golden_pts)
         next_visual_pts, visual_status = self.calc_next_points(golden_frame, curr_frame, visual_pts)
@@ -197,25 +212,30 @@ class Homography_Tracker:
         curr_warped = cv2.warpPerspective(curr_frame,
                                           T_new, d_size,
                                           flags=cv2.INTER_NEAREST)
+        velocity_mask = None
+        if len(visual_pts):
+            # Keeping the points bulk from being removed
+            if len(next_visual_pts) < (visual_deviation * len(visual_pts)):
+                next_visual_pts = visual_pts.copy()
 
-        # Marking the velocity on the current frame than warp it
-        visual_pts = visual_pts[visual_status == 1]
-        next_visual_pts = next_visual_pts[visual_status == 1]
-        velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
-                                                               next_visual_pts.reshape(len(next_visual_pts), 2),
-                                                               visual_pts.reshape(len(visual_pts), 2)),
-                                            T_new, d_size,
-                                            flags=cv2.INTER_NEAREST)
+            # Marking the velocity on the current frame than warp it
+            visual_pts = visual_pts[visual_status == 1]
+            next_visual_pts = next_visual_pts[visual_status == 1]
+            velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
+                                                                   next_visual_pts.reshape(len(next_visual_pts), 2),
+                                                                   visual_pts.reshape(len(visual_pts), 2)),
+                                                T_new, d_size,
+                                                flags=cv2.INTER_NEAREST)
 
-        return curr_warped, T_new, velocity_mask
+        return curr_warped, T_new, velocity_mask, next_visual_pts, visual_status
 
 
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
-    run_tracking([is_manual=False]) -> None
+    run_tracking([is_manual=False[, save_out=False]]) -> None
     .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self, is_manual=False):
+    def run_tracking(self, is_manual=False, save_out=False):
         print("Processing..")
         global Points
         global point_img
@@ -227,8 +247,9 @@ class Homography_Tracker:
         golden_pts = self.get_key_points(golden_frame, is_manual)
         w, h, c = golden_frame.shape
 
-        # Final accumulated mosaic
-        mosaic = np.zeros((w, h, c), dtype=np.uint8)
+        Homography_Tracker.ACTION_NAME = Action_Track
+        visual_pts = self.get_key_points(golden_frame, is_manual=True)
+        visual_deviation = 3/4
 
         # Translation matrix to the mosaic center due to homography alignment property
         scale = 1/3
@@ -238,21 +259,23 @@ class Homography_Tracker:
             [scale, 0, h*x_translate],
             [0, scale, w*y_translate],
             [0, 0, 1]], dtype=np.float32)
+
+        # Final accumulated mosaic
+        mosaic = np.zeros((w, h, c), dtype=np.uint8)
         velocity_mask = np.zeros_like(mosaic)
 
-        visual_pts = self.get_key_points(golden_frame, is_manual=True)
         while cap.isOpened():
             ret, curr_frame = cap.read()
             if not ret:
                 break
             else:
                 # Computing the homography and warping the current frame
-                curr_warped, T, mask = self.calc_homography(curr_frame,
-                                                            T, (h, w),
-                                                            golden_frame,
-                                                            golden_pts,
-                                                            visual_pts)
-                velocity_mask = cv2.add(velocity_mask, mask)
+                curr_warped, T, mask, pts, status = self.calc_homography(curr_frame,
+                                                                         T, (h, w),
+                                                                         golden_frame,
+                                                                         golden_pts,
+                                                                         visual_pts,
+                                                                         visual_deviation)
                 # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != [0, 0, 0])
                 mosaic[good_locations] = curr_warped[good_locations]
@@ -261,7 +284,12 @@ class Homography_Tracker:
                 golden_frame = curr_frame.copy()
                 golden_pts = self.get_key_points(golden_frame, is_manual)
 
-                mosaic = cv2.add(mosaic, velocity_mask)
+                if len(status) > 0:
+                    visual_pts = pts
+                if mask is not None:
+                    velocity_mask = cv2.add(velocity_mask, mask)
+                    mosaic = cv2.add(mosaic, velocity_mask)
+
                 cv2.imshow("Moving Mosaic scene In Progress..", mosaic)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
@@ -271,6 +299,12 @@ class Homography_Tracker:
         cap.release()
         print("Done!")
 
+        if save_out:
+            if not os.path.exists(output_dir_path):
+                os.mkdir(output_dir_path)
+            out_name = output_dir_path + "Moving_Scene_" + input_video_name[0:-4] + "_out.jpg"
+            cv2.imwrite(out_name, mosaic, Homography_Tracker.JPEG_PARAM)
+
         cv2.imshow("Final Moving Mosaic Scene", mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -279,4 +313,4 @@ class Homography_Tracker:
 
 if __name__ == "__main__":
     tracker = Homography_Tracker()
-    tracker.run_tracking(is_manual=is_manual_selection)
+    tracker.run_tracking(is_manual=is_manual_selection, save_out=save_out)

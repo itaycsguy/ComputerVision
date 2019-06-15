@@ -8,18 +8,27 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "Billiard2.mp4"
+input_video_name = "ParkingLot.mp4" #"HexBugs.mp4"
 num_auto_key_points = 2000
-num_manual_key_points = 4
+num_manual_key_points = 20
+moving_scene = True
 is_manual_selection = False
+save_out = True
 
 # User key-points selection
 Point_color = (0, 0, 255)
 Point_size = 4
 Line_color = (0, 255, 0)
-Line_size = 1
+Line_size = 3
+
+# Action with the user
+Action_Rect = "Select 4 Rectangle Points.."
+Action_Track = "Select " + str(num_manual_key_points) + " Points To Track.."
 
 class Rectification_Tracker:
+    ACTION_NAME = ""
+    JPEG_PARAM = [int(cv2.IMWRITE_JPEG_QUALITY), 95]
+
     """
     mouse_click() -> None
     .   @brief Taking a position of some mouse click
@@ -44,16 +53,19 @@ class Rectification_Tracker:
     select_points_from_user() -> Points array
     .   @brief Picking points from a frame interactively
     """
-    def select_points_from_user(self):
-        cv2.namedWindow("Select Points")
+    def select_points_from_user(self, is_rect=False):
+        cv2.namedWindow(Rectification_Tracker.ACTION_NAME)
         # mouse event listener
-        cv2.setMouseCallback("Select Points", self.mouse_click)
+        cv2.setMouseCallback(Rectification_Tracker.ACTION_NAME, self.mouse_click)
 
+        num_points = num_manual_key_points
+        if is_rect:
+            num_points = 4
         # lists to hold pixels in each segment
         while True:
-            cv2.imshow("Select Points", point_img)
+            cv2.imshow(Rectification_Tracker.ACTION_NAME, point_img)
             k = cv2.waitKey(20)
-            if (k == 27) or (len(Points) == num_manual_key_points):  # escape
+            if (k == 27) or (len(Points) == num_points):  # escape
                 break
         cv2.destroyAllWindows()
 
@@ -135,11 +147,15 @@ class Rectification_Tracker:
     get_key_points(frame[, is_manual=False]) -> key-point from frame
     .   @brief Extracting or selection manually key-points from frame
     """
-    def get_key_points(self, frame, is_manual=False):
+    def get_key_points(self, frame, is_manual=False, is_rect=False):
         if is_manual:
-            return self.select_points_from_user()
+            points = self.select_points_from_user(is_rect)
+            Points.clear()
+            return points
 
-        return self.extract_key_points(frame)
+        points = self.extract_key_points(frame)
+        Points.clear()
+        return points
 
 
     """
@@ -178,7 +194,7 @@ class Rectification_Tracker:
     calc_homography(curr_frame, T, dsize, golden_frame, golden_pts) -> warped image, good point of the warped image
     .   @brief Computing an homography between 2 frames
     """
-    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts, visual_pts):
+    def calc_homography(self, curr_frame, T, d_size, golden_frame, golden_pts, visual_pts, visual_deviation):
         # Computing the next points by optical flow
         curr_pts, status = self.calc_next_points(golden_frame, curr_frame, golden_pts)
         next_visual_pts, visual_status = self.calc_next_points(golden_frame, curr_frame, visual_pts)
@@ -195,17 +211,22 @@ class Rectification_Tracker:
         curr_warped = cv2.warpPerspective(curr_frame,
                                           T_new, d_size,
                                           flags=cv2.INTER_NEAREST)
+        velocity_mask = None
+        if len(visual_pts):
+            # Keeping the points bulk from being removed
+            if len(next_visual_pts) < (visual_deviation * len(visual_pts)):
+                next_visual_pts = visual_pts.copy()
 
-        # Marking the velocity on the current frame than warp it
-        visual_pts = visual_pts[visual_status == 1]
-        next_visual_pts = next_visual_pts[visual_status == 1]
-        velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
-                                                               next_visual_pts.reshape(len(next_visual_pts), 2),
-                                                               visual_pts.reshape(len(visual_pts), 2)),
-                                            T_new, d_size,
-                                            flags=cv2.INTER_NEAREST)
+            # Marking the velocity on the current frame than warp it
+            visual_pts = visual_pts[visual_status == 1]
+            next_visual_pts = next_visual_pts[visual_status == 1]
+            velocity_mask = cv2.warpPerspective(self.mark_velocity(curr_frame,
+                                                                   next_visual_pts.reshape(len(next_visual_pts), 2),
+                                                                   visual_pts.reshape(len(visual_pts), 2)),
+                                                T_new, d_size,
+                                                flags=cv2.INTER_NEAREST)
 
-        return curr_warped, T_new, velocity_mask
+        return curr_warped, T_new, velocity_mask, next_visual_pts, visual_status
 
 
     """
@@ -235,10 +256,10 @@ class Rectification_Tracker:
 
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
-    run_tracking([is_manual=False]) -> None
+    run_tracking([is_manual=False[, save_out=False]]) -> None
     .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self, is_manual=False):
+    def run_tracking(self, moving_scene=False, is_manual=False, save_out=False):
         print("Processing..")
         global Points
         global point_img
@@ -248,28 +269,51 @@ class Rectification_Tracker:
         point_img = golden_frame.copy()
         w, h, c = golden_frame.shape
 
-        golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True))
+        Rectification_Tracker.ACTION_NAME = Action_Rect
+        golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True, is_rect=True))
         rect_coord = self.get_overview_coordinates(h, w)
-        T, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, 5.0)
+        H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, 5.0)
+        T = H.copy()
         golden_pts = self.get_key_points(golden_frame, is_manual=False)
+
+        # Make the decision to be on the projected frame
+        # visual_frame = cv2.warpPerspective(golden_frame,
+        #                                    T,
+        #                                    (h, w),
+        #                                    flags=cv2.INTER_NEAREST)
+        # point_img = visual_frame.copy()
+
+        Rectification_Tracker.ACTION_NAME = Action_Track
+        visual_pts = self.get_key_points(golden_frame, is_manual=True)
+        visual_deviation = 3/4
+
+        if moving_scene:
+            # Translation matrix to the mosaic center due to homography alignment property
+            scale = 1/6
+            x_translate = (1-scale)/2
+            y_translate = (1-scale)/2
+            T = np.matmul(
+                np.asmatrix([
+                    [scale, 0, h*x_translate],
+                    [0, scale, w*y_translate],
+                    [0, 0, 1]], dtype=np.float32), H)
 
         # Final accumulated mosaic
         mosaic = np.zeros((w, h, c), dtype=np.uint8)
         velocity_mask = np.zeros_like(mosaic)
 
-        visual_pts = self.get_key_points(golden_frame, is_manual=True)
         while cap.isOpened():
             ret, curr_frame = cap.read()
             if not ret:
                 break
             else:
                 # Computing the homography and warping the current frame
-                curr_warped, T, mask = self.calc_homography(curr_frame,
-                                                            T, (h, w),
-                                                            golden_frame,
-                                                            golden_pts,
-                                                            visual_pts)
-                velocity_mask = cv2.add(velocity_mask, mask)
+                curr_warped, T, mask, pts, status = self.calc_homography(curr_frame,
+                                                                         T, (h, w),
+                                                                         golden_frame,
+                                                                         golden_pts,
+                                                                         visual_pts,
+                                                                         visual_deviation)
                 # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != [0, 0, 0])
                 mosaic[good_locations] = curr_warped[good_locations]
@@ -277,6 +321,12 @@ class Rectification_Tracker:
                 # Update the first frame to be the current
                 golden_frame = curr_frame.copy()
                 golden_pts = self.get_key_points(golden_frame, is_manual)
+
+                if len(status) > 0:
+                    visual_pts = pts
+                if mask is not None:
+                    velocity_mask = cv2.add(velocity_mask, mask)
+                    mosaic = cv2.add(mosaic, velocity_mask)
 
                 mosaic = cv2.add(mosaic, velocity_mask)
                 cv2.imshow("Stable Mosaic Scene In Progress..", mosaic)
@@ -288,6 +338,12 @@ class Rectification_Tracker:
         cap.release()
         print("Done!")
 
+        if save_out:
+            if not os.path.exists(output_dir_path):
+                os.mkdir(output_dir_path)
+            out_name = output_dir_path + "Stable_Scene_" + input_video_name[0:-4] + "_out.jpg"
+            cv2.imwrite(out_name, mosaic, Rectification_Tracker.JPEG_PARAM)
+
         cv2.imshow("Final Stable Mosaic Scene", mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -295,4 +351,4 @@ class Rectification_Tracker:
 
 if __name__ == "__main__":
     tracker = Rectification_Tracker()
-    tracker.run_tracking(is_manual=is_manual_selection)
+    tracker.run_tracking(moving_scene=moving_scene, is_manual=is_manual_selection, save_out=save_out)
