@@ -11,7 +11,10 @@ output_dir_path = ".//Results//"
 input_video_name = "ParkingLot.mp4" # "HexBugs.mp4"
 num_auto_key_points = 2000
 num_manual_key_points = 20
-is_manual_selection = False
+num_auto_track_points = 40
+num_manual_track_points = 20
+is_manual_plane_points = False
+is_manual_track_points = True
 save_out = False
 
 # User key-points selection
@@ -21,7 +24,8 @@ Line_color = (0, 255, 0)
 Line_size = 3
 
 # Action with the user
-Action_Track = "Select " + str(num_manual_key_points) + " Points To Track.."
+Action_Plane = "Select " + str(num_manual_key_points) + " Plane Points.."
+Action_Track = "Select " + str(num_manual_track_points) + " Points To Track.."
 
 class Homography_Tracker:
     VISUAL_DEVIATION = 3/4
@@ -55,7 +59,13 @@ class Homography_Tracker:
     select_points_from_user() -> Points array
     .   @brief Picking points from a frame interactively
     """
-    def select_points_from_user(self):
+    def select_points_from_user(self, is_track=False):
+        Homography_Tracker.ACTION_NAME = Action_Plane
+        num_points = num_manual_key_points
+        if is_track:
+            Homography_Tracker.ACTION_NAME = Action_Track
+            num_points = num_manual_track_points
+
         cv2.namedWindow(Homography_Tracker.ACTION_NAME)
         # mouse event listener
         cv2.setMouseCallback(Homography_Tracker.ACTION_NAME, self.mouse_click)
@@ -64,7 +74,7 @@ class Homography_Tracker:
         while True:
             cv2.imshow(Homography_Tracker.ACTION_NAME, point_img)
             k = cv2.waitKey(20)
-            if (k == 27) or (len(Points) == num_manual_key_points):  # escape
+            if (k == 27) or (len(Points) == num_points):  # escape
                 break
         cv2.destroyAllWindows()
 
@@ -110,14 +120,20 @@ class Homography_Tracker:
 
 
     """
-    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=200]]]]) -> array of key points as tuples
+    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=200[, is_track=False]]]]]) -> array of key points as tuples
     .   @brief Extracting ROI points
     """
-    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=200):
-        if is_manual_selection:
-            max_corners = num_manual_key_points
-        elif num_auto_key_points > 0:
-            max_corners = num_auto_key_points
+    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=200, is_track=False):
+        if is_track:
+            if is_manual_track_points:
+                max_corners = num_manual_track_points
+            else:
+                max_corners = num_auto_track_points
+        else:
+            if is_manual_plane_points:
+                max_corners = num_manual_key_points
+            else:
+                max_corners = num_auto_key_points
 
         return cv2.goodFeaturesToTrack(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY),
                                        qualityLevel=quality_level,
@@ -150,13 +166,13 @@ class Homography_Tracker:
     get_key_points(frame[, is_manual=False]) -> key-point from frame
     .   @brief Extracting or selection manually key-points from frame
     """
-    def get_key_points(self, frame, is_manual=False):
+    def get_key_points(self, frame, is_manual=False, is_track=False):
         if is_manual:
-            points = self.select_points_from_user()
+            points = self.select_points_from_user(is_track)
             Points.clear()
             return points
 
-        points = self.extract_key_points(frame)
+        points = self.extract_key_points(frame, is_track=is_track)
         Points.clear()
         return points
 
@@ -239,7 +255,7 @@ class Homography_Tracker:
     run_tracking([is_manual=False[, save_out=False]]) -> None
     .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self, is_manual=False, save_out=False):
+    def run_tracking(self, is_manual_plane_points=False, is_manual_track_points=True, save_out=False):
         print("Processing..")
         global Points
         global point_img
@@ -248,11 +264,10 @@ class Homography_Tracker:
         cap, golden_frame = self.get_video_capturer()
         point_img = golden_frame.copy()
 
-        golden_pts = self.get_key_points(golden_frame, is_manual)
+        golden_pts = self.get_key_points(golden_frame, is_manual_plane_points)
         w, h, c = golden_frame.shape
 
-        Homography_Tracker.ACTION_NAME = Action_Track
-        visual_pts = self.get_key_points(golden_frame, is_manual=True)
+        visual_pts = self.get_key_points(golden_frame, is_manual=is_manual_track_points, is_track=True)
 
         # Translation matrix to the mosaic center due to homography alignment property
         x_translate = (1-Homography_Tracker.SCALE)/2
@@ -278,13 +293,14 @@ class Homography_Tracker:
                                                                          golden_pts,
                                                                          visual_pts,
                                                                          Homography_Tracker.VISUAL_DEVIATION)
+
                 # Adding the pixel's which are not holding zeros to the final mosaic image
                 good_locations = np.where(curr_warped != Homography_Tracker.BLACK)
                 mosaic[good_locations] = curr_warped[good_locations]
 
                 # Update the first frame and points to be the current
                 golden_frame = curr_frame.copy()
-                golden_pts = self.get_key_points(golden_frame, is_manual)
+                golden_pts = self.get_key_points(golden_frame, is_manual_plane_points)
 
                 if len(status) > 0:
                     visual_pts = pts
@@ -316,4 +332,6 @@ class Homography_Tracker:
 
 if __name__ == "__main__":
     tracker = Homography_Tracker()
-    tracker.run_tracking(is_manual=is_manual_selection, save_out=save_out)
+    tracker.run_tracking(is_manual_plane_points=is_manual_plane_points,
+                         is_manual_track_points=is_manual_track_points,
+                         save_out=save_out)

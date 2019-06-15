@@ -8,11 +8,14 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "HexBugs.mp4"    # "ParkingLot.mp4"
+input_video_name = "ParkingLot.mp4" # "HexBugs.mp4"
 num_auto_key_points = 2000
 num_manual_key_points = 20
-moving_scene = False
-is_manual_selection = False
+num_auto_track_points = 40
+num_manual_track_points = 20
+is_manual_plane_points = False
+is_manual_track_points = True
+moving_scene = True
 save_out = False
 
 # User key-points selection
@@ -23,7 +26,8 @@ Line_size = 3
 
 # Action with the user
 Action_Rect = "Select 4 Rectangle Points.."
-Action_Track = "Select " + str(num_manual_key_points) + " Points To Track.."
+Action_Plane = "Select " + str(num_manual_key_points) + " Plane Points.."
+Action_Track = "Select " + str(num_manual_track_points) + " Points To Track.."
 
 class Rectification_Tracker:
     VISUAL_DEVIATION = 3/4
@@ -57,14 +61,20 @@ class Rectification_Tracker:
     select_points_from_user() -> Points array
     .   @brief Picking points from a frame interactively
     """
-    def select_points_from_user(self, is_rect=False):
+    def select_points_from_user(self, is_rect=False, is_track=False):
+        Rectification_Tracker.ACTION_NAME = Action_Plane
+        num_points = num_manual_key_points
+        if is_track:
+            Rectification_Tracker.ACTION_NAME = Action_Track
+            num_points = num_manual_track_points
+        if is_rect:
+            Rectification_Tracker.ACTION_NAME = Action_Rect
+            num_points = 4
+
         cv2.namedWindow(Rectification_Tracker.ACTION_NAME)
         # mouse event listener
         cv2.setMouseCallback(Rectification_Tracker.ACTION_NAME, self.mouse_click)
 
-        num_points = num_manual_key_points
-        if is_rect:
-            num_points = 4
         # lists to hold pixels in each segment
         while True:
             cv2.imshow(Rectification_Tracker.ACTION_NAME, point_img)
@@ -115,14 +125,20 @@ class Rectification_Tracker:
 
 
     """
-    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=2000]]]]) -> array of key points as tuples
+    extract_key_points(image[, qualityLevel=0.01[, minDistance=30[, blockSize=3[, max_corners=200[, is_track=False]]]]]) -> array of key points as tuples
     .   @brief Extracting ROI points
     """
-    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=200):
-        if is_manual_selection:
-            max_corners = num_manual_key_points
-        elif num_auto_key_points > 0:
-            max_corners = num_auto_key_points
+    def extract_key_points(self, image, quality_level=0.01, min_distance=30, block_size=3, max_corners=200, is_track=False):
+        if is_track:
+            if is_manual_track_points:
+                max_corners = num_manual_track_points
+            else:
+                max_corners = num_auto_track_points
+        else:
+            if is_manual_plane_points:
+                max_corners = num_manual_key_points
+            else:
+                max_corners = num_auto_key_points
 
         return cv2.goodFeaturesToTrack(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY),
                                        qualityLevel=quality_level,
@@ -152,16 +168,16 @@ class Rectification_Tracker:
 
 
     """
-    get_key_points(frame[, is_manual=False]) -> key-point from frame
+    get_key_points(frame[, is_manual=False[, is_track=False]]) -> key-point from frame
     .   @brief Extracting or selection manually key-points from frame
     """
-    def get_key_points(self, frame, is_manual=False, is_rect=False):
+    def get_key_points(self, frame, is_manual=False, is_rect=False, is_track=False):
         if is_manual:
-            points = self.select_points_from_user(is_rect)
+            points = self.select_points_from_user(is_rect, is_track)
             Points.clear()
             return points
 
-        points = self.extract_key_points(frame)
+        points = self.extract_key_points(frame, is_track=is_track)
         Points.clear()
         return points
 
@@ -266,7 +282,7 @@ class Rectification_Tracker:
     run_tracking([is_manual=False[, save_out=False]]) -> None
     .   @brief Running the tracking + mosaic process
     """
-    def run_tracking(self, moving_scene=False, is_manual=False, save_out=False):
+    def run_tracking(self, moving_scene=False, is_manual_plane_points=False, is_manual_track_points=True, save_out=False):
         print("Processing..")
         global Points
         global point_img
@@ -280,10 +296,10 @@ class Rectification_Tracker:
         golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True, is_rect=True))
         rect_coord = self.get_overview_coordinates(h, w)
         H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, Rectification_Tracker.RANSAC_THRESH)
-        golden_pts = self.get_key_points(golden_frame, is_manual=False)
 
+        golden_pts = self.get_key_points(golden_frame, is_manual=is_manual_plane_points)
         Rectification_Tracker.ACTION_NAME = Action_Track
-        visual_pts = self.get_key_points(golden_frame, is_manual=True)
+        visual_pts = self.get_key_points(golden_frame, is_manual=is_manual_track_points, is_track=True)
 
         T = H.copy()
         if moving_scene:
@@ -292,8 +308,8 @@ class Rectification_Tracker:
             y_translate = (1-Rectification_Tracker.SCALE)/2
             T = np.matmul(
                 np.asmatrix([
-                    [Rectification_Tracker.SCALE, 0, w*x_translate],
-                    [0, Rectification_Tracker.SCALE, h*y_translate],
+                    [Rectification_Tracker.SCALE, 0, h*x_translate],
+                    [0, Rectification_Tracker.SCALE, w*y_translate],
                     [0, 0, 1]], dtype=np.float32), H)
 
         # Final accumulated mosaic
@@ -318,7 +334,7 @@ class Rectification_Tracker:
 
                 # Update the first frame to be the current
                 golden_frame = curr_frame.copy()
-                golden_pts = self.get_key_points(golden_frame, is_manual)
+                golden_pts = self.get_key_points(golden_frame, is_manual_plane_points)
 
                 if len(status) > 0:
                     visual_pts = pts
@@ -349,4 +365,7 @@ class Rectification_Tracker:
 
 if __name__ == "__main__":
     tracker = Rectification_Tracker()
-    tracker.run_tracking(moving_scene=moving_scene, is_manual=is_manual_selection, save_out=save_out)
+    tracker.run_tracking(moving_scene=moving_scene,
+                         is_manual_plane_points=is_manual_plane_points,
+                         is_manual_track_points=is_manual_track_points,
+                         save_out=save_out)
