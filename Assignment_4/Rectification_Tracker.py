@@ -10,7 +10,7 @@ output_dir_path = ".//Results//"
 
 input_video_name = "HexBugs.mp4"    # "ParkingLot.mp4"
 num_auto_key_points = 2000
-num_manual_key_points = 20
+num_manual_key_points = 1
 moving_scene = False
 is_manual_selection = False
 save_out = False
@@ -247,7 +247,7 @@ class Rectification_Tracker:
         max_x = int(max(reshaped_pts, key=lambda x: x[0])[0])
         min_y = int(min(reshaped_pts, key=lambda x: x[1])[1])
         max_y = int(max(reshaped_pts, key=lambda x: x[1])[1])
-        pts = np.array([[min_x, min_y], [min_x, max_y], [max_x, min_y], [max_x, max_y]]).reshape(-1, 1, 2)
+        pts = np.array([[min_x, min_y], [max_x, min_y], [min_x, max_y], [max_x, max_y]]).reshape(-1, 1, 2)
         return pts
 
 
@@ -260,7 +260,6 @@ class Rectification_Tracker:
                            [np.float32(h), 0.],
                            [0., np.float32(w)],
                            [np.float32(h), np.float32(w)]]).reshape(-1, 1, 2)
-
 
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
@@ -279,16 +278,9 @@ class Rectification_Tracker:
 
         Rectification_Tracker.ACTION_NAME = Action_Rect
         golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True, is_rect=True))
-        rect_coord = self.get_overview_coordinates(w, h)
+        rect_coord = self.get_overview_coordinates(h, w)
         H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, Rectification_Tracker.RANSAC_THRESH)
         golden_pts = self.get_key_points(golden_frame, is_manual=False)
-
-        # Make the decision to be on the projected frame
-        # visual_frame = cv2.warpPerspective(golden_frame,
-        #                                    T,
-        #                                    (h, w),
-        #                                    flags=cv2.INTER_NEAREST)
-        # point_img = visual_frame.copy()
 
         Rectification_Tracker.ACTION_NAME = Action_Track
         visual_pts = self.get_key_points(golden_frame, is_manual=True)
@@ -305,7 +297,7 @@ class Rectification_Tracker:
                     [0, 0, 1]], dtype=np.float32), H)
 
         # Final accumulated mosaic
-        mosaic = np.zeros((h, w, c), dtype=np.uint8)
+        mosaic = np.zeros((w, h, c), dtype=np.uint8)
         velocity_mask = np.zeros_like(mosaic)
 
         while cap.isOpened():
@@ -315,7 +307,7 @@ class Rectification_Tracker:
             else:
                 # Computing the homography and warping the current frame
                 curr_warped, T, mask, pts, status = self.calc_homography(curr_frame,
-                                                                         T, (w, h),
+                                                                         T, (h, w),
                                                                          golden_frame,
                                                                          golden_pts,
                                                                          visual_pts,
@@ -334,7 +326,7 @@ class Rectification_Tracker:
                     velocity_mask = cv2.add(velocity_mask, mask)
                     mosaic = cv2.add(mosaic, velocity_mask)
 
-                cv2.imshow("Stable Mosaic Scene In Progress..", np.rot90(np.fliplr(mosaic)))
+                cv2.imshow("Stable Mosaic Scene In Progress..", mosaic)
                 k = cv2.waitKey(1) & 0xff
                 if k == 27:
                     break
@@ -343,15 +335,14 @@ class Rectification_Tracker:
         cap.release()
         print("Done!")
 
-        final_mosaic = np.rot90(np.fliplr(mosaic))
         if save_out:
             if not os.path.exists(output_dir_path):
                 os.mkdir(output_dir_path)
             out_name = "Stable_Scene_" + input_video_name[0:-4] + "_out.jpg"
-            cv2.imwrite(output_dir_path + out_name, final_mosaic, Rectification_Tracker.JPEG_PARAM)
+            cv2.imwrite(output_dir_path + out_name, mosaic, Rectification_Tracker.JPEG_PARAM)
             print(out_name, "is saved.")
 
-        cv2.imshow("Final Stable Mosaic Scene", final_mosaic)
+        cv2.imshow("Final Stable Mosaic Scene", mosaic)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
