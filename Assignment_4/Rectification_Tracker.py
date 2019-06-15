@@ -10,7 +10,7 @@ output_dir_path = ".//Results//"
 
 input_video_name = "HexBugs.mp4"    # "ParkingLot.mp4"
 num_auto_key_points = 2000
-num_manual_key_points = 1
+num_manual_key_points = 20
 moving_scene = False
 is_manual_selection = False
 save_out = False
