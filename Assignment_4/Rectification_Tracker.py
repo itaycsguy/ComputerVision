@@ -8,12 +8,12 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "ParkingLot.mp4" #"HexBugs.mp4"
+input_video_name = "HexBugs.mp4"    # "ParkingLot.mp4"
 num_auto_key_points = 2000
-num_manual_key_points = 4 #20
-moving_scene = True
+num_manual_key_points = 1   # 20
+moving_scene = False
 is_manual_selection = False
-save_out = True
+save_out = False
 
 # User key-points selection
 Point_color = (0, 0, 255)
