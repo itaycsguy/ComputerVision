@@ -24,6 +24,10 @@ Line_size = 3
 Action_Track = "Select " + str(num_manual_key_points) + " Points To Track.."
 
 class Homography_Tracker:
+    VISUAL_DEVIATION = 3/4
+    SCALE = 1/3
+    BLACK = [0, 0, 0]
+    RANSAC_THRESH = 5.0
     ACTION_NAME = ""
     JPEG_PARAM = [int(cv2.IMWRITE_JPEG_QUALITY), 95]
 
@@ -205,7 +209,7 @@ class Homography_Tracker:
         good_golden_pts = np.float32(golden_pts[status == 1])
 
         # Computing the actual homography between the golden and the current frame
-        H, _ = cv2.findHomography(good_curr_pts, good_golden_pts, cv2.RANSAC, 5.0)
+        H, _ = cv2.findHomography(good_curr_pts, good_golden_pts, cv2.RANSAC, Homography_Tracker.RANSAC_THRESH)
 
         T_new = np.matmul(T, H)
         # Warping the current frame using the homography that has been found step ago
@@ -249,15 +253,13 @@ class Homography_Tracker:
 
         Homography_Tracker.ACTION_NAME = Action_Track
         visual_pts = self.get_key_points(golden_frame, is_manual=True)
-        visual_deviation = 3/4
 
         # Translation matrix to the mosaic center due to homography alignment property
-        scale = 1/3
-        x_translate = (1-scale)/2
-        y_translate = (1-scale)/2
+        x_translate = (1-Homography_Tracker.SCALE)/2
+        y_translate = (1-Homography_Tracker.SCALE)/2
         T = np.asmatrix([
-            [scale, 0, h*x_translate],
-            [0, scale, w*y_translate],
+            [Homography_Tracker.SCALE, 0, h*x_translate],
+            [0, Homography_Tracker.SCALE, w*y_translate],
             [0, 0, 1]], dtype=np.float32)
 
         # Final accumulated mosaic
@@ -275,9 +277,9 @@ class Homography_Tracker:
                                                                          golden_frame,
                                                                          golden_pts,
                                                                          visual_pts,
-                                                                         visual_deviation)
+                                                                         Homography_Tracker.VISUAL_DEVIATION)
                 # Adding the pixel's which are not holding zeros to the final mosaic image
-                good_locations = np.where(curr_warped != [0, 0, 0])
+                good_locations = np.where(curr_warped != Homography_Tracker.BLACK)
                 mosaic[good_locations] = curr_warped[good_locations]
 
                 # Update the first frame and points to be the current
@@ -302,8 +304,9 @@ class Homography_Tracker:
         if save_out:
             if not os.path.exists(output_dir_path):
                 os.mkdir(output_dir_path)
-            out_name = output_dir_path + "Moving_Scene_" + input_video_name[0:-4] + "_out.jpg"
-            cv2.imwrite(out_name, mosaic, Homography_Tracker.JPEG_PARAM)
+            out_name = "Moving_Scene_" + input_video_name[0:-4] + "_out.jpg"
+            cv2.imwrite(output_dir_path + out_name, mosaic, Homography_Tracker.JPEG_PARAM)
+            print(out_name, "is saved.")
 
         cv2.imshow("Final Moving Mosaic Scene", mosaic)
         cv2.waitKey(0)
