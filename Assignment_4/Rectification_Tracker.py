@@ -8,11 +8,11 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "HexBugs.mp4"    # "ParkingLot.mp4"
+input_video_name = "RobotBugandCat.mp4"  # "RobotBugandCat.mp4" # "ParkingLot.mp4"
 num_auto_key_points = 2000
 num_manual_key_points = 20
 num_auto_track_points = 40
-num_manual_track_points = 20
+num_manual_track_points = 25
 is_manual_plane_points = False
 is_manual_track_points = True
 moving_scene = False
@@ -164,7 +164,7 @@ class Rectification_Tracker:
             status = status.ravel()
         else:
             status = list()
-        return next_pts, status.ravel()
+        return next_pts, status
 
 
     """
@@ -254,17 +254,27 @@ class Rectification_Tracker:
 
 
     """
+    find_min(pts_list, pts_corner) -> minimum point as related to the point corner
+    .   @brief Finding the minimum point as related to the norm distance to the ptr_corner
+    """
+    def find_min(self, pts_list, pts_corner):
+        p0 = np.linalg.norm(pts_list[0] - pts_corner)
+        p1 = np.linalg.norm(pts_list[1] - pts_corner)
+        p2 = np.linalg.norm(pts_list[2] - pts_corner)
+        p3 = np.linalg.norm(pts_list[3] - pts_corner)
+        return pts_list[np.argmin([p0, p1, p2, p3])]
+
+
+    """
     reorder_points(pts) -> reorganized points as defined
     .   @brief Ordering 4 points as predefined by the rectangle
     """
-    def reorder_points(self, pts):
+    def reorder_points(self, h, w, pts):
         reshaped_pts = pts.reshape(len(pts), 2)
-        min_x = int(min(reshaped_pts, key=lambda x: x[0])[0])
-        max_x = int(max(reshaped_pts, key=lambda x: x[0])[0])
-        min_y = int(min(reshaped_pts, key=lambda x: x[1])[1])
-        max_y = int(max(reshaped_pts, key=lambda x: x[1])[1])
-        pts = np.array([[min_x, min_y], [max_x, min_y], [min_x, max_y], [max_x, max_y]]).reshape(-1, 1, 2)
-        return pts
+        return np.array([self.find_min(reshaped_pts, [0, 0]),
+                         self.find_min(reshaped_pts, [0, h]),
+                         self.find_min(reshaped_pts, [w, 0]),
+                         self.find_min(reshaped_pts, [w, h])]).reshape(-1, 1, 2)
 
 
     """
@@ -272,10 +282,10 @@ class Rectification_Tracker:
     .   @brief Building a rectangle by height and width of the input image
     """
     def get_overview_coordinates(self, h, w):
-        return np.asarray([[0., 0.],
-                           [np.float32(h), 0.],
-                           [0., np.float32(w)],
-                           [np.float32(h), np.float32(w)]]).reshape(-1, 1, 2)
+        return np.asarray([[0, 0],
+                           [0, h],
+                           [w, 0],
+                           [w, h]]).reshape(-1, 1, 2)
 
     """
     Reference: https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_feature_homography/py_feature_homography.html
@@ -293,8 +303,8 @@ class Rectification_Tracker:
         w, h, c = golden_frame.shape
 
         Rectification_Tracker.ACTION_NAME = Action_Rect
-        golden_pts = self.reorder_points(self.get_key_points(golden_frame, is_manual=True, is_rect=True))
-        rect_coord = self.get_overview_coordinates(h, w)
+        rect_coord = self.get_overview_coordinates(w, h)
+        golden_pts = self.reorder_points(w, h, self.get_key_points(golden_frame, is_manual=True, is_rect=True))
         H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, Rectification_Tracker.RANSAC_THRESH)
 
         golden_pts = self.get_key_points(golden_frame, is_manual=is_manual_plane_points)
