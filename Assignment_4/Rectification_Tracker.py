@@ -8,7 +8,7 @@ input_dir_path = ".//Datasets//"
 # directory where results should being saved - it is created if it doesn't exist
 output_dir_path = ".//Results//"
 
-input_video_name = "RobotBugandCat.mp4"  # "RobotBugandCat.mp4" # "ParkingLot.mp4"
+input_video_name = "RobotBugandCat.mp4" # "HexBugs.mp4"  # "RobotBugandCat.mp4" # "ParkingLot.mp4"
 num_auto_key_points = 2000
 num_manual_key_points = 20
 num_auto_track_points = 40
@@ -16,7 +16,7 @@ num_manual_track_points = 25
 is_manual_plane_points = False
 is_manual_track_points = True
 moving_scene = False
-save_out = False
+save_out = True
 
 # User key-points selection
 Point_color = (0, 0, 255)
