@@ -16,7 +16,7 @@ num_manual_track_points = 25
 is_manual_plane_points = False
 is_manual_track_points = True
 moving_scene = False
-save_out = True
+save_out = False
 
 # User key-points selection
 Point_color = (0, 0, 255)
@@ -25,7 +25,8 @@ Line_color = (0, 255, 0)
 Line_size = 3
 
 # Action with the user
-Action_Rect = "Select 4 Rectangle Points.."
+Num_Rect_Points = 2
+Action_Rect = "Select " + str(Num_Rect_Points) + " Rectangle Points.."
 Action_Plane = "Select " + str(num_manual_key_points) + " Plane Points.."
 Action_Track = "Select " + str(num_manual_track_points) + " Points To Track.."
 
@@ -69,7 +70,7 @@ class Rectification_Tracker:
             num_points = num_manual_track_points
         if is_rect:
             Rectification_Tracker.ACTION_NAME = Action_Rect
-            num_points = 4
+            num_points = Num_Rect_Points
 
         cv2.namedWindow(Rectification_Tracker.ACTION_NAME)
         # mouse event listener
@@ -266,10 +267,27 @@ class Rectification_Tracker:
 
 
     """
-    reorder_points(pts) -> reorganized points as defined
+    reorder_2points(pts) -> reorganized points as defined
+    .   @brief Ordering 2 points as predefined by the rectangle
+    """
+    def reorder_2points(self, pts):
+        reshaped_pts = pts.reshape(len(pts), 2)
+        min_x = min(reshaped_pts[0][0], reshaped_pts[1][0])
+        max_x = max(reshaped_pts[0][0], reshaped_pts[1][0])
+        min_y = min(reshaped_pts[0][1], reshaped_pts[1][1])
+        max_y = max(reshaped_pts[0][1], reshaped_pts[1][1])
+        return np.array([
+            [min_x, min_y],
+            [min_x, max_y],
+            [max_x, min_y],
+            [max_x, max_y]]).reshape(-1, 1, 2)
+
+
+    """
+    reorder_4points(pts) -> reorganized points as defined
     .   @brief Ordering 4 points as predefined by the rectangle
     """
-    def reorder_points(self, h, w, pts):
+    def reorder_4points(self, h, w, pts):
         reshaped_pts = pts.reshape(len(pts), 2)
         return np.array([self.find_min(reshaped_pts, [0, 0]),
                          self.find_min(reshaped_pts, [0, h]),
@@ -304,7 +322,8 @@ class Rectification_Tracker:
 
         Rectification_Tracker.ACTION_NAME = Action_Rect
         rect_coord = self.get_overview_coordinates(w, h)
-        golden_pts = self.reorder_points(w, h, self.get_key_points(golden_frame, is_manual=True, is_rect=True))
+        # golden_pts = self.reorder_4points(w, h, self.get_key_points(golden_frame, is_manual=True, is_rect=True))
+        golden_pts = self.reorder_2points(self.get_key_points(golden_frame, is_manual=True, is_rect=True))
         H, _ = cv2.findHomography(golden_pts, rect_coord, cv2.RANSAC, Rectification_Tracker.RANSAC_THRESH)
 
         golden_pts = self.get_key_points(golden_frame, is_manual=is_manual_plane_points)
